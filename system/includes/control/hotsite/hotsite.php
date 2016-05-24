@@ -19,11 +19,15 @@
  */
 
 class hotsite {
+    /* Database Connection */
+    private $conn;
     
     /* Hotsite Basic Structure */
     private $event_id;
     private $pages;
     private $event;
+    private $status;
+    private $last_change;
     
     /* Hotsite CSS Structure */
     private $text_color;
@@ -51,8 +55,27 @@ class hotsite {
         }
     }
     
-    public function loadHotsite($event_id) {
-        echo $event_id;
+    public function loadHotsite($event) {
+        if(is_array($event)) {
+            if(!is_numeric($event['id'])) {
+                throw new Exception("O identificador do evento está em formato inválido.",1);
+            }
+        } else {
+            if(!is_numeric($event)) {
+                throw new Exception("O identificador do evento está em formato inválido.",2);
+            }
+            $eventcontroller = new eventController();
+            $event = $eventcontroller->loadEvent($event);
+        }
+        
+        $fields = array("id","id_evento","status","info","data_alteracao");
+        $this->conn->prepareselect("hotsite",$fields,"id_evento",$event['id']);
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível executar a ação.",3);
+        }
+        
+        $hotsite_array = $this->conn->fetch;
+        
         
     }
 
