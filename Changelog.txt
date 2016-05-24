@@ -16,6 +16,8 @@
  * 
  */
 
+[24/05/16]
+- Adicionado repositório git.
 
 [26/04/16]
 - Alterado layout base.
