@@ -1,0 +1,30 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+      {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+      {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+      <div id="sidebar-menu-finances" class="sidebar-menu sidebar-finances-menu">
+            {% include "financeiro/menu_finances.twig" %}
+      </div>
+      <div id="right-content-finances" class="right-content right-content-finances">
+      <input type="button" class="btn-01" id="compra-add-categoria-btn" value="Adicionar Categoria"/>
+      <input type="button" class="btn-01" id="compra-add-compra-btn" value="Adicionar Compra"/>
+      <div id="compra-categoria-list">
+            <div class="title">Categorias:</div>
+      </div>
+      <div class="clear"></div>
+      <div id="compra-list-wrap">
+      </div>
+      </div>
+      <script>
+            var finance_interface = new financeInterface();
+            finance_interface.loadListCompras();
+            finance_interface.bindCategoryAdd();
+            finance_interface.bindCompraAdd();            
+      </script>
+{% endblock %}

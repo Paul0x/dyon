@@ -1,0 +1,17 @@
+<div id="user-header">
+    <div class="name">
+        {{ user.nome }}
+        {% if user.tipo >= 5 %}
+            @ {{ user.nome_instancia }}
+        {% endif %}
+    </div>
+    <div class="controls">
+        <div class='control fa fa-bell' id='button-notifications' title="Notificações"></div>
+        <div class='control fa fa-navicon' id='button-menu' title="Menu"></div>
+        <a href="{{ config.system_path }}/usuario/logout"><div class='control fa fa-times' id='button-logout' title="Sair"></div></a>
+        <script>
+            controlsinterface = new controlsInterface();
+            controlsinterface.init();
+        </script>
+    </div>
+</div>

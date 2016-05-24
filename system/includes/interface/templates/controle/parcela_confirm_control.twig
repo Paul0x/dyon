@@ -1,0 +1,55 @@
+<div class='ajax-minibox ajax-minibox-form-1 parcela-confirm-box'>  
+    <div class="ajax-box-title">
+        Confirmação de Parcela
+    </div>
+    <div class='ajax-box-info'>
+        Confirme o pacote adicionando o comprovante de pagamento. Lembrando que essa ação não pode ser desfeita sem o cancelamento da parcela.
+    </div>
+    <div class='item'>
+        <label>Id da Parcela</label>
+        <div>{{ parcela.id }}</div>
+    </div>
+    <div class='item'>
+        <label>Valor</label>
+        <div>{{ parcela.valor }}</div>
+    </div>
+    <div class='item'>
+        <label>Datas</label>
+        <div>Criada em <strong>{{ parcela.data_criacao }}</strong> / Vencimento em <strong>{{ parcela.data_vencimento }}</strong></div>
+    </div>
+    <form id='parcela-confirm-upload' name='parcela-confirm-upload' method='post' enctype="multipart/form-data">
+        {% if not parcela.id_comprovante %}
+            <div class='field'>
+                <label>Comprovante da Parcela</label>
+                <div class='parcela-select-comprovante-type'>
+                    <div class='type selected' id='parcela-select-comprovante-type-file'>Arquivo</div>
+                    <div class='type' id='parcela-select-comprovante-type-cod'>Código da Transação</div>
+                    <div class='clear'></div>
+                </div>
+                <input type='hidden' id="parcela-field-id" value='{{ parcela.id }}' name='id' />
+                <input type='hidden' id="parcela-field-tipo-comprovante" value='1' name='tipo-comprovante' />
+                <div class='parcela-select-comprovante-type-box-file'>
+                    <input type='file' id='parcela-field-comprovante-file' name='comprovante-file' />
+                </div>
+                <div class='parcela-select-comprovante-type-box-cod'>
+                    <input type='text' id='parcela-field-comprovante-cod' name='comprovante-cod' placeholder='Insira o código da transação...' />
+                </div>
+            </div>
+        {% else %}
+            <div class='field'>
+                <label>Comprovante da Parcela</label>
+                <div>
+                    <input type='hidden' id="parcela-field-id" value='{{ parcela.id }}' name='id' />
+                    {% if parcela.tipo_comprovante == 1 %}
+                        <a href="{{ config.system_path }}/comprovante/parcela/{{ parcela.id_comprovante }}" target="new">Link</a> 
+                    {% elseif parcela.tipo_comprovante == 2 %}
+                        Código: <strong>{{ parcela.id_comprovante }}</strong>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% endif %}
+        <input type='button' id='confirm-pacote-submit' class='btn-01' value='Confirmar Pacote'/>
+        <input type='button' class='btn-03 ajax-close-box' value='Fechar'/>
+    </form>
+</div>

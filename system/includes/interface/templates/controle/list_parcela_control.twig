@@ -1,0 +1,65 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+    <script type="text/javascript">
+        control_interface = new controlInterface;
+    </script>
+    <div id="sidebar-menu-events" class="sidebar-menu sidebar-control-menu">
+        {% include "controle/menu_control.twig" %}
+    </div>
+    <div id="right-content-control" class="right-content right-content-control">
+        <div class="list-info-wrap">
+            <header>
+                <div class="title">Listagem de Parcelas 
+                    {% if pacotes %}
+                        {% if pacotes.status == 0 %}
+                            Canceladas
+                        {% elseif pacotes.status == 1 %}
+                            Pendentes
+                        {% elseif pacotes.status == 2 %}
+                            Aprovadas
+                        {% elseif pacotes.status == 3 %}
+                            Aguardando Confirmação
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+            </header>
+
+            {% if not error_flag %}
+                <div class="item-list-info">
+                    <input type="hidden" id="list-page-count" value="{{ pacotes.count.query }}" />
+                    <input type="hidden" id="status-parcela" value="{{ pacotes.status }}" />
+                </div>
+                <section class="item-list">
+                    <div class="list-row list-row-header">
+                        {% for field in pacotes.field_list %}
+                            <div orderby="{{ field }}" class="list-column-header list-column column-{{ field }}{% if loop.index == loop.length %} list-column-last{% endif %}">
+                                {{ field|capitalize }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% include "controle/list_parcela_list.twig" %}
+                </section>
+                {% if pacotes.count.query == 20 %}
+                    <div class="list-view-more" id="list-view-more">Ver Mais Resultados</div>
+                    <script type="text/javascript">
+                        control_interface = new controlInterface;
+                        control_interface.bindParcelaListMore();
+                    </script>
+                {% endif %}
+            {% else %}
+                <div class="error-message01">{{ error_flag }}</div>
+            {% endif %}
+
+            <div class="clear"></div>           
+        </div>
+    </div>
+{% endblock %}

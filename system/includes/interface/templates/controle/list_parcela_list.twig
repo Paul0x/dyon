@@ -1,0 +1,17 @@
+{% for pacote_key in pacotes.list|keys %}
+    <div class="list-row {% if pacote_key % 2 == 0 %}list-row-even{% else %}list-row-odd{% endif %}{% if loop.index == loop.length %} list-row-last{% endif %}">
+        <a href="{{config.system_path}}/cliente/{{ pacotes.list[pacote_key][pacotes.list[pacote_key]|length-1]}}/">
+            {% for field in pacotes.field_list|keys %}
+                <div class="column-{{ pacotes.field_list[field] }} list-column{% if loop.index == loop.length %} list-column-last{% endif %}">
+                    {% if pacotes.field_list[field] == "pagamento" %}
+                        {% if pacotes.list[pacote_key][field] != "" %}
+                            {{ pacotes.list[pacote_key][field]|date('d/m/Y') }}
+                        {% endif %}
+                    {% else %}
+                        {{ pacotes.list[pacote_key][ field ] }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </a>
+    </div>
+{% endfor %}      

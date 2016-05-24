@@ -1,0 +1,24 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+    <div id="topbar-menu-hotsite" class="topbar-menu-hotsite">
+        {% include "hotsite/menu_hotsite.twig" %}
+        <div class="menu-wrap">
+        </div>
+        
+    </div>
+    <div id="main-wrapper-hotsite" >
+        
+    </div>
+    <script>
+        hotsite_interface = new hotsiteInterface;
+        hotsite_interface.init({{ evento.id }});
+    </script>
+{% endblock %}

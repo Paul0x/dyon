@@ -1,0 +1,42 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+    <div class='sidebar-menu left-content-house'>
+        {% if events_select %}
+            <select id="control-event-select"> }}
+                {% for event in events_select %}
+                    <option value="{{ event.id }}" {% if event.id == user.evento_padrao %} selected {% endif %} >{{ event.nome }}</option>
+                {% endfor %}
+            </select>
+        {% endif %}
+        <script>
+            house_interface = new houseInterface();
+            house_interface.bindSelectEvent();
+        </script>
+        <div class='title'>Casas de Apoio</div>
+        {% if no_house %}
+            <div class='error'>Nenhuma casa para o evento.</div>
+        {% elseif house_list %}
+            <div class='menu-house-list'>
+            {% for house in house_list %}
+                <div class="item" house="{{ house.id }}">{{ house.nome }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+        <input type='button' value='Adicionar Casa' id='button-add-house' />
+    </div>
+    <div class="right-content-house">
+        <div class='info-select'>Selecione uma casa para visualizar os quartos<br/> ou clique no botão para adicionar uma casa.</div>
+    </div>
+    <script>
+        house_interface = new houseInterface();
+        house_interface.bindButtons();
+    </script>
+{% endblock %}

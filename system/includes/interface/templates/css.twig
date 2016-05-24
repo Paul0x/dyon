@@ -1,0 +1,5 @@
+{% if config.css|length > 0 %}
+        {% for style in config.css %}
+            <link rel="stylesheet" href="{{ config.system_path }}/css/{{ style }}.css">
+        {% endfor %}
+{% endif %}

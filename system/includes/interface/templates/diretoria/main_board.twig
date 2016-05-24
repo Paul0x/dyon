@@ -1,0 +1,25 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+      {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+      <div id="right-content-boards" class="right-content-big right-content-boards">
+          <div id='board-list-wrap'>
+              <div class='title'>Lista de Diretorias</div>
+              <div class='items'>
+              </div>
+              <div class='clear'></div>
+          </div>
+          <div id='board-wrap'>
+          </div>
+      </div>
+            <script>
+                board_interface = new boardInterface();
+                board_interface.initBoards();
+            </script>
+{% endblock %}

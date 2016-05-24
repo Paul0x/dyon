@@ -1,0 +1,101 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+    <div id="sidebar-menu-finances" class="sidebar-menu sidebar-finances-menu">
+        {% include "financeiro/menu_finances.twig" %}
+    </div>
+    <div id="right-content-finances" class="right-content right-content-finances">
+        <header>
+            <div class="title">Resumo Financeiro para o dia {{ summary.date_now }}</div>
+        </header>
+        <div id="summary-wrap">
+            <div class="summary-box summary-box-general">
+                <div class="title title-general">Geral</div>
+                <div class="item">
+                    <label>Saldo (S = PA - CAV)</label>
+                    <div class="field field-saldo">{{ summary.evento_info.saldo_total }}</div>
+                </div>
+            </div>
+            <div class="summary-box summary-box-general">
+                <div class="title title-receitas">Receitas</div>
+                <div class="item">
+                    <label>Total Arrecadado (Parcelas Pagas)</label>
+                    <div class="field field-saldo">{{ summary.pacotes_info.total_arrecadado }}</div>
+                </div>
+                <div class="item">
+                    <label>Total Planejado (Parcelas Pagas + Parcelas Pendentes)</label>
+                    <div class="field field-saldo">{{ summary.pacotes_info.total_planejado }}</div>
+                </div>
+                <div class="item">
+                    <label>Pacotes Aprovados (Pacotes Aprovados + Pacotes Quitados)</label>
+                    <div class="field field-saldo">{{ summary.pacotes_info.pacotes_aprovados }} ( {{ summary.pacotes_info.pacotes_aprovados -  summary.pacotes_info.pacotes_quitados}} +  {{ summary.pacotes_info.pacotes_quitados }} )</div>
+                </div>
+                <div class="list">
+                    <label>5 Últimas Parcelas Pagas</label>
+                    <div class="items">
+                        {% if summary.list.parcelas %}
+                            {% for parcela in summary.list.parcelas %}
+                                <div class="item">
+                                    <div class="data">{{ parcela.data_pagamento }}</div>
+                                    <div class="valor">{{ parcela.valor }}</div>
+                                    <div class="label">{{ parcela.nome }}</div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="summary-box summary-box-general">
+                <div class="title title-despesas">Despesas</div>
+                <div class="item">
+                    <label>Total Gasto (Parcelas Vencidas)</label>
+                    <div class="field field-saldo">{{ summary.compras.total_vencido }}</div>
+                </div>
+                <div class="item">
+                    <label>Total Planejado (Parcelas Vencidas + Parcelas Futuras)</label>
+                    <div class="field field-saldo">{{ summary.compras.total_planejado }}</div>
+                </div>
+                <div class="list">
+                    <label>10 Próximos Vencimentos</label>                    
+                    <div class="items">
+                        {% if summary.list.compras_proximas %}
+                            {% for parcela in summary.list.compras_proximas %}
+                                <div class="item">
+                                    <div class="data">{{ parcela.data_pagamento }}</div>
+                                    <div class="valor">{{ parcela.valor }}</div>
+                                    <div class="label">{{ parcela.nome }}</div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="list">
+                    <label>10 Últimos Vencimentos</label>
+                    <div class="items">
+                        {% if summary.list.compras_vencida %}
+                            {% for parcela in summary.list.compras_vencida %}
+                                <div class="item">
+                                    <div class="data">{{ parcela.data_pagamento }}</div>
+                                    <div class="valor">{{ parcela.valor }}</div>
+                                    <div class="label">{{ parcela.nome }}</div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    </script>
+{% endblock %}

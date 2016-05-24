@@ -1,0 +1,11 @@
+{% for cliente_key in clientes.list|keys %}
+      <div class="list-row {% if cliente_key % 2 == 0 %}list-row-even{% else %}list-row-odd{% endif %}{% if loop.index == loop.length %} list-row-last{% endif %}">
+            <a href="{{config.system_path}}/cliente/{{ clientes.list[cliente_key][clientes.list[cliente_key]|length-1] }}">
+                  {% for field in clientes.field_list|keys %}
+                        <div class="column-{{ clientes.field_list[field] }} list-column{% if loop.index == loop.length %} list-column-last{% endif %}">
+                              {{ clientes.list[cliente_key][ field ] }}
+                        </div>
+                  {% endfor %}
+            </a>
+      </div>
+{% endfor %}      

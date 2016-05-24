@@ -1,0 +1,65 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+      {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+      {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+      <div id="sidebar-menu-events" class="sidebar-menu sidebar-events-menu">
+            {% include "evento/menu_event.twig" %}
+      </div>
+      <div id="right-content-events" class="right-content right-content-events">
+            {% if event %}
+                  <div id="event-edit-wrap">
+                       <header>
+                              <div class="title">{{ event.nome }}</div>
+                              <div class="created">Criado por <strong>{{ event.criador }}</strong> em <strong>{{ event.data_criacao }}</strong></div>
+                              <div class="sub-title">Editor de Eventos</div>
+                        </header>
+                        <div class="form-edit-infos">
+                              {% if event %}
+                                    <div class="info">Edite as informações do evento pelos campos abaixo.</div>
+                                    <form method="post">
+                                          <div class='item'>
+                                                <label>Nome</label>
+                                                <input type="text" name="nome" value="{{ event.nome }}" />
+                                          </div>
+                                          <div class='item'>
+                                                <label>Data de Início</label>
+                                                <input type="text" name="data_inicio_data" value="{{ event.data_inicio_data }}" /> às <input type="text" name="data_inicio_hora" class="input-small" value="{{ event.data_inicio_hora }}"/>
+                                          </div>
+                                          <div class='item'>
+                                                <label>Data de Encerramento</label>
+                                                <input type="text" name="data_fim_data" value="{{ event.data_fim_data }}" /> às <input type="text" name="data_fim_hora" class="input-small" value="{{ event.data_fim_hora }}"/>
+                                          </div>
+                                          <div class='item'>
+                                                <label>Máximo de Vendas <div class="mini-info">(0 para ilimitado)</div></label>
+                                                <input type="text" name="max_venda" value="{{ event.max_venda }}" />
+                                          </div>
+                                          <input type="submit" class="btn-01" value="Editar Evento" name="submit" />
+                                    </form>
+                                    {% if error_edit_flag %}
+                                          <div class="event-edit-error error-message01">
+                                                {{ error_edit_flag }}
+                                          </div>
+                                    {% endif %}
+                                    {% if confirm_edit_flag %}
+                                          <div class="event-edit-error dialog-message01">
+                                                Evento editado com sucesso.
+                                          </div>
+                                    {% endif %}
+                              {% endif %}                      
+                        </div>
+                        <div class="clear"></div>           
+                  </div>
+            {% endif %}
+            {% if event_error_flag %}
+                  <div class="event-not-found error-message01">
+                        {{ error }}
+                  </div>                  
+            {% endif %}
+      </div>
+{% endblock %}
