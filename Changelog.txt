@@ -18,6 +18,7 @@
 
 [24/05/16]
 - Adicionado repositório git.
+- Adicionado suporte aos hotsites.
 
 [26/04/16]
 - Alterado layout base.
