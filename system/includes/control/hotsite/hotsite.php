@@ -81,4 +81,10 @@ class hotsite {
 
         
     }
+
+    private function setHotsiteVariables(Array $info) {
+        
+        echo "zohan é uma bixa";
+    	
+    }
 }
