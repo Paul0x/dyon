@@ -12,10 +12,15 @@
         {% include "hotsite/menu_hotsite.twig" %}
         <div class="menu-wrap">
         </div>
-        
+
     </div>
     <div id="main-wrapper-hotsite" >
-        
+        {% if error_flag %}
+            <div class="error-flag">
+                {{ error_flag }}
+            </div>
+        {% endif %}
+
     </div>
     <script>
         hotsite_interface = new hotsiteInterface;
