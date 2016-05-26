@@ -74,9 +74,11 @@ class hotsite {
             throw new Exception("Não foi possível executar a ação.",3);
         }
         
-        $hotsite_array = $this->conn->fetch;
-        
+	$hotsite_array = $this->conn->fetch;
+
+	$variables = $this->setHotsiteVariables($hotsite_array);
+       	
+
         
     }
-
 }
