@@ -56,7 +56,7 @@ hotsiteInterface = function () {
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    loadBigAjaxBox(data.html);
+                    loadAjaxBox(data.html);
                     var pickers = new Array();
                     var infos = data.hotsite_config;
                     $("#hotsite-config-form .color-value").each(function (index, element) {
