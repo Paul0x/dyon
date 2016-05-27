@@ -39,15 +39,15 @@ hotsiteInterface = function () {
             }
         });
     };
-    
-    this.bindMenuController = function() {
+
+    this.bindMenuController = function () {
         var self = this;
-        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function() {
+        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function () {
             self.loadHotsiteConfigInterface();
-        });        
+        });
     };
-    
-    this.loadHotsiteConfigInterface = function() {
+
+    this.loadHotsiteConfigInterface = function () {
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
@@ -57,9 +57,15 @@ hotsiteInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     loadBigAjaxBox(data.html);
+                    var pickers = new Array();
+                    var infos = data.hotsite_config;
+                    $("#hotsite-config-form .color-value").each(function (index, element) {
+                        var field = $(this).attr("var");
+                        pickers[field] = new jscolor(element);
+                        pickers[field].fromString(infos[field]);
+                    });
                 }
             }
         });
-        
     };
 };

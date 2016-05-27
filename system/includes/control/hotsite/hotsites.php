@@ -64,7 +64,7 @@ class hotsiteAdminController {
 
     private function loadHotsiteAdministrativePage($user) {
         try {
-            if(isset($_SESSION['hotsitecache'])) {
+            if (isset($_SESSION['hotsitecache'])) {
                 unset($_SESSION['hotsitecache']);
             }
             $selectedevent = $user->getSelectedEvent();
@@ -78,10 +78,10 @@ class hotsiteAdminController {
             echo $this->twig->render("hotsite/main.twig", Array("error_flag" => $error_flag, "evento" => $evento, "config" => config::$html_preload, "events_select" => $events_select, "user" => $user->getBasicInfo()));
         }
     }
-    
+
     private function ajaxLoad($user) {
         $mode = filter_input(INPUT_POST, "mode", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        switch($mode) {
+        switch ($mode) {
             case "get_hotsite_interface":
                 $this->loadHotsiteInterface();
                 break;
@@ -89,26 +89,36 @@ class hotsiteAdminController {
                 $this->loadHotsiteConfigInterface("html");
                 break;
         }
-       
     }
-    
+
     private function loadHotsiteInterface() {
         $interface_modules = Array();
         $interface_modules['topmenu'] = $this->twig->render("hotsite/topmenu.twig", Array("config" => config::$html_preload));
         $interface_modules['leftmenu'] = $this->twig->render("hotsite/leftmenu.twig", Array("config" => config::$html_preload));
-        echo json_encode(array("success" => "true", "modules" => $interface_modules));        
+        echo json_encode(array("success" => "true", "modules" => $interface_modules));
+    }
+
+    private function loadHotsiteConfigInterface($output) {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if(!is_object($hotsite)) {
+                throw new Exception("Não foi possível carregar o hotsite.");
+            }
+            
+            $hotsite_config = $hotsite->getHTMLConfigVariables("array");
+            echo json_encode(array("success" => "true", "hotsite_config" => $hotsite_config, "html" => $this->twig->render("hotsite/ajax_config_interface.twig", Array("config" => config::$html_preload ))));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));            
+        }
+    }
+}
+
+    /**
+     * Método para inicializar a classe de controle, chamada pelo sistema.
+     * @param Array $url
+     */
+    function init_module_hotsite($url) {
+        $eventcontroller = new hotsiteAdminController();
+        $eventcontroller->init($url);
     }
     
-    private function loadHotsiteConfigInterface($output) {
-        echo json_encode(array("success" => "true", "html" => $this->twig->render("hotsite/ajax_config_interface.twig", Array("error_flag" => $error_flag, "evento" => $evento, "config" => config::$html_preload, "events_select" => $events_select))));   }
-
-}
-
-/**
- * Método para inicializar a classe de controle, chamada pelo sistema.
- * @param Array $url
- */
-function init_module_hotsite($url) {
-    $eventcontroller = new hotsiteAdminController();
-    $eventcontroller->init($url);
-}

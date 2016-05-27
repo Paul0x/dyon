@@ -49,6 +49,11 @@ class hotsite {
      * Constrói o objeto e inicializa a conexão com o banco de dados.
      */
     public function __construct(conn $conn, $event_id = null) {
+        $dumpinfo = array(
+            "text_color" => "ffffff",
+            "title_color" => "dddddd",
+            "background_color" => "449900"
+        );
         $this->conn = $conn;
 
         if (!is_null($event_id)) {
@@ -75,13 +80,12 @@ class hotsite {
         }
         $hotsite_array = $this->conn->fetch;
 
-        $variables = $this->getHotsiteVariables($hotsite_array);
+        $variables = $this->loadHotsiteVariables($hotsite_array);
     }
 
-    private function getHotsiteVariables(Array $hotsite_array) {
+    private function loadHotsiteVariables(Array $hotsite_array) {
         $variable_list = Array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "gallery_status", "contact_status", "schedule_status", "faq_status", "blog_status");
  
-
         try {
             $info = unserialize($hotsite_array['info']);
         } catch (Exception $ex) {
@@ -91,14 +95,31 @@ class hotsite {
         if (is_array($info)) {
             foreach ($info as $index => $variable) {
                 if (in_array($index, $variable_list)) {
-                    $function = "set" . ucfirst($index);
-                    $this->$function($variable);
+                    $this->__set($index, $variable);
                 }
             }
             return 2;
         } else {
             return 1;
         }
+    }
+    
+    public function getHTMLConfigVariables($output_format = "json") {
+        $variables = array("text_color","text_font","title_color","title_font","background_image","background_color");
+        $hotsite_config = array();
+        foreach($variables as $index => $variable) {
+            $hotsite_config[$variable] = $this->$variable;            
+        }
+        
+        if($output_format == "json") {
+            return json_encode($hotsite_config);
+        } else {
+            return $hotsite_config;
+        }
+    }
+    
+    public function __set($name, $value) {
+        $this->$name = $value;
     }
 
 }
