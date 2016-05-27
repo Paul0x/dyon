@@ -85,6 +85,9 @@ class hotsiteAdminController {
             case "get_hotsite_interface":
                 $this->loadHotsiteInterface();
                 break;
+            case "load_hotsite_config_interface":
+                $this->loadHotsiteConfigInterface("html");
+                break;
         }
        
     }
@@ -95,6 +98,9 @@ class hotsiteAdminController {
         $interface_modules['leftmenu'] = $this->twig->render("hotsite/leftmenu.twig", Array("config" => config::$html_preload));
         echo json_encode(array("success" => "true", "modules" => $interface_modules));        
     }
+    
+    private function loadHotsiteConfigInterface($output) {
+        echo json_encode(array("success" => "true", "html" => $this->twig->render("hotsite/ajax_config_interface.twig", Array("error_flag" => $error_flag, "evento" => $evento, "config" => config::$html_preload, "events_select" => $events_select))));   }
 
 }
 

@@ -5,10 +5,10 @@
         <group>
             <file>file:/C:/wamp/www/dyon/system/includes/control/hotsite/hotsites.php</file>
             <file>file:/C:/wamp/www/dyon/system/includes/interface/templates/hotsite/main.twig</file>
-            <file>file:/C:/wamp/www/dyon/system/js/control.js</file>
             <file>file:/C:/wamp/www/dyon/system/css/core.css</file>
             <file>file:/C:/wamp/www/dyon/system/js/hotsite.js</file>
             <file>file:/C:/wamp/www/dyon/system/includes/control/hotsite/hotsite.php</file>
+            <file>file:/C:/wamp/www/dyon/system/includes/interface/templates/hotsite/ajax_config_interface.twig</file>
             <file>file:/C:/wamp/www/dyon/system/includes/interface/templates/hotsite/topmenu.twig</file>
         </group>
     </open-files>

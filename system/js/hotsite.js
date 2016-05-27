@@ -34,9 +34,32 @@ hotsiteInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#topbar-menu-hotsite .menu-wrap").html(data.modules.topmenu);
-
+                    self.bindMenuController();
                 }
             }
         });
+    };
+    
+    this.bindMenuController = function() {
+        var self = this;
+        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function() {
+            self.loadHotsiteConfigInterface();
+        });        
+    };
+    
+    this.loadHotsiteConfigInterface = function() {
+        $.ajax({
+            url: self.root + "/interface/ajax",
+            data: {
+                mode: "load_hotsite_config_interface"
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    loadBigAjaxBox(data.html);
+                }
+            }
+        });
+        
     };
 };
