@@ -27,6 +27,7 @@ class hotsiteController {
     public function loadHotsite($url) {
         $eventcontroller = new eventController();
         $event = $eventcontroller->getEventByURL($url, true);
+        print_r($event);
         
         
     }

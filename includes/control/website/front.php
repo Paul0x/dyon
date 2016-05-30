@@ -30,7 +30,7 @@ class websiteController {
             try {
                 $hotcontroller->loadHotsite($url['id'], true);
             } catch (Exception $ex) {
-                echo "dsa";
+                echo $ex->getMessage();
                 
             }
         } else {
