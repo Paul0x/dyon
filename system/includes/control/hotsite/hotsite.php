@@ -29,6 +29,7 @@ class hotsite {
     private $event;
     private $status;
     private $last_change;
+    private $id;
 
     /* Hotsite CSS Structure */
     private $text_color;
@@ -79,13 +80,19 @@ class hotsite {
             throw new Exception("Não foi possível executar a ação.", 3);
         }
         $hotsite_array = $this->conn->fetch;
-
+        $this->setId($hotsite_array['id']);
         $variables = $this->loadHotsiteVariables($hotsite_array);
+    }
+    
+    private function setId($id) {
+        if(!is_numeric($id)) {
+            throw new Exception("Identificador do hotsite em formato inválido.");
+        }
+        $this->id = $id;
     }
 
     private function loadHotsiteVariables(Array $hotsite_array) {
         $variable_list = Array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "gallery_status", "contact_status", "schedule_status", "faq_status", "blog_status");
- 
         try {
             $info = unserialize($hotsite_array['info']);
         } catch (Exception $ex) {
@@ -130,7 +137,7 @@ class hotsite {
         
     }
     
-    public function cache() {
+    public function createCache() {
         
     }
 
