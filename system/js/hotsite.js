@@ -15,22 +15,22 @@
  *  =====================================================================
  */
 
-hotsiteInterface = function () {
+hotsiteInterface = function() {
 
     this.root = $("#dir-root").val();
-    this.init = function (id) {
+    this.init = function(id) {
         var self = this;
         self.loadHotsiteInterface();
     };
 
-    this.loadHotsiteInterface = function () {
+    this.loadHotsiteInterface = function() {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "get_hotsite_interface"
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#topbar-menu-hotsite .menu-wrap").html(data.modules.topmenu);
@@ -40,32 +40,52 @@ hotsiteInterface = function () {
         });
     };
 
-    this.bindMenuController = function () {
+    this.bindMenuController = function() {
         var self = this;
-        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function () {
+        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function() {
             self.loadHotsiteConfigInterface();
         });
     };
 
-    this.loadHotsiteConfigInterface = function () {
+    this.loadHotsiteConfigInterface = function() {
+        var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "load_hotsite_config_interface"
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     loadAjaxBox(data.html);
                     var pickers = new Array();
                     var infos = data.hotsite_config;
-                    $("#hotsite-config-form .color-value").each(function (index, element) {
+                    $("#hotsite-config-form .color-value").each(function(index, element) {
                         var field = $(this).attr("var");
                         pickers[field] = new jscolor(element);
-                        pickers[field].fromString(infos[field]);
+                        if (infos[field] !== null) {
+                            pickers[field].fromString(infos[field]);
+                        } else {
+                            pickers[field].fromString("ffffff");          
+                            
+                        }
+                    });
+
+                    $("#hotsite-config-form-submit").die().live("click", function() {
+                        self.saveHotsiteConfig(infos);
+
                     });
                 }
             }
         });
+    };
+
+    this.saveHotsiteConfig = function() {
+        var new_infos = new Object();
+        new_infos.text_color = $("#hotsite-config-form .item[ref=text-color] .value").html();
+        new_infos.title_color = $("#hotsite-config-form .item[ref=title-color] .value").html();
+        new_infos.background_color = $("#hotsite-config-form .item[ref=background-color] .value").html();
+        
+        alert(new_infos.text_color+" - "+new_infos.background_color+" - "+new_infos.title_color);
     };
 };
