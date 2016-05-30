@@ -13,7 +13,7 @@
             <div class="label">Imagem de Fundo</div>
             <div class="info">Selecione uma imagem de fundo para o seu website, escolha também se a imagem se repetirá ou será estática.</div>
             <div class="inputs">
-                <div><input type="file" name="background-image-file" /></div>
+                <div><input id="hotsite-background-image-file" type="file" name="background-image-file" /></div>
                 <div class="input"><input type="checkbox" name="background-image-repeat" /><label for="background-image-repeat">Repetir Imagem</label></div>
                 <div class="value image-value"></div>
             </div>
@@ -27,6 +27,8 @@
             <div class="label">Cor do Título</div>
             <div class="info">Selecione abaixo a cor padrão dos títulos no seu site.</div>
             <div class="value color-value" var="title_color"></div>
+        </div>
+        <div class="error-log">
         </div>
         <input id="hotsite-config-form-submit" type="button" value="Alterar" />
         <input class="hotsite-config-button ajax-close-box" type="button" value="Fechar" />
