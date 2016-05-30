@@ -88,6 +88,9 @@ class hotsiteAdminController {
             case "load_hotsite_config_interface":
                 $this->loadHotsiteConfigInterface("html");
                 break;
+            case "submit_hotsite_config":
+                $this->changeHotisteConfig();
+                break;
         }
     }
 
@@ -101,24 +104,48 @@ class hotsiteAdminController {
     private function loadHotsiteConfigInterface($output) {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
-            if(!is_object($hotsite)) {
+            if (!is_object($hotsite)) {
                 throw new Exception("Não foi possível carregar o hotsite.");
             }
-            
+
             $hotsite_config = $hotsite->getHTMLConfigVariables("array");
-            echo json_encode(array("success" => "true", "hotsite_config" => $hotsite_config, "html" => $this->twig->render("hotsite/ajax_config_interface.twig", Array("config" => config::$html_preload ))));
+            echo json_encode(array("success" => "true", "hotsite_config" => $hotsite_config, "html" => $this->twig->render("hotsite/ajax_config_interface.twig", Array("config" => config::$html_preload))));
         } catch (Exception $ex) {
-            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));            
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+
+    private function changeHotisteConfig() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite)) {
+                throw new Exception("Não foi possível carregar o hotsite.");
+            }
+
+            $config_parameters = Array("text_color", "title_color", "background_color", "background_repeat");
+            $hotsite_config = Array();
+            foreach ($config_parameters as $index => $parameter) {
+                $hotsite_config[$parameter] = filter_input(INPUT_POST, $parameter, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            }
+            if($_FILES['background_image']) {
+                $hotsite_config['background_image'] = $_FILES['background_image'];
+            }
+            
+            $hotsite->setHotsiteConfig($hotsite_config);
+            $hotsite->save("config");
+            $hotsite->createCache();
+        } catch (Exception $ex) {
+            
+        }
+    }
+
 }
 
-    /**
-     * Método para inicializar a classe de controle, chamada pelo sistema.
-     * @param Array $url
-     */
-    function init_module_hotsite($url) {
-        $eventcontroller = new hotsiteAdminController();
-        $eventcontroller->init($url);
-    }
-    
+/**
+ * Método para inicializar a classe de controle, chamada pelo sistema.
+ * @param Array $url
+ */
+function init_module_hotsite($url) {
+    $eventcontroller = new hotsiteAdminController();
+    $eventcontroller->init($url);
+}

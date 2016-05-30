@@ -121,6 +121,18 @@ class hotsite {
     public function __set($name, $value) {
         $this->$name = $value;
     }
+    
+    public function setHotsiteConfig($hotsite_config) {        
+        
+    }
+    
+    public function save($mode) {
+        
+    }
+    
+    public function cache() {
+        
+    }
 
 }
  

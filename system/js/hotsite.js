@@ -15,22 +15,22 @@
  *  =====================================================================
  */
 
-hotsiteInterface = function() {
+hotsiteInterface = function () {
 
     this.root = $("#dir-root").val();
-    this.init = function(id) {
+    this.init = function (id) {
         var self = this;
         self.loadHotsiteInterface();
     };
 
-    this.loadHotsiteInterface = function() {
+    this.loadHotsiteInterface = function () {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "get_hotsite_interface"
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#topbar-menu-hotsite .menu-wrap").html(data.modules.topmenu);
@@ -40,27 +40,27 @@ hotsiteInterface = function() {
         });
     };
 
-    this.bindMenuController = function() {
+    this.bindMenuController = function () {
         var self = this;
-        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function() {
+        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function () {
             self.loadHotsiteConfigInterface();
         });
     };
 
-    this.loadHotsiteConfigInterface = function() {
+    this.loadHotsiteConfigInterface = function () {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "load_hotsite_config_interface"
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     loadAjaxBox(data.html);
                     var pickers = new Array();
                     var infos = data.hotsite_config;
-                    $("#hotsite-config-form .color-value").each(function(index, element) {
+                    $("#hotsite-config-form .color-value").each(function (index, element) {
                         var field = $(this).attr("var");
                         pickers[field] = new jscolor(element);
                         if (infos[field] !== null) {
@@ -71,7 +71,7 @@ hotsiteInterface = function() {
                         }
                     });
 
-                    $("#hotsite-config-form-submit").die().live("click", function() {
+                    $("#hotsite-config-form-submit").die().live("click", function () {
                         self.saveHotsiteConfig(infos);
 
                     });
@@ -80,7 +80,7 @@ hotsiteInterface = function() {
         });
     };
 
-    this.saveHotsiteConfig = function() {
+    this.saveHotsiteConfig = function (infos) {
         var self = this;
         var color_pattern = /^[0-9A-F]{6}$/;
         var new_infos = new Object();
@@ -119,25 +119,34 @@ hotsiteInterface = function() {
         var xhr = new XMLHttpRequest();
 
         form.append("mode", "submit_hotsite_config");
-        form.append("text_color", new_infos.text_color);
-        form.append("title_color", new_infos.title_color);
-        form.append("background_color", new_infos.background_color);
-        form.append("background_image", new_infos.background_image.file);
-        form.append("background_image_filename", new_infos.background_image.filename);
-        form.append("background_repeat", new_infos.background_repeat);
+        if (new_infos.text_color !== infos.text_color) {
+            form.append("text_color", new_infos.text_color);
+        }
+        if (new_infos.title_color !== infos.title_color) {
+            form.append("title_color", new_infos.title_color);
+        }
+        if (new_infos.background_color !== infos.background_color) {
+            form.append("background_color", new_infos.background_color);
+        }
+        if (new_infos.background_image) {
+            form.append("background_image", new_infos.background_image.file);
+            form.append("background_image_filename", new_infos.background_image.filename);
+        }
+        if (new_infos.background_repeat !== infos.background_repeat) {
+            form.append("background_repeat", new_infos.background_repeat);
+        }
         xhr.open('POST', self.root + "/interface/ajax", true);
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState == 2) {
             }
             if (xhr.readyState == 4 && xhr.status == 200) {
-                
+
             }
         };
         xhr.send(form);
-        alert(new_infos.text_color + " - " + new_infos.background_color + " - " + new_infos.title_color);
     };
 
-    this.hotsiteConfigError = function(message) {
+    this.hotsiteConfigError = function (message) {
         $("#hotsite-config-form .error-log").html(message);
 
     };
