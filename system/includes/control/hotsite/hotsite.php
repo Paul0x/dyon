@@ -139,6 +139,12 @@ class hotsite {
             if ($hotsite_config[$variable] != $this->$variable && preg_match($hex_check, $hotsite_config[$variable])) {
                 $this->__set($variable,$hotsite_config[$variable]);
             }
+        }        
+        
+        if(isset($hotsite_config['background_image'])) {
+            $hotsitefiles = new hotsiteFiles();
+            $image_path = $hotsitefiles->saveBackgroundImage($this, $hotsite_config['background_image']);
+            $this->background_image = $image_path;
         }
         
     }
@@ -150,9 +156,7 @@ class hotsite {
         
         if(!is_numeric($this->id)) {
             throw new Exception("O identificador do hotsite não está disponível.");
-        }
-        
-        
+        }       
         
         foreach($this->variable_list as $index => $variable) {
             if($this->$variable != $this->database_info[$variable]) {
@@ -169,6 +173,14 @@ class hotsite {
 
     public function createCache() {
         
+    }
+    
+    public function getId() {
+        if(!is_numeric($this->id)) {
+            throw new Exception("O identificador do hotsite é inválido.");
+        }
+        
+        return $this->id;
     }
 
 }
