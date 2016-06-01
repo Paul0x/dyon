@@ -30,7 +30,9 @@ class hotsite {
     private $status;
     private $last_change;
     private $id;
-
+    private $database_info;
+    private $variable_list = Array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "background_repeat", "gallery_status", "contact_status", "schedule_status", "faq_status", "blog_status");
+        
     /* Hotsite CSS Structure */
     private $text_color;
     private $text_font;
@@ -38,6 +40,7 @@ class hotsite {
     private $title_font;
     private $background_color;
     private $background_image;
+    private $background_repeat;
 
     /* Hotsite Pages Structure */
     private $gallery_status;
@@ -83,25 +86,25 @@ class hotsite {
         $this->setId($hotsite_array['id']);
         $variables = $this->loadHotsiteVariables($hotsite_array);
     }
-    
+
     private function setId($id) {
-        if(!is_numeric($id)) {
+        if (!is_numeric($id)) {
             throw new Exception("Identificador do hotsite em formato inválido.");
         }
         $this->id = $id;
     }
 
     private function loadHotsiteVariables(Array $hotsite_array) {
-        $variable_list = Array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "gallery_status", "contact_status", "schedule_status", "faq_status", "blog_status");
         try {
             $info = unserialize($hotsite_array['info']);
+            $this->database_info = $info;
         } catch (Exception $ex) {
             throw new Exception("Não foi possível pegar as informações do site.");
         }
 
         if (is_array($info)) {
             foreach ($info as $index => $variable) {
-                if (in_array($index, $variable_list)) {
+                if (in_array($index, $this->variable_list)) {
                     $this->__set($index, $variable);
                 }
             }
@@ -110,36 +113,62 @@ class hotsite {
             return 1;
         }
     }
-    
+
     public function getHTMLConfigVariables($output_format = "json") {
-        $variables = array("text_color","text_font","title_color","title_font","background_image","background_color");
+        $variables = array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "background_repeat");
         $hotsite_config = array();
-        foreach($variables as $index => $variable) {
-            $hotsite_config[$variable] = $this->$variable;            
+        foreach ($variables as $index => $variable) {
+            $hotsite_config[$variable] = $this->$variable;
         }
-        
-        if($output_format == "json") {
+
+        if ($output_format == "json") {
             return json_encode($hotsite_config);
         } else {
             return $hotsite_config;
         }
     }
-    
+
     public function __set($name, $value) {
         $this->$name = $value;
     }
-    
-    public function setHotsiteConfig($hotsite_config) {        
+
+    public function setHotsiteConfig($hotsite_config) {
+        $hex_check = "/^[0-9A-F]{6}$/";
+        $color_variables = array("text_color", "background_color", "title_color");
+        foreach ($color_variables as $index => $variable) {
+            if ($hotsite_config[$variable] != $this->$variable && preg_match($hex_check, $hotsite_config[$variable])) {
+                $this->__set($variable,$hotsite_config[$variable]);
+            }
+        }
         
     }
-    
+
     public function save($mode) {
+        if(!isset($this->database_info)) {
+            throw new Exception("As informações do hotsite não estão carregadas.");
+        }
         
+        if(!is_numeric($this->id)) {
+            throw new Exception("O identificador do hotsite não está disponível.");
+        }
+        
+        
+        
+        foreach($this->variable_list as $index => $variable) {
+            if($this->$variable != $this->database_info[$variable]) {
+                $this->database_info[$variable] = $this->$variable;
+            }            
+        }
+        
+        $serialized_info = serialize($this->database_info);
+        $this->conn->prepareupdate($serialized_info, "info", "hotsite", $this->id, "id");
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível salvar as informações do hotsite.");
+        }
     }
-    
+
     public function createCache() {
         
     }
 
 }
- 
