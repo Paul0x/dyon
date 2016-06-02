@@ -19,6 +19,7 @@
  */
 define(FILES_URL, $_SERVER['DOCUMENT_ROOT']."dyon");
 class hotsiteFiles {
+    
     public function saveBackgroundImage($hotsite, $background_image) {
         if (!$hotsite->getId()) {
             throw new Exception("Identificador do hotsite inválido.");
@@ -45,6 +46,23 @@ class hotsiteFiles {
         }
         
         return $background_image_name;
+    }
+    
+    public function removeBackgroundImage($hotsite, $background_image_filename) {        
+        if (!$hotsite->getId()) {
+            throw new Exception("Identificador do hotsite inválido.");
+        }
+        
+        $sufix = substr($background_image_filename, strlen($background_image_filename)-3, 3);
+        if($sufix != "png" && $sufix != "jpg") {
+            throw new Exception("O arquivo de background não pode ser removido.");
+        } 
+        
+        if(file_exists(FILES_URL."/hotsite/background_image/" . $background_image_filename)) {
+            unlink(FILES_URL."/hotsite/background_image/" . $background_image_filename);
+        } else {
+            throw new Exception("O arquivo de background não existe. - ".FILES_URL."/hotsite/background_image/" . $background_image_filename);
+        }
     }
 
 }

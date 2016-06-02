@@ -135,6 +135,7 @@ class hotsiteAdminController {
             $hotsite->setHotsiteConfig($hotsite_config);
             $hotsite->save("config");
             $hotsite->createCache();
+            $_SESSION['hotsitecache'] = serialize($hotsite);
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));            
