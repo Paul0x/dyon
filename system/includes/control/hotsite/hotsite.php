@@ -150,8 +150,10 @@ class hotsite {
             $hotsitefiles->removeBackgroundImage($this, $old_background);
             $this->background_image = $image_path;
         }
-        
-        
+
+        if ($hotsite_config['background_repeat'] != $this->background_repeat && ($hotsite_config['background_repeat'] == 0 || $hotsite_config['background_repeat'] == 1)) {
+            $this->background_repeat = $hotsite_config["background_repeat"];
+        }
     }
 
     public function save($mode) {

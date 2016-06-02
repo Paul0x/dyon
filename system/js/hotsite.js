@@ -67,9 +67,12 @@ hotsiteInterface = function () {
                             pickers[field].fromString(infos[field]);
                         } else {
                             pickers[field].fromString("ffffff");
-
                         }
                     });
+                    
+                    if(infos.background_repeat === "true") {
+                        $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked",true);
+                    }
 
                     $("#hotsite-config-form-submit").die().live("click", function () {
                         self.saveHotsiteConfig(infos);
@@ -88,7 +91,7 @@ hotsiteInterface = function () {
         new_infos.text_color = $("#hotsite-config-form .item[ref=text-color] .value").html();
         new_infos.title_color = $("#hotsite-config-form .item[ref=title-color] .value").html();
         new_infos.background_color = $("#hotsite-config-form .item[ref=background-color] .value").html();
-        new_infos.background_repeat = $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").val();
+        new_infos.background_repeat = $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").is(":checked");
         if (!color_pattern.test(new_infos.text_color)) {
             self.hotsiteConfigError("A cor do texto está em formato inválido.");
             return;
