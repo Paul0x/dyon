@@ -98,7 +98,6 @@ class hotsiteAdminController {
     private function loadHotsiteInterface() {
         $interface_modules = Array();
         $interface_modules['topmenu'] = $this->twig->render("hotsite/topmenu.twig", Array("config" => config::$html_preload));
-        $interface_modules['leftmenu'] = $this->twig->render("hotsite/leftmenu.twig", Array("config" => config::$html_preload));
         echo json_encode(array("success" => "true", "modules" => $interface_modules));
     }
 
