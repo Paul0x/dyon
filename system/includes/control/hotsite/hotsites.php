@@ -92,6 +92,9 @@ class hotsiteAdminController {
             case "submit_hotsite_config":
                 $this->changeHotisteConfig();
                 break;
+            case "get_hotsite_page":
+                $this->getHotsitePage();
+                break;
         }
     }
 
@@ -138,6 +141,15 @@ class hotsiteAdminController {
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));            
+        }
+    }
+    
+    private function getHotsitePage() {
+        try {
+            $page['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
+            echo json_encode(array("success" => "true", "page" => $page));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
 
