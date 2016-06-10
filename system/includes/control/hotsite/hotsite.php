@@ -26,6 +26,8 @@ define(DYON_HOTSITE_SECTION_FAQ, 5);
 define(DYON_HOTSITE_SECTION_LINEUP, 6);
 define(DYON_HOTSITE_SECTION_CONTACT, 7);
 
+include("includes/control/hotsite/pages/page.php");
+
 class hotsite {
     /* Database Connection */
 
@@ -210,7 +212,7 @@ class hotsite {
             throw new Exception("Identificador da página inválido.");
         }
         
-        
+        $page = new page($page_id, $this);
     }
 
     private function checkId() {
