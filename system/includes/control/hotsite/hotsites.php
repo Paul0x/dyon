@@ -130,22 +130,31 @@ class hotsiteAdminController {
             foreach ($config_parameters as $index => $parameter) {
                 $hotsite_config[$parameter] = filter_input(INPUT_POST, $parameter, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             }
-            if($_FILES['background_image']) {
+            if ($_FILES['background_image']) {
                 $hotsite_config['background_image'] = $_FILES['background_image'];
             }
-            
+
             $hotsite->setHotsiteConfig($hotsite_config);
             $hotsite->save("config");
             $hotsite->createCache();
             $_SESSION['hotsitecache'] = serialize($hotsite);
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
-            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));            
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function getHotsitePage() {
         try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite)) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+            $page_id = filter_input(INPUT_POST, "page_id", FILTER_VALIDATE_INT);
+            if (!$page_id || $page_id <= 0) {
+                $page_id = $hotsite->getFrontPageId();
+            }
+            $page['content'] = $hotsite->getPageById($page_id);
             $page['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
             echo json_encode(array("success" => "true", "page" => $page));
         } catch (Exception $ex) {

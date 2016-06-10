@@ -18,6 +18,14 @@
  * 
  */
 
+define(DYON_HOTSITE_PAGE_FRONT, 1);
+define(DYON_HOTSITE_PAGE_BASIC, 2);
+define(DYON_HOTSITE_SECTION_BLOG, 3);
+define(DYON_HOTSITE_SECTION_GALLERY, 4);
+define(DYON_HOTSITE_SECTION_FAQ, 5);
+define(DYON_HOTSITE_SECTION_LINEUP, 6);
+define(DYON_HOTSITE_SECTION_CONTACT, 7);
+
 class hotsite {
     /* Database Connection */
 
@@ -161,9 +169,8 @@ class hotsite {
             throw new Exception("As informações do hotsite não estão carregadas.");
         }
 
-        if (!is_numeric($this->id)) {
-            throw new Exception("O identificador do hotsite não está disponível.");
-        }
+
+        $this->checkId();
 
         foreach ($this->variable_list as $index => $variable) {
             if ($this->$variable != $this->database_info[$variable]) {
@@ -183,11 +190,33 @@ class hotsite {
     }
 
     public function getId() {
+        $this->checkId();
+
+        return $this->id;
+    }
+
+    public function getFrontPageId() {
+        $this->checkId();
+        $this->conn->prepareselect("pagina", "id", array("id_hotsite","tipo"), array($this->getId(), 1));
+        if(!$this->conn->executa()) {
+            throw new Exception("Não encontramos a página inicial do seu hotsite. :/");            
+        }
+        
+        return $this->conn->fetch[0];
+    }
+    
+    public function getPageById($page_id) {
+        if(!is_numeric($page_id)) {
+            throw new Exception("Identificador da página inválido.");
+        }
+        
+        
+    }
+
+    private function checkId() {
         if (!is_numeric($this->id)) {
             throw new Exception("O identificador do hotsite é inválido.");
         }
-
-        return $this->id;
     }
 
 }
