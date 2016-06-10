@@ -213,6 +213,7 @@ class hotsite {
         }
         
         $page = new page($page_id, $this);
+        return $page;
     }
 
     private function checkId() {

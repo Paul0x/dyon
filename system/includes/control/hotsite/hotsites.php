@@ -154,9 +154,10 @@ class hotsiteAdminController {
             if (!$page_id || $page_id <= 0) {
                 $page_id = $hotsite->getFrontPageId();
             }
-            $page['content'] = $hotsite->getPageById($page_id);
-            $page['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
-            echo json_encode(array("success" => "true", "page" => $page));
+            $page = $hotsite->getPageById($page_id);
+            $pageinfo['render'] = $page->renderPage();
+            $pageinfo['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
+            echo json_encode(array("success" => "true", "page" => $pageinfo));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }

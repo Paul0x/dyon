@@ -83,4 +83,11 @@ class page {
         }
     }
 
+    public function renderPage() {
+        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/hotsite/render');
+        $this->twig = new Twig_Environment($this->twig_loader);
+        return $this->twig->render("body.twig", Array("config" => config::$html_preload));
+       
+    }
+
 }

@@ -47,10 +47,10 @@ hotsiteInterface = function () {
             self.loadHotsiteConfigInterface();
         });
     };
-    
+
     this.loadPageHotsiteInterface = function () {
         var self = this;
-        
+
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
@@ -61,13 +61,18 @@ hotsiteInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     self.loadSideMenu(data.page.sidemenu);
+                    self.renderPreview(data.page.render);
                 }
             }
         });
-        
+
     };
-    
-    this.loadSideMenu = function(sidemenu) {
+
+    this.renderPreview = function (render) {
+        $("#preview-hotsite").html(render);
+    }
+
+    this.loadSideMenu = function (sidemenu) {
         $("#leftbar-menu-hotsite").html(sidemenu);
     };
 
@@ -93,9 +98,9 @@ hotsiteInterface = function () {
                             pickers[field].fromString("ffffff");
                         }
                     });
-                    
-                    if(infos.background_repeat === "true") {
-                        $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked",true);
+
+                    if (infos.background_repeat === "true") {
+                        $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
                     }
 
                     $("#hotsite-config-form-submit").die().live("click", function () {
