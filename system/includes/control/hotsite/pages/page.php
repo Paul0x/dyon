@@ -65,6 +65,8 @@ class page {
         } catch (Exception $ex) {
             $this->blocks = null;
         }
+        
+        $this->hotsite = $hotsite;
     }
 
     public function loadPageBlocks() {
@@ -84,9 +86,11 @@ class page {
     }
 
     public function renderPage() {
+        $page['inline_css'] = $this->hotsite->renderCss();
+        $page['title'] = $this->page_title;
         $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/hotsite/render');
         $this->twig = new Twig_Environment($this->twig_loader);
-        return $this->twig->render("body.twig", Array("config" => config::$html_preload));
+        return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));
        
     }
 

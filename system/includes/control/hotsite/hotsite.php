@@ -199,19 +199,19 @@ class hotsite {
 
     public function getFrontPageId() {
         $this->checkId();
-        $this->conn->prepareselect("pagina", "id", array("id_hotsite","tipo"), array($this->getId(), 1));
-        if(!$this->conn->executa()) {
-            throw new Exception("Não encontramos a página inicial do seu hotsite. :/");            
+        $this->conn->prepareselect("pagina", "id", array("id_hotsite", "tipo"), array($this->getId(), 1));
+        if (!$this->conn->executa()) {
+            throw new Exception("Não encontramos a página inicial do seu hotsite. :/");
         }
-        
+
         return $this->conn->fetch[0];
     }
-    
+
     public function getPageById($page_id) {
-        if(!is_numeric($page_id)) {
+        if (!is_numeric($page_id)) {
             throw new Exception("Identificador da página inválido.");
         }
-        
+
         $page = new page($page_id, $this);
         return $page;
     }
@@ -219,6 +219,13 @@ class hotsite {
     private function checkId() {
         if (!is_numeric($this->id)) {
             throw new Exception("O identificador do hotsite é inválido.");
+        }
+    }
+
+    public function renderCss($inline = true) {
+        $render = new render();
+        if ($inline) {
+            return $render->bodyCss($this->getHTMLConfigVariables("array"));
         }
     }
 

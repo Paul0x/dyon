@@ -24,6 +24,7 @@ require_once("includes/control/usuario/users.php");
 require_once("includes/lib/Twig/Autoloader.php");
 require_once("includes/control/hotsite/hotsite.php");
 require_once("includes/control/hotsite/files.php");
+include("includes/control/hotsite/render.php");
 
 class hotsiteAdminController {
 
