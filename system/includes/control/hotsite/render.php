@@ -25,8 +25,11 @@ class render {
         $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/hotsite/render');
         $this->twig = new Twig_Environment($this->twig_loader);
     }
-    public function bodyCss($attrs) {        
-        return $this->twig->render("css/body.twig", Array("attrs" => $attrs));
+    public function bodyCss($attrs, $context = null) {  
+        if($attrs['background_image']) {
+            $attrs['background_url'] = config::$html_preload['domain_path']."/hotsite/background_image/".$attrs['background_image'];
+        }
+        return $this->twig->render("css/body.twig", Array("attrs" => $attrs, "context" => $context));
         
     }
 

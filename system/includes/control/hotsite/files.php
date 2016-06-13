@@ -53,6 +53,10 @@ class hotsiteFiles {
             throw new Exception("Identificador do hotsite inválido.");
         }
         
+        if(!$background_image_filename) {
+            return;
+        }
+        
         $sufix = substr($background_image_filename, strlen($background_image_filename)-3, 3);
         if($sufix != "png" && $sufix != "jpg") {
             throw new Exception("O arquivo de background não pode ser removido.");

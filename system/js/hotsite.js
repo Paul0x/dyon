@@ -167,9 +167,18 @@ hotsiteInterface = function () {
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 2) {
+            if (xhr.readyState === 2) {
             }
-            if (xhr.readyState == 4 && xhr.status == 200) {
+            if (xhr.readyState === 4 && xhr.status == 200) {
+                var data = eval("(" + xhr.responseText + ")");
+                if (data.success === "true") {
+                    closeAjaxBox();
+                    self.loadPageHotsiteInterface();
+                }
+                else {
+                    self.hotsiteConfigError(data.error);
+                    return;
+                }
 
             }
         };

@@ -1,9 +1,12 @@
-body {
-    background-color: #{{ attrs.background_color }};
-    font-color: #{{ attrs.font_color }};
+{{ context }} body {
+background-color: #{{ attrs.background_color }};
+font-color: #{{ attrs.font_color }};
+{% if attrs.background_image %}
+    background-image: url({{ attrs.background_url }}){% if attrs.background_repeat == 'y' %} repeat{% else %} no-repeat {% endif %};
+{% endif %}
 }
 
-body .title
+{ context }} body .title
 {
-    font-color: #{{ attrs.title_color }};
+font-color: #{{ attrs.title_color }};
 }
