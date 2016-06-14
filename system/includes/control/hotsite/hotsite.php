@@ -25,6 +25,7 @@ define(DYON_HOTSITE_SECTION_GALLERY, 4);
 define(DYON_HOTSITE_SECTION_FAQ, 5);
 define(DYON_HOTSITE_SECTION_LINEUP, 6);
 define(DYON_HOTSITE_SECTION_CONTACT, 7);
+define(CURRENT_PAGE, 32);
 
 include("includes/control/hotsite/pages/page.php");
 
@@ -42,7 +43,8 @@ class hotsite {
     private $id;
     private $database_info;
     private $variable_list = Array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "background_repeat", "gallery_status", "contact_status", "schedule_status", "faq_status", "blog_status");
-
+    private $current_page;
+    
     /* Hotsite CSS Structure */
     private $text_color;
     private $text_font;
@@ -208,6 +210,10 @@ class hotsite {
     }
 
     public function getPageById($page_id) {
+        if($page_id == CURRENT_PAGE) {
+            $page_id = $this->getCurrentPage();            
+        }
+        
         if (!is_numeric($page_id)) {
             throw new Exception("Identificador da página inválido.");
         }
@@ -220,6 +226,22 @@ class hotsite {
         if (!is_numeric($this->id)) {
             throw new Exception("O identificador do hotsite é inválido.");
         }
+    }
+    
+    public function setCurrentPage($page_id) {
+        if(!is_numeric($page_id)) {
+            throw new Exception("Formato do identificador da página é inválido.");
+        }
+        
+        $this->current_page = $page_id;
+    }
+    
+    public function getCurrentPage() {
+        if(!isset($this->current_page)) {
+            throw new Exception("O hotsite não está com nenhuma página carregada.");
+        }
+        
+        return $this->current_page;        
     }
 
     public function renderCss($inline = true) {

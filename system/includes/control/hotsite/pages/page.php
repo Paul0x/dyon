@@ -90,8 +90,16 @@ class page {
         $page['title'] = $this->page_title;
         $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/hotsite/render');
         $this->twig = new Twig_Environment($this->twig_loader);
-        return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));
-       
+        return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));       
+    }
+    
+    public function createBlock() {
+        if(!is_numeric($this->id)) {
+            throw new Exception("A página não está carregada.");
+        }
+        
+        
+        
     }
 
 }

@@ -108,7 +108,7 @@ class hotsiteAdminController {
     private function loadHotsiteConfigInterface($output) {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
-            if (!is_object($hotsite)) {
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
                 throw new Exception("Não foi possível carregar o hotsite.");
             }
 
@@ -122,7 +122,7 @@ class hotsiteAdminController {
     private function changeHotisteConfig() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
-            if (!is_object($hotsite)) {
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
                 throw new Exception("Não foi possível carregar o hotsite.");
             }
 
@@ -145,22 +145,43 @@ class hotsiteAdminController {
         }
     }
 
-    private function getHotsitePage() {
+    private function getHotsitePage($current_hotsite = false) {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
-            if (!is_object($hotsite)) {
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
                 throw new Exception("O Hotsite não está carregado.");
             }
+            
             $page_id = filter_input(INPUT_POST, "page_id", FILTER_VALIDATE_INT);
             if (!$page_id || $page_id <= 0) {
                 $page_id = $hotsite->getFrontPageId();
             }
+            
             $page = $hotsite->getPageById($page_id);
             $pageinfo['render'] = $page->renderPage();
             $pageinfo['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
+            
+            if($current_hotsite) {
+                $hotsite->setCurrentPage($page_id);
+            }
+            
+            $_SESSION['hotsitecache'] = serialize($hotsite);
             echo json_encode(array("success" => "true", "page" => $pageinfo));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
+    
+    private function createHotsiteBlock() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+            $page = $hotsite->getPageById(CURRENT_PAGE);
+            $block = $page->createBlock();
+        } catch (Exception $ex) {
+
         }
     }
 
