@@ -98,6 +98,8 @@ class page {
             throw new Exception("A página não está carregada.");
         }
         
+        $block = new block();
+        
         
         
     }

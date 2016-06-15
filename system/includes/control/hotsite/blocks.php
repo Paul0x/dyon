@@ -19,7 +19,11 @@
  */
 
 class block {
-    public function __construct($block_id) {
+    public function __construct($block_id = null, &$page = null) {
+   
+    }
+    
+    public function setNewBlock() {
         
     }
 }

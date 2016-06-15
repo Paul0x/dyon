@@ -73,7 +73,29 @@ hotsiteInterface = function () {
     }
 
     this.loadSideMenu = function (sidemenu) {
+        var self = this;
+        $(".hotsite-admnistrative-sidemenu .item").die("click");
         $("#leftbar-menu-hotsite").html(sidemenu);
+        if($(".hotsite-administrative-sidemenu .item[action=add-block]").length) {
+            $(".hotsite-administrative-sidemenu .item[action=add-block]").die().live("click", function() {
+                self.hotsiteCreateBlock();                
+            });            
+        }
+    };
+    
+    this.hotsiteCreateBlock = function() {
+        var self = this;
+        $.ajax({
+            url: self.root + "/interface/ajax",
+            data: {
+                mode: "create_block"
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                }
+            }
+        });
     };
 
     this.loadHotsiteConfigInterface = function () {

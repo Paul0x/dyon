@@ -94,7 +94,10 @@ class hotsiteAdminController {
                 $this->changeHotisteConfig();
                 break;
             case "get_hotsite_page":
-                $this->getHotsitePage();
+                $this->getHotsitePage(true);
+                break;
+            case "create_block":
+                $this->createHotsiteBlock();
                 break;
         }
     }
@@ -181,10 +184,10 @@ class hotsiteAdminController {
             $page = $hotsite->getPageById(CURRENT_PAGE);
             $block = $page->createBlock();
         } catch (Exception $ex) {
-
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-
+    
 }
 
 /**
