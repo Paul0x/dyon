@@ -88,7 +88,7 @@ class page {
             throw new Exception("A página não está carregada.");
         }
 
-        $this->conn->prepareselect("bloco", array_merge(array("id"), block::getFieldList()), "id_pagina", $this->id, "", "", "", PDO::FETCH_ASSOC, "all");
+        $this->conn->prepareselect("bloco", array_merge(array("id"), block::getFieldList()), "id_pagina", $this->id, "", "", "", PDO::FETCH_ASSOC, "all", "weight");
         if (!$this->conn->executa()) {
             throw new Exception("Nenhum bloco encontrado na página.");
         }
@@ -104,6 +104,8 @@ class page {
     public function renderPage() {
         $page['inline_css'] = $this->hotsite->renderCss();
         $page['title'] = $this->page_title;
+        $page['id'] = $this->id;
+        $page['hotsite_id'] = $this->hotsite->getId();
         $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/hotsite/render');
         $this->twig = new Twig_Environment($this->twig_loader);
         return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));

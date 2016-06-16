@@ -123,6 +123,7 @@ class block {
         }
 
         $info_array = array();
+        $info_array['id'] = $this->id;
         $info_array['page_id'] = $this->page_id;
         $info_array['weight'] = $this->weight;
         $info_array['width'] = $this->width;

@@ -16,7 +16,7 @@
  */
 
 hotsiteInterface = function () {
-
+    this.loaded_blocks;
     this.root = $("#dir-root").val();
     this.init = function (id) {
         var self = this;
@@ -62,10 +62,24 @@ hotsiteInterface = function () {
                 if (data.success === "true") {
                     self.loadSideMenu(data.page.sidemenu);
                     self.renderPreview(data.page.render);
+                    self.loaded_blocks = data.page.blocks;
+                    self.loadBlocks();
                 }
             }
         });
 
+    };
+    
+    this.loadBlocks = function() {
+        var self = this;
+        if(self.loaded_blocks == undefined) {
+            return;
+        }
+        
+        $.each(self.loaded_blocks, function(index, block) {
+            alert(block.id);
+            
+        });
     };
 
     this.renderPreview = function (render) {
