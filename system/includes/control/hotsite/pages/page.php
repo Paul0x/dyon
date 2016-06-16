@@ -78,7 +78,7 @@ class page {
         if (!$this->conn->executa()) {
             throw new Exception("Nenhum bloco encontrado na página.");
         }
-        $block_list = $this->conn->fetch();
+        $block_list = $this->conn->fetch;
         $blocks = array();
         foreach ($block_list as $index => $block) {
             $blocks[$index] = new block($block['id']);
@@ -98,10 +98,20 @@ class page {
             throw new Exception("A página não está carregada.");
         }
         
-        $block = new block();
+        $block = block::setNewBlock($this);        
+    }
+    
+    
+    public function getPageLastBlockWeight() {
+        return 100;
+    }
+    
+    public function getId() {
+        if(!isset($this->id) || !is_numeric($this->id)) {
+            throw new Exception("Página não instanciada.");
+        }
         
-        
-        
+        return $this->id;
     }
 
 }
