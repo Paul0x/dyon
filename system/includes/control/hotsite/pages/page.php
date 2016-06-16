@@ -63,10 +63,24 @@ class page {
         try {
             $this->blocks = $this->loadPageBlocks();
         } catch (Exception $ex) {
+            echo $ex->getMessage();
             $this->blocks = null;
         }
-        
+
         $this->hotsite = $hotsite;
+    }
+
+    public function getPageBlocks() {
+        if (is_null($this->blocks) || !is_array($this->blocks)) {
+            throw new Exception("A página não tem blocos.");
+        }
+
+        $block_array = array();
+        foreach ($this->blocks as $index => $block) {
+            $block_array[] = $block->getInfo();
+        }
+        return $block_array;
+
     }
 
     public function loadPageBlocks() {
@@ -74,15 +88,17 @@ class page {
             throw new Exception("A página não está carregada.");
         }
 
-        $this->conn->prepareselect("bloco", "id", "id_pagina", $this->id, "", "", "", PDO::FETCH_ASSOC, "all");
+        $this->conn->prepareselect("bloco", array_merge(array("id"), block::getFieldList()), "id_pagina", $this->id, "", "", "", PDO::FETCH_ASSOC, "all");
         if (!$this->conn->executa()) {
             throw new Exception("Nenhum bloco encontrado na página.");
         }
         $block_list = $this->conn->fetch;
         $blocks = array();
         foreach ($block_list as $index => $block) {
-            $blocks[$index] = new block($block['id']);
+            $blocks[$index] = new block($block['id'], $this, $block);
         }
+        
+        return $blocks;
     }
 
     public function renderPage() {
@@ -90,27 +106,26 @@ class page {
         $page['title'] = $this->page_title;
         $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/hotsite/render');
         $this->twig = new Twig_Environment($this->twig_loader);
-        return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));       
+        return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));
     }
-    
+
     public function createBlock() {
-        if(!is_numeric($this->id)) {
+        if (!is_numeric($this->id)) {
             throw new Exception("A página não está carregada.");
         }
-        
-        $block = block::setNewBlock($this);        
+
+        $block = block::setNewBlock($this);
     }
-    
-    
+
     public function getPageLastBlockWeight() {
         return 100;
     }
-    
+
     public function getId() {
-        if(!isset($this->id) || !is_numeric($this->id)) {
+        if (!isset($this->id) || !is_numeric($this->id)) {
             throw new Exception("Página não instanciada.");
         }
-        
+
         return $this->id;
     }
 

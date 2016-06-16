@@ -65,11 +65,6 @@ class hotsite {
      * Constrói o objeto e inicializa a conexão com o banco de dados.
      */
     public function __construct(conn $conn, $event_id = null) {
-        $dumpinfo = array(
-            "text_color" => "ffffff",
-            "title_color" => "dddddd",
-            "background_color" => "449900"
-        );
         $this->conn = $conn;
 
         if (!is_null($event_id)) {

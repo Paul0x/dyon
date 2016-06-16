@@ -163,6 +163,7 @@ class hotsiteAdminController {
             $page = $hotsite->getPageById($page_id);
             $pageinfo['render'] = $page->renderPage();
             $pageinfo['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
+            $pageinfo['blocks'] = $page->getPageBlocks();
             
             if($current_hotsite) {
                 $hotsite->setCurrentPage($page_id);
