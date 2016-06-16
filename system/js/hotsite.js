@@ -77,7 +77,18 @@ hotsiteInterface = function () {
         }
         
         $.each(self.loaded_blocks, function(index, block) {
-            alert(block.id);
+            var html = "<div class='block' id='hotsite-block-"+block.id+"'>";
+            html+= "</div>";
+            
+            var css = "#hotsite-block-"+block.id+" { \n\
+                        width: "+block.width+"%;\n\
+                        min-height: 50px;\n\
+                        margin: 5px;\n\
+                        padding: 5px;\n\
+                        }";
+                        
+            $("#preview-hotsite style").append(css);
+            $("#preview-hotsite .hotsite-page").append(html);
             
         });
     };

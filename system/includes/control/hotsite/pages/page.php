@@ -63,7 +63,6 @@ class page {
         try {
             $this->blocks = $this->loadPageBlocks();
         } catch (Exception $ex) {
-            echo $ex->getMessage();
             $this->blocks = null;
         }
 

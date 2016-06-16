@@ -28,7 +28,7 @@ class block {
     private $weight;
     private $width;
 
-    public function __construct($block_id = null, &$page = null, $block_info) {
+    public function __construct($block_id = null, &$page = null, $block_info = null) {
         $this->conn = new conn();
 
         if (is_numeric($block_id) && is_object($page) && is_a($page, "page")) {
@@ -87,8 +87,8 @@ class block {
     }
 
     private function setDatabaseInfo($block) {
-        $sql_input = array($block['page_id'], $block['weight'], $block['width'], $block['float']);
-        $fields = array("id_pagina", "weight", "width", "float");
+        $sql_input = array($block['page_id'], $block['weight'], $block['width'], $block['float'], $block['background_image_repeat']);
+        $fields = array("id_pagina", "weight", "width", "float", "background_image_repeat");
         $this->conn->prepareinsert("bloco", $sql_input, $fields);
         if (!$this->conn->executa()) {
             throw new Exception("Não foi possível criar o bloco.");
@@ -99,7 +99,6 @@ class block {
         $this->weight = $block['weight'];
         $this->width = $block['width'];
         $this->float = $block['float'];
-
         return $this;
     }
 
@@ -112,8 +111,9 @@ class block {
         $block['page_id'] = $page->getId();
         $block['weight'] = $page->getPageLastBlockWeight();
         $block['width'] = 100;
-        $block['float'] = true;
-        $block_obj->setInfo($block);
+        $block['float'] = 1;
+        $block['background_image_repeat'] = 0;
+        $block_obj->setDatabaseInfo($block);
         return $block_obj;
     }
 
