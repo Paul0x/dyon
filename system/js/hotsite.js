@@ -88,9 +88,9 @@ hotsiteInterface = function () {
                         }";
                         
             $("#preview-hotsite style").append(css);
-            $("#preview-hotsite .hotsite-page").append(html);
-            
+            $("#preview-hotsite .hotsite-page").append(html);            
         });
+        drag.containers.push(document.getElementById("page-1-1"));
     };
 
     this.renderPreview = function (render) {
