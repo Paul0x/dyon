@@ -15,22 +15,22 @@
  *  =====================================================================
  */
 
-hotsiteInterface = function () {
+hotsiteInterface = function() {
     this.loaded_blocks;
     this.root = $("#dir-root").val();
-    this.init = function (id) {
+    this.init = function(id) {
         var self = this;
         self.loadHotsiteInterface();
     };
 
-    this.loadHotsiteInterface = function () {
+    this.loadHotsiteInterface = function() {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "get_hotsite_interface"
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#topbar-menu-hotsite .menu-wrap").html(data.modules.topmenu);
@@ -41,25 +41,28 @@ hotsiteInterface = function () {
         });
     };
 
-    this.bindMenuController = function () {
+    this.bindMenuController = function() {
         var self = this;
-        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function () {
+        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function() {
             self.loadHotsiteConfigInterface();
         });
     };
 
-    this.loadPageHotsiteInterface = function () {
+    this.loadPageHotsiteInterface = function(page) {
         var self = this;
-
+        if(page === undefined) {
+            page = 1;
+        }
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "get_hotsite_page",
-                page: 1
+                page: page
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
+                    self.loaded_page = 1;
                     self.loadSideMenu(data.page.sidemenu);
                     self.renderPreview(data.page.render);
                     self.loaded_blocks = data.page.blocks;
@@ -69,74 +72,106 @@ hotsiteInterface = function () {
         });
 
     };
-    
+
     this.loadBlocks = function() {
-        var self = this;        
-        if(self.loaded_blocks === undefined) {
+        var self = this;
+        if (self.loaded_blocks === undefined) {
             return;
         }
-        
+
         $.each(self.loaded_blocks, function(index, block) {
-            var html = "<div class='block' id='hotsite-block-"+block.id+"'>";
-            html+= "</div>";
-            
-            var css = "#hotsite-block-"+block.id+" { \n\
-                        width: "+block.width+"%;\n\
+            var html = "<div class='block' id='hotsite-block-" + block.id + "'>";
+            html += "</div>";
+
+            var css = "#hotsite-block-" + block.id + " { \n\
+                        width: calc(" + block.width + "% - 10px);\n\
                         min-height: 50px;\n\
                         margin: 5px;\n\
                         padding: 5px;\n\
                         }";
-                        
+
             $("#preview-hotsite style").append(css);
-            $("#preview-hotsite .hotsite-page").append(html);            
+            $("#preview-hotsite .hotsite-page").append(html);
         });
         drag.containers.push(document.getElementById("page-1-1"));
     };
 
-    this.renderPreview = function (render) {
+    this.renderPreview = function(render) {
         $("#preview-hotsite").html(render);
     }
 
-    this.loadSideMenu = function (sidemenu) {
+    this.loadSideMenu = function(sidemenu) {
         var self = this;
         $(".hotsite-admnistrative-sidemenu .item").die("click");
         $("#leftbar-menu-hotsite").html(sidemenu);
-        if($(".hotsite-administrative-sidemenu .item[action=add-block]").length) {
+        if ($(".hotsite-administrative-sidemenu .item[action=add-block]").length) {
             $(".hotsite-administrative-sidemenu .item[action=add-block]").die().live("click", function() {
-                self.hotsiteCreateBlock();                
-            });            
+                self.hotsiteCreateBlock(0, 0);
+            });
         }
     };
-    
-    this.hotsiteCreateBlock = function() {
+
+    this.hotsiteCreateBlock = function(step, width) {
         var self = this;
-        $.ajax({
-            url: self.root + "/interface/ajax",
-            data: {
-                mode: "create_block"
-            },
-            success: function (data) {
-                data = eval("( " + data + " )");
-                if (data.success === "true") {
+        switch (step) {
+            case 0:
+                var sidemenu = $("#leftbar-menu-hotsite").html();
+                var html = "<div class='header'>Adicionar Bloco</div>";
+                html += "<div class='info'>Selecione a largura do bloco através do formulário abaixo.";
+                html += "<select id='block-add-width-select'>";
+                html += "<option value='100'>1 Coluna (100%)</option>";
+                html += "<option value='50'>2 Colunas (50%)</option>";
+                html += "<option value='30'>3 Colunas (30%)</option>";
+                html += "<option value='25'>4 Colunas (25%)</option>";
+                html += "<option value='20'>5 Colunas (20%)</option>";
+                html += "<option value='12.5'>8 Colunas (12,5%)</option>";
+                html += "</select>";
+                html += "<input type='button' id='block-add-submit' value='Criar Bloco'>";
+                html += "<input type='button' id='block-add-cancel' value='Cancelar'>";
+                $("#leftbar-menu-hotsite").html(html);
+                $("#block-add-cancel").die().live("click", function() {
+                    $("#leftbar-menu-hotsite").html(sidemenu);
+                });
+                $("#block-add-submit").die().live("click", function() {
+                    var width = parseInt($("#block-add-width-select").val());
+                    self.hotsiteCreateBlock(1, width);
+                });
+                break;
+            case 1:
+                if (width <= 0 || isNaN(width)) {
+                    $("#block-add-cancel").append("<div class='error'>Largura do bloco inválida.");
                 }
-            }
-        });
+                $.ajax({
+                    url: self.root + "/interface/ajax",
+                    data: {
+                        mode: "create_block",
+                        width: width
+                    },
+                    success: function(data) {
+                        data = eval("( " + data + " )");
+                        if (data.success === "true") {
+                            self.loadPageHotsiteInterface(self.loaded_page);
+                        }
+                    }
+                });
+                break;
+        }
     };
 
-    this.loadHotsiteConfigInterface = function () {
+    this.loadHotsiteConfigInterface = function() {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "load_hotsite_config_interface"
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     loadAjaxBox(data.html);
                     var pickers = new Array();
                     var infos = data.hotsite_config;
-                    $("#hotsite-config-form .color-value").each(function (index, element) {
+                    $("#hotsite-config-form .color-value").each(function(index, element) {
                         var field = $(this).attr("var");
                         pickers[field] = new jscolor(element);
                         if (infos[field] !== null) {
@@ -150,7 +185,7 @@ hotsiteInterface = function () {
                         $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
                     }
 
-                    $("#hotsite-config-form-submit").die().live("click", function () {
+                    $("#hotsite-config-form-submit").die().live("click", function() {
                         self.saveHotsiteConfig(infos);
 
                     });
@@ -159,7 +194,7 @@ hotsiteInterface = function () {
         });
     };
 
-    this.saveHotsiteConfig = function (infos) {
+    this.saveHotsiteConfig = function(infos) {
         var self = this;
         var color_pattern = /^[0-9A-F]{6}$/;
         var new_infos = new Object();
@@ -213,7 +248,7 @@ hotsiteInterface = function () {
             form.append("background_repeat", new_infos.background_repeat);
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === 2) {
             }
             if (xhr.readyState === 4 && xhr.status == 200) {
@@ -232,7 +267,7 @@ hotsiteInterface = function () {
         xhr.send(form);
     };
 
-    this.hotsiteConfigError = function (message) {
+    this.hotsiteConfigError = function(message) {
         $("#hotsite-config-form .error-log").html(message);
     };
 };

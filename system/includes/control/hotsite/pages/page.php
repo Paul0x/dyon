@@ -110,12 +110,12 @@ class page {
         return $this->twig->render("body.twig", Array("config" => config::$html_preload, "page" => $page));
     }
 
-    public function createBlock() {
+    public function createBlock($width = 100) {
         if (!is_numeric($this->id)) {
             throw new Exception("A página não está carregada.");
         }
 
-        $block = block::setNewBlock($this);
+        $block = block::setNewBlock($this, $width);
     }
 
     public function getPageLastBlockWeight() {

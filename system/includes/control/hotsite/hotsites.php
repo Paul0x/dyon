@@ -182,11 +182,13 @@ class hotsiteAdminController {
     private function createHotsiteBlock() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
+            $width = filter_input(INPUT_POST, "width", FILTER_VALIDATE_INT);
             if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
                 throw new Exception("O Hotsite não está carregado.");
             }
             $page = $hotsite->getPageById(CURRENT_PAGE);
-            $block = $page->createBlock();
+            $block = $page->createBlock($width);
+            echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }

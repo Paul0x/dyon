@@ -102,15 +102,19 @@ class block {
         return $this;
     }
 
-    public static function setNewBlock(&$page) {
+    public static function setNewBlock(&$page, $width = 100) {
         $block_obj = new block();
         if (!is_object($page) || !is_a($page, "page")) {
             throw new Exception("Página inválida para criação do bloco.");
         }
+        
+        if(!is_numeric($width) || ($width > 100 && $width <= 12.5)) {
+            throw new Exception("Largura do bloco inválida.");
+        }
 
         $block['page_id'] = $page->getId();
         $block['weight'] = $page->getPageLastBlockWeight();
-        $block['width'] = 100;
+        $block['width'] = $width;
         $block['float'] = 1;
         $block['background_image_repeat'] = 0;
         $block_obj->setDatabaseInfo($block);
