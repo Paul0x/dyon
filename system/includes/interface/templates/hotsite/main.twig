@@ -35,6 +35,8 @@
         </div>
     </div>
     <script>
+        var drag = dragula([$("#viewcontroller-hotsite")]);
+        alert(drag);
         hotsite_interface = new hotsiteInterface;
         hotsite_interface.init({{ evento.id }});
     </script>

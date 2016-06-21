@@ -71,8 +71,8 @@ hotsiteInterface = function () {
     };
     
     this.loadBlocks = function() {
-        var self = this;
-        if(self.loaded_blocks == undefined) {
+        var self = this;        
+        if(self.loaded_blocks === undefined) {
             return;
         }
         

@@ -3,11 +3,12 @@
 <html>
       <head>
           <meta http-equiv="content-type" content="text/html; charset=utf-8"></meta>
-            {% include "scripts.twig" %}
             {% include "css.twig" %}
+            {% include "scripts.twig" %}
             <title>{{ config.title }}</title>
       </head>
       <body>
+            {% include "scripts.twig" %}
           <input type="hidden" id="dir-root" value="{{ config.system_path }}"/>
             <header id="main-header-wrap">
                 <div class="title"><img src="{{ config.system_path}}/images/logo.png" alt="Dyon"/> DYON</div>
@@ -26,7 +27,7 @@
             </div>
             <footer id="main-footer-wrap">
                   Dyon.vc © 2015 ~ 2016 - <a href="http://blog.dyon.vc" class="white-link">Blog</a> - <a href="http://sistema.dyon.vc">Administração</a> [ GC ]
-            </footer>
+            </footer>            
       </body>
 </html>
 {% else %}
