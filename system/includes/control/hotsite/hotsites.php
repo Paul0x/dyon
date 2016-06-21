@@ -103,9 +103,17 @@ class hotsiteAdminController {
     }
 
     private function loadHotsiteInterface() {
-        $interface_modules = Array();
-        $interface_modules['topmenu'] = $this->twig->render("hotsite/topmenu.twig", Array("config" => config::$html_preload));
-        echo json_encode(array("success" => "true", "modules" => $interface_modules));
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("Não foi possível carregar o hotsite.");
+            }
+            $interface_modules = Array();
+            $interface_modules['topmenu'] = $this->twig->render("hotsite/topmenu.twig", Array("config" => config::$html_preload));
+            echo json_encode(array("success" => "true", "modules" => $interface_modules, "hotsite" => array("id" => $hotsite->getId())));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
     }
 
     private function loadHotsiteConfigInterface($output) {
@@ -161,12 +169,13 @@ class hotsiteAdminController {
             }
 
             $page = $hotsite->getPageById($page_id);
+            $pageinfo['id'] = $page->getId();
             $pageinfo['render'] = $page->renderPage();
             $pageinfo['sidemenu'] = $this->twig->render("hotsite/sidemenu/page.twig", Array("config" => config::$html_preload));
             try {
                 $pageinfo['blocks'] = $page->getPageBlocks();
             } catch (Exception $ex) {
-                $pageinfo['blocks'] = null;                
+                $pageinfo['blocks'] = null;
             }
             if ($current_hotsite) {
                 $hotsite->setCurrentPage($page_id);

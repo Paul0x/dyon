@@ -16,7 +16,10 @@
  */
 
 hotsiteInterface = function() {
-    this.loaded_blocks;
+    var loaded_hotsite;
+    var loaded_page;
+    var loaded_blocks;
+
     this.root = $("#dir-root").val();
     this.init = function(id) {
         var self = this;
@@ -36,6 +39,8 @@ hotsiteInterface = function() {
                     $("#topbar-menu-hotsite .menu-wrap").html(data.modules.topmenu);
                     self.bindMenuController();
                     self.loadPageHotsiteInterface();
+                    self.bindBlockController();
+                    self.loaded_hotsite = data.hotsite.id;
                 }
             }
         });
@@ -50,7 +55,7 @@ hotsiteInterface = function() {
 
     this.loadPageHotsiteInterface = function(page) {
         var self = this;
-        if(page === undefined) {
+        if (page === undefined) {
             page = 1;
         }
         $.ajax({
@@ -62,11 +67,17 @@ hotsiteInterface = function() {
             success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    self.loaded_page = 1;
+                    self.loaded_page = data.page.id;
                     self.loadSideMenu(data.page.sidemenu);
                     self.renderPreview(data.page.render);
                     self.loaded_blocks = data.page.blocks;
                     self.loadBlocks();
+                    self.drag = dragula([document.getElementById("page-" + self.loaded_hotsite + "-" + self.loaded_page)], {
+                        moves: function(el, container, handle) {
+                            return handle.className === 'fa fa-arrows move';
+                        }
+                    });
+
                 }
             }
         });
@@ -80,7 +91,11 @@ hotsiteInterface = function() {
         }
 
         $.each(self.loaded_blocks, function(index, block) {
-            var html = "<div class='block' id='hotsite-block-" + block.id + "'>";
+            var html = "<div class='block' id='hotsite-block-" + block.id + "' rel='" + block.id + "'>";
+            html += "<div class='block-controller' rel='" + block.id + "'>";
+            html += "<i class=\"fa fa-arrows move\" aria-hidden=\"true\"></i>";
+            html += "<i class=\"fa fa-pencil edit\" aria-hidden=\"true\"></i>";
+            html += "</div>";
             html += "</div>";
 
             var css = "#hotsite-block-" + block.id + " { \n\
@@ -93,7 +108,18 @@ hotsiteInterface = function() {
             $("#preview-hotsite style").append(css);
             $("#preview-hotsite .hotsite-page").append(html);
         });
-        drag.containers.push(document.getElementById("page-1-1"));
+    };
+
+    this.bindBlockController = function() {
+        $(".block").live("mouseenter", function() {
+            var id = $(this).attr("rel");
+            $(".block-controller[rel=" + id + "]").css("display", "block");
+        });
+        $(".block").live("mouseleave", function() {
+            var id = $(this).attr("rel");
+            $(".block-controller[rel=" + id + "]").css("display", "none");
+        });
+
     };
 
     this.renderPreview = function(render) {
