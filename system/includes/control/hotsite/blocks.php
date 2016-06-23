@@ -35,28 +35,28 @@ class block {
             $this->setInfo($block_id, $page, $block_info);
         }
     }
-    
-    public function __set($name, $value) {        
+
+    public function __set($name, $value) {
         $hex_check = "/^[0-9A-F]{6}$/";
-        switch($name) {
+        switch ($name) {
             case "weight":
-            case "width":    
-                if(!is_numeric($value)) {
+            case "width":
+                if (!is_numeric($value)) {
                     return false;
                 }
                 break;
             case "background_image_repeat":
             case "float":
-                if($value != 1 && $value != 0) {
+                if ($value != 1 && $value != 0) {
                     return false;
                 }
                 break;
             case "background_color":
-                if(!preg_match($hex_check, $value)) {
+                if (!preg_match($hex_check, $value)) {
                     return false;
                 }
                 break;
-        }        
+        }
         $this->$name = $value;
         return true;
     }
@@ -65,25 +65,54 @@ class block {
         if (!is_numeric($block_id)) {
             throw new Exception("Identificador do bloco inválido.");
         }
-        
-        if(!is_numeric($block_id)) {
+
+        if (!is_numeric($block_id)) {
             throw new Exception("Identificador do bloco inválido.");
         }
-        
-        if(!is_a($page, "page")) {
+
+        if (!is_a($page, "page")) {
             throw new Exception("Página inválida.");
         }
-        
+
         $this->id = $block_id;
         $this->page_id = $page->getId();
-        
-        foreach(block::$field_list as $index => $variable) {
-            if(isset($block_info[$variable])) {
-                if(!$this->__set($variable,$block_info[$variable])) {
-                    throw new Exception("O campo $variable está em formato inválido.");
+
+
+        if ($block_info) {
+            foreach (block::$field_list as $index => $variable) {
+                if (isset($block_info[$variable])) {
+                    if (!$this->__set($variable, $block_info[$variable])) {
+                        throw new Exception("O campo $variable está em formato inválido.");
+                    }
                 }
             }
-        }        
+        } else {
+            $block_info = $this->getDatabaseInfo();
+            if(!$block_info) {
+                throw new Exception("Bloco não encontrado.");
+            }
+            $this->setInfo($block_id,$page,$block_info);
+        }
+        
+    }
+
+    public function getDatabaseInfo() {
+        if (!$this->id || !$this->page_id) {
+            throw new Exception("O identificador do bloco não está carregado para puxar informações.");
+        }
+
+        $infos = array_merge(array("id","id_pagina"), block::$field_list);
+        $this->conn->prepareselect("bloco", $infos, "id", $this->id);
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível encontrar o bloco.");
+        }
+
+        $block = $this->conn->fetch;
+        if($block['id_pagina'] != $this->page_id) {
+            throw new Exception("O bloco não pertece a página selecionada.");
+        }
+        
+        return $block;
     }
 
     private function setDatabaseInfo($block) {
@@ -107,8 +136,8 @@ class block {
         if (!is_object($page) || !is_a($page, "page")) {
             throw new Exception("Página inválida para criação do bloco.");
         }
-        
-        if(!is_numeric($width) || ($width > 100 && $width <= 12.5)) {
+
+        if (!is_numeric($width) || ($width > 100 && $width <= 12.5)) {
             throw new Exception("Largura do bloco inválida.");
         }
 
@@ -139,7 +168,7 @@ class block {
 
         return $info_array;
     }
-    
+
     public static function getFieldList() {
         return block::$field_list;
     }

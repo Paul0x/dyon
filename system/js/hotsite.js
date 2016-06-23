@@ -111,20 +111,43 @@ hotsiteInterface = function() {
     };
 
     this.bindBlockController = function() {
-        $(".block").live("mouseenter", function() {
+        var self = this;
+        $(".block").live("mouseover", function() {
             var id = $(this).attr("rel");
+            $(".block-controller").css("display", "none");
             $(".block-controller[rel=" + id + "]").css("display", "block");
         });
-        $(".block").live("mouseleave", function() {
+        $(".block").live("mouseout, mouseleave", function() {
             var id = $(this).attr("rel");
             $(".block-controller[rel=" + id + "]").css("display", "none");
         });
+        $(".block-controller .edit").die("click").live("click", function() {
+            var id = $(this).parent().attr("rel");
+            self.loadBlockEditInterface(id);
+        });
+    };
 
+    this.loadBlockEditInterface = function(id) {
+        id = parseInt(id);
+        if (isNaN(id)) {
+            return;
+        }
+
+        $.ajax({
+            url: self.root + "/interface/ajax",
+            data: {
+                mode: "get_block",
+                id: id
+            },
+            success: function(data) {
+                data = eval("( " + data + " )");                
+            }
+        });
     };
 
     this.renderPreview = function(render) {
         $("#preview-hotsite").html(render);
-    }
+    };
 
     this.loadSideMenu = function(sidemenu) {
         var self = this;

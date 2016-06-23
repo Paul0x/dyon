@@ -99,6 +99,9 @@ class hotsiteAdminController {
             case "create_block":
                 $this->createHotsiteBlock();
                 break;
+            case "get_block";
+                $this->getBlock();
+                break;
         }
     }
 
@@ -203,6 +206,20 @@ class hotsiteAdminController {
         }
     }
 
+    private function getBlock() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+            $page = $hotsite->getPageById(CURRENT_PAGE);
+            $block = $page->getBlock($id);
+            echo json_encode(array("success" => "true", "block" => $block));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
 }
 
 /**

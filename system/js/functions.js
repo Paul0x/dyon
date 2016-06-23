@@ -88,6 +88,7 @@ function loadAjaxBox(html) {
 
     $("#ajax-box").html(html);
     $("#ajax-box, #ajax-box-background").stop(true, true).fadeIn();
+    $("#ajax-box-background").die().live("click", function() { closeAjaxBox(); });
 }
 
 function loadBigAjaxBox(html) {

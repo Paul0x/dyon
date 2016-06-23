@@ -121,6 +121,19 @@ class page {
     public function getPageLastBlockWeight() {
         return 100;
     }
+    
+    public function getBlock($id) {
+        if(!is_numeric($id)) {
+            throw new Exception("Identificador do bloco inválido.");
+        }
+        
+        if (!is_numeric($this->id)) {
+            throw new Exception("A página não está carregada.");
+        }
+        
+        $block = new block($id, $this);
+        return $block->getInfo();
+    } 
 
     public function getId() {
         if (!isset($this->id) || !is_numeric($this->id)) {
