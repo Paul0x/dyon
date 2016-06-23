@@ -136,11 +136,16 @@ hotsiteInterface = function() {
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
-                mode: "get_block",
+                mode: "get_block_edit_form",
                 id: id
             },
             success: function(data) {
-                data = eval("( " + data + " )");                
+                data = eval("( " + data + " )");   
+                if(data.success === "true") {
+                    loadAjaxBox(data.html);
+                } else {
+                    
+                }
             }
         });
     };
@@ -170,7 +175,7 @@ hotsiteInterface = function() {
                 html += "<select id='block-add-width-select'>";
                 html += "<option value='100'>1 Coluna (100%)</option>";
                 html += "<option value='50'>2 Colunas (50%)</option>";
-                html += "<option value='30'>3 Colunas (30%)</option>";
+                html += "<option value='33.3'>3 Colunas (30%)</option>";
                 html += "<option value='25'>4 Colunas (25%)</option>";
                 html += "<option value='20'>5 Colunas (20%)</option>";
                 html += "<option value='12.5'>8 Colunas (12,5%)</option>";

@@ -99,8 +99,8 @@ class hotsiteAdminController {
             case "create_block":
                 $this->createHotsiteBlock();
                 break;
-            case "get_block";
-                $this->getBlock();
+            case "get_block_edit_form";
+                $this->getBlockEditForm();
                 break;
         }
     }
@@ -206,7 +206,7 @@ class hotsiteAdminController {
         }
     }
 
-    private function getBlock() {
+    private function getBlockEditForm() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
             $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
@@ -215,7 +215,7 @@ class hotsiteAdminController {
             }
             $page = $hotsite->getPageById(CURRENT_PAGE);
             $block = $page->getBlock($id);
-            echo json_encode(array("success" => "true", "block" => $block));
+            echo json_encode(array("success" => "true", "block" => $block, "html" => $this->twig->render("hotsite/ajax_blockedit_interface.twig", Array("config" => config::$html_preload))));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
