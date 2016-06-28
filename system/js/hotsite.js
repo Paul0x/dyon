@@ -125,6 +125,53 @@ hotsiteInterface = function() {
             var id = $(this).parent().attr("rel");
             self.loadBlockEditInterface(id);
         });
+        $("#hotsite-block-form-submit").die().live("click", function() {
+            var id = parseInt($(this).parent().attr("block"));
+            self.loadBlockRemoveInterface(id, 0);
+        });
+    };
+
+    this.loadBlockRemoveInterface = function(id, step) {
+        var self = this;
+        switch (step) {
+            case 0:
+                var old_html = $("#hotsite-ajax-box-wrap").html();
+                var html = "<div class='headerbox'>";
+                html += "<div class='title'>Remover Bloco</div>";
+                html += "<div class='info'>Ao remover o bloco você também deletará todo o conteúdo dentro dele, para preservar o conteúdo transfira ele para outro bloco.<br/> <b>Essa ação não pode ser desfeita</b>.</div>";
+                html += "</div>";
+                html += "<input type='button' id='remove-block-submit-button' class='hotsite-ajax-confirm-button' value='Remover Bloco' />";
+                html += "<input type='button' id='remove-block-return-button' class='hotsite-ajax-return-button' value='Voltar' />";
+                $("#hotsite-ajax-box-wrap").html(html);
+                $("#remove-block-submit-button").die().live("click", function() {
+                    self.loadBlockRemoveInterface(id, 1);
+                });
+                $("#remove-block-return-button").live("click", function() {
+                    $(this).die();
+                    $("#hotsite-ajax-box-wrap").html(old_html);
+                });
+                break;
+            case 1:
+                if (isNaN(id)) {
+                    $("#remove-block-return-button").append("<div class='error'>Não é possível remover o bloco específicado</div>");
+                }
+                $.ajax({
+                    url: self.root + "/interface/ajax",
+                    data: {
+                        mode: "remove_block",
+                        id: id
+                    },
+                    success: function(data) {
+                        data = eval("( " + data + " )");
+                        if (data.success === "true") {
+                            closeAjaxBox();
+                            self.loadPageHotsiteInterface(self.loaded_page);
+                        }
+                    }
+                });
+                break;
+        }
+
     };
 
     this.loadBlockEditInterface = function(id) {
@@ -140,11 +187,26 @@ hotsiteInterface = function() {
                 id: id
             },
             success: function(data) {
-                data = eval("( " + data + " )");   
-                if(data.success === "true") {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    var infos = data.block;
                     loadAjaxBox(data.html);
+                    var pickers = new Array();
+                    $("#hotsite-blockedit-form .color-value").each(function(index, element) {
+                        var field = $(this).attr("var");
+                        pickers[field] = new jscolor(element);
+                        if (infos[field] !== null) {
+                            pickers[field].fromString(infos[field]);
+                        } else {
+                            pickers[field].fromString("ffffff");
+                        }
+                    });
+
+                    if (infos.background_repeat === "true") {
+                        $("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
+                    }
                 } else {
-                    
+
                 }
             }
         });
@@ -193,7 +255,7 @@ hotsiteInterface = function() {
                 break;
             case 1:
                 if (width <= 0 || isNaN(width)) {
-                    $("#block-add-cancel").append("<div class='error'>Largura do bloco inválida.");
+                    $("#block-add-cancel").append("<div class='error'>Largura do bloco inválida.</div>");
                 }
                 $.ajax({
                     url: self.root + "/interface/ajax",

@@ -102,6 +102,9 @@ class hotsiteAdminController {
             case "get_block_edit_form";
                 $this->getBlockEditForm();
                 break;
+            case "remove_block":
+                $this->removeBlock();
+                break;
         }
     }
 
@@ -215,10 +218,27 @@ class hotsiteAdminController {
             }
             $page = $hotsite->getPageById(CURRENT_PAGE);
             $block = $page->getBlock($id);
-            echo json_encode(array("success" => "true", "block" => $block, "html" => $this->twig->render("hotsite/ajax_blockedit_interface.twig", Array("config" => config::$html_preload))));
+            echo json_encode(array("success" => "true", "block" => $block, "html" => $this->twig->render("hotsite/ajax_blockedit_interface.twig", Array("block" => $block, "config" => config::$html_preload))));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
+    }
+    
+    private function removeBlock() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+            $page = $hotsite->getPageById(CURRENT_PAGE);
+            $block = $page->getBlock($id,true);
+            $block->removeBlock();
+            echo json_encode(array("success" => "true"));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+        
     }
 }
 

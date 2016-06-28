@@ -146,6 +146,7 @@ class block {
         $block['width'] = $width;
         $block['float'] = 1;
         $block['background_image_repeat'] = 0;
+        $block['background_color'] = "ff0000";
         $block_obj->setDatabaseInfo($block);
         return $block_obj;
     }
@@ -171,6 +172,18 @@ class block {
 
     public static function getFieldList() {
         return block::$field_list;
+    }
+    
+    public function removeBlock() {
+        if(!isset($this->id) || !is_numeric($this->id)) {
+            throw new Exception("Identificador do bloco inválido.");
+        }
+        
+        $this->conn->preparedelete("bloco", "id", $this->id);
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível remover o bloco.");
+        }
+        
     }
 
 }

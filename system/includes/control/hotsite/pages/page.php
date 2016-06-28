@@ -79,7 +79,6 @@ class page {
             $block_array[] = $block->getInfo();
         }
         return $block_array;
-
     }
 
     public function loadPageBlocks() {
@@ -96,7 +95,7 @@ class page {
         foreach ($block_list as $index => $block) {
             $blocks[$index] = new block($block['id'], $this, $block);
         }
-        
+
         return $blocks;
     }
 
@@ -121,19 +120,24 @@ class page {
     public function getPageLastBlockWeight() {
         return 100;
     }
-    
-    public function getBlock($id) {
-        if(!is_numeric($id)) {
+
+    public function getBlock($id, $obj = false) {
+        if (!is_numeric($id)) {
             throw new Exception("Identificador do bloco inválido.");
         }
-        
+
         if (!is_numeric($this->id)) {
             throw new Exception("A página não está carregada.");
         }
-        
+
         $block = new block($id, $this);
-        return $block->getInfo();
-    } 
+
+        if (!$obj) {
+            return $block->getInfo();
+        } else {
+            return $block;
+        }
+    }
 
     public function getId() {
         if (!isset($this->id) || !is_numeric($this->id)) {
