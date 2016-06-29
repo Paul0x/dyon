@@ -9,17 +9,18 @@
             <div class="info">Selecione a largura que seu bloco ocupará na página.</div>
             <select class="value">
                 <option value="100">1 Coluna (100%)</option>
-                <option value="50">2 Coluna (100%)</option>
-                <option value="33.3">3 Coluna (100%)</option>
-                <option value="25">4 Coluna (100%)</option>
-                <option value="20">5 Coluna (100%)</option>
-                <option value="12.5">8 Coluna (100%)</option>
+                <option value="50">2 Coluna (50%)</option>
+                <option value="33.3">3 Coluna (33.3%)</option>
+                <option value="25">4 Coluna (25%)</option>
+                <option value="20">5 Coluna (20%)</option>
+                <option value="12.5">8 Coluna (12.5%)</option>
             </select>
         </div>
         <div class="item" ref="background-color">
             <div class="label">Cor de Fundo</div>
             <div class="info">Selecione abaixo a cor de fundo do seu bloco.</div>
             <div class="value color-value" var="background_color"></div>
+            <input type="checkbox" name="background-color-none"/><label for="background-color-none">Transparente</label>
         </div>
         <div class="item" ref="background-image">
             <div class="label">Imagem de Fundo</div>
@@ -32,8 +33,8 @@
         </div>
         <div class="error-log">
         </div>
-        <input id="hotsite-block-form-submit" type="button" value="Alterar" />
-        <input id="hotsite-block-form-submit" type="button" value="Remover Bloco" />
+        <input id="hotsite-block-edit-submit" type="button" value="Alterar" />
+        <input id="hotsite-block-remove-submit" type="button" value="Remover Bloco" />
         <input class="hotsite-ajax-button ajax-close-box" type="button" value="Fechar" />
     </div>
 </div>
