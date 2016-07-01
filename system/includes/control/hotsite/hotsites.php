@@ -237,9 +237,25 @@ class hotsiteAdminController {
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
-        }
-        
+        }        
     }
+    
+    private function editBlock() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+            $page = $hotsite->getPageById(CURRENT_PAGE);
+            $block = $page->getBlock($id,true);
+            $block->removeBlock();
+            echo json_encode(array("success" => "true"));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }        
+    }
+    
 }
 
 /**

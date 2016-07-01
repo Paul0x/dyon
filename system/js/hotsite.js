@@ -235,7 +235,7 @@ hotsiteInterface = function() {
         if ($("#hotsite-blockedit-form .item[ref=background-color] input[name=background-color-none]").is(":checked")) {
             new_infos.background_color = null;
         }
-        new_infos.width = $("#hotsite-blockedit-form .item[ref=width] .value").html();
+        new_infos.width = $("#hotsite-blockedit-form .item[ref=width] .value").val();
         new_infos.background_repeat = $("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-repeat]").is(":checked");
         if (!color_pattern.test(new_infos.background_color) && !new_infos.background_color === null) {
             self.hotsiteConfigError("A cor do fundo está em formato inválido.");
