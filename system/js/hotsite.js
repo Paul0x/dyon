@@ -233,7 +233,7 @@ hotsiteInterface = function() {
         self.hotsiteConfigError("clear");
         new_infos.background_color = $("#hotsite-blockedit-form .item[ref=background-color] .value").html();
         if ($("#hotsite-blockedit-form .item[ref=background-color] input[name=background-color-none]").is(":checked")) {
-            new_infos.background_color = null;
+            new_infos.background_color = 0;
         }
         new_infos.width = $("#hotsite-blockedit-form .item[ref=width] .value").val();
         new_infos.background_repeat = $("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-repeat]").is(":checked");

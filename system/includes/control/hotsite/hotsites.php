@@ -105,6 +105,9 @@ class hotsiteAdminController {
             case "remove_block":
                 $this->removeBlock();
                 break;
+            case "submit_block_edit":
+                $this->editBlock();
+                break;
         }
     }
 
@@ -243,13 +246,21 @@ class hotsiteAdminController {
     private function editBlock() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
-            $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
                 throw new Exception("O Hotsite não está carregado.");
             }
             $page = $hotsite->getPageById(CURRENT_PAGE);
-            $block = $page->getBlock($id,true);
-            $block->removeBlock();
+            
+            $block_info['id'] = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            $block_info['width'] = filter_input(INPUT_POST, "width", FILTER_VALIDATE_FLOAT);
+            $block_info['background_color'] = filter_input(INPUT_POST, "background_color", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $block_info['background_image_repeat'] = filter_input(INPUT_POST, "background_repeat", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            
+            if ($_FILES['background_image']) {
+                $block_info['background_image'] = $_FILES['background_image'];
+            }
+            $block = new block($block_info['id'], $page);
+            $block->updateBlockInfo($block_info);
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));

@@ -52,7 +52,7 @@ class block {
                 }
                 break;
             case "background_color":
-                if (!preg_match($hex_check, $value)) {
+                if (!preg_match($hex_check, $value) && $value) {
                     return false;
                 }
                 break;
@@ -129,6 +129,14 @@ class block {
         $this->width = $block['width'];
         $this->float = $block['float'];
         return $this;
+    }
+    
+    public function updateBlockInfo($block_info) {
+        if(!$this->id || !is_numeric($this->id)) {
+            throw new Exception("O bloco não está carregado.");
+        }
+        
+    
     }
 
     public static function setNewBlock(&$page, $width = 100) {
