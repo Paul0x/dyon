@@ -132,9 +132,29 @@ class block {
     }
     
     public function updateBlockInfo($block_info) {
+        $width_array = array (100,50,33.3,25,20,12.5);
+        $changed_fields = array();
         if(!$this->id || !is_numeric($this->id)) {
             throw new Exception("O bloco não está carregado.");
         }
+        
+        if($block_info['background_color'] && $block_info['background_color'] != "remove") {
+            $this->__set("background_color", $block_info['backcground_color']);
+            $changed_fields[] = "background_color";
+            $changed_values[] = $this->background_color;
+        } else if($block_info['background_color'] == "remove") {
+            $this->background_color = "remove";      
+            $changed_fields[] = "background_color";
+            $changed_values[] = $this->background_color;      
+        }
+        
+        if($block_info['width'] != $this->width && in_array($block_info['width'], $width_array)) {
+            $this->__set("width", $block_info['width']);            
+            $changed_fields[] = "width";
+            $changed_values[] = $this->width;
+        }
+        
+        if($block[''])
         
     
     }
