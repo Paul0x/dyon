@@ -116,8 +116,8 @@ class block {
     }
 
     private function setDatabaseInfo($block) {
-        $sql_input = array($block['page_id'], $block['weight'], $block['width'], $block['float'], $block['background_image_repeat']);
-        $fields = array("id_pagina", "weight", "width", "float", "background_image_repeat");
+        $sql_input = array($block['page_id'], $block['weight'], $block['width'], $block['float'], $block['background_image_repeat'], $block['background_color']);
+        $fields = array("id_pagina", "weight", "width", "float", "background_image_repeat", "background_color");
         $this->conn->prepareinsert("bloco", $sql_input, $fields);
         if (!$this->conn->executa()) {
             throw new Exception("Não foi possível criar o bloco.");
@@ -139,13 +139,13 @@ class block {
         }
         
         if($block_info['background_color'] && $block_info['background_color'] != "remove") {
-            $this->__set("background_color", $block_info['backcground_color']);
+            $this->__set("background_color", $block_info['background_color']);
             $changed_fields[] = "background_color";
             $changed_values[] = $this->background_color;
         } else if($block_info['background_color'] == "remove") {
             $this->background_color = "remove";      
             $changed_fields[] = "background_color";
-            $changed_values[] = $this->background_color;      
+            $changed_values[] = 0;      
         }
         
         if($block_info['width'] != $this->width && in_array($block_info['width'], $width_array)) {
@@ -154,9 +154,15 @@ class block {
             $changed_values[] = $this->width;
         }
         
-        if($block[''])
+        if($block_info['background_image']) {
+            $this->setBackgroundImage($block_info['background_image']);
+        } 
         
-    
+        
+        $this->conn->prepareupdate($changed_values, $changed_fields, "bloco", $this->id, "id");
+        if(!$this->conn->executa()) {
+           throw new Exception("Não foi possível editar o bloco.");            
+        }
     }
 
     public static function setNewBlock(&$page, $width = 100) {
@@ -174,7 +180,7 @@ class block {
         $block['width'] = $width;
         $block['float'] = 1;
         $block['background_image_repeat'] = 0;
-        $block['background_color'] = "ff0000";
+        $block['background_color'] = "0";
         $block_obj->setDatabaseInfo($block);
         return $block_obj;
     }
