@@ -15,25 +15,26 @@
  *  =====================================================================
  */
 
-hotsiteInterface = function () {
+hotsiteInterface = function() {
     var loaded_hotsite;
     var loaded_page;
     var loaded_blocks;
+    var block_delimiters = true;
 
     this.root = $("#dir-root").val();
-    this.init = function (id) {
+    this.init = function(id) {
         var self = this;
         self.loadHotsiteInterface();
     };
 
-    this.loadHotsiteInterface = function () {
+    this.loadHotsiteInterface = function() {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "get_hotsite_interface"
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#topbar-menu-hotsite .menu-wrap").html(data.modules.topmenu);
@@ -46,14 +47,36 @@ hotsiteInterface = function () {
         });
     };
 
-    this.bindMenuController = function () {
+    this.bindMenuController = function() {
         var self = this;
-        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function () {
+        $("#hotsite-administrative-topmenu .item[ref=config]").bind("click", function() {
             self.loadHotsiteConfigInterface();
+        });
+        $("#viewcontroller-block-delimiter").bind("click", function() {
+            self.toggleBlockBorders();
         });
     };
 
-    this.loadPageHotsiteInterface = function (page) {
+    this.toggleBlockBorders = function() {
+        var self = this;
+        if(self.block_delimiters) {
+            $("#preview-hotsite .block").css("border","none");
+            $("#preview-hotsite .block").css("margin","0px");
+            $("#preview-hotsite .block").css("padding","0px");
+            $("#viewcontroller-block-delimiter span").removeClass("fa-check-square-o").addClass("fa-square-o");
+            self.block_delimiters = false;
+        } else {
+            $("#preview-hotsite .block").css("border","1px dashed #018D3C");
+            $("#preview-hotsite .block").css("margin","5px");
+            $("#preview-hotsite .block").css("padding","5px");
+            $("#viewcontroller-block-delimiter span").removeClass("fa-square-o").addClass("fa-check-square-o");
+            self.block_delimiters = true;
+            
+        }
+
+    };
+
+    this.loadPageHotsiteInterface = function(page) {
         var self = this;
         if (page === undefined) {
             page = 1;
@@ -64,7 +87,7 @@ hotsiteInterface = function () {
                 mode: "get_hotsite_page",
                 page: page
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     self.loaded_page = data.page.id;
@@ -73,7 +96,7 @@ hotsiteInterface = function () {
                     self.loaded_blocks = data.page.blocks;
                     self.loadBlocks();
                     self.drag = dragula([document.getElementById("page-" + self.loaded_hotsite + "-" + self.loaded_page)], {
-                        moves: function (el, container, handle) {
+                        moves: function(el, container, handle) {
                             return handle.className === 'fa fa-arrows move';
                         }
                     });
@@ -84,14 +107,14 @@ hotsiteInterface = function () {
 
     };
 
-    this.loadBlocks = function () {
+    this.loadBlocks = function() {
         var color_pattern = /^[0-9A-F]{6}$/;
         var self = this;
         if (self.loaded_blocks === undefined) {
             return;
         }
 
-        $.each(self.loaded_blocks, function (index, block) {
+        $.each(self.loaded_blocks, function(index, block) {
             var html = "<div class='block' id='hotsite-block-" + block.id + "' rel='" + block.id + "'>";
             html += "<div class='block-controller' rel='" + block.id + "'>";
             html += "<i class=\"fa fa-arrows move\" aria-hidden=\"true\"></i>";
@@ -105,7 +128,7 @@ hotsiteInterface = function () {
                         margin: 5px;\n\
                         padding: 5px;";
             if (block.background_color !== 0 && color_pattern.test(block.background_color)) {
-                css += "background-color: #"+block.background_color+";";
+                css += "background-color: #" + block.background_color + ";";
             }
             css += "}";
 
@@ -114,32 +137,32 @@ hotsiteInterface = function () {
         });
     };
 
-    this.bindBlockController = function () {
+    this.bindBlockController = function() {
         var self = this;
-        $(".block").live("mouseover", function () {
+        $(".block").live("mouseover", function() {
             var id = $(this).attr("rel");
             $(".block-controller").css("display", "none");
             $(".block-controller[rel=" + id + "]").css("display", "block");
         });
-        $(".block").live("mouseout, mouseleave", function () {
+        $(".block").live("mouseout, mouseleave", function() {
             var id = $(this).attr("rel");
             $(".block-controller[rel=" + id + "]").css("display", "none");
         });
-        $(".block-controller .edit").die("click").live("click", function () {
+        $(".block-controller .edit").die("click").live("click", function() {
             var id = $(this).parent().attr("rel");
             self.loadBlockEditInterface(id);
         });
-        $("#hotsite-block-remove-submit").die().live("click", function () {
+        $("#hotsite-block-remove-submit").die().live("click", function() {
             var id = parseInt($(this).parent().attr("block"));
             self.loadBlockRemoveInterface(id, 0);
         });
-        $("#hotsite-block-edit-submit").die().live("click", function () {
+        $("#hotsite-block-edit-submit").die().live("click", function() {
             var id = parseInt($(this).parent().attr("block"));
             self.submitBlockEdit(id);
         });
     };
 
-    this.loadBlockRemoveInterface = function (id, step) {
+    this.loadBlockRemoveInterface = function(id, step) {
         var self = this;
         switch (step) {
             case 0:
@@ -151,10 +174,10 @@ hotsiteInterface = function () {
                 html += "<input type='button' id='remove-block-submit-button' class='hotsite-ajax-confirm-button' value='Remover Bloco' />";
                 html += "<input type='button' id='remove-block-return-button' class='hotsite-ajax-return-button' value='Voltar' />";
                 $("#hotsite-ajax-box-wrap").html(html);
-                $("#remove-block-submit-button").die().live("click", function () {
+                $("#remove-block-submit-button").die().live("click", function() {
                     self.loadBlockRemoveInterface(id, 1);
                 });
-                $("#remove-block-return-button").live("click", function () {
+                $("#remove-block-return-button").live("click", function() {
                     $(this).die();
                     $("#hotsite-ajax-box-wrap").html(old_html);
                 });
@@ -169,7 +192,7 @@ hotsiteInterface = function () {
                         mode: "remove_block",
                         id: id
                     },
-                    success: function (data) {
+                    success: function(data) {
                         data = eval("( " + data + " )");
                         if (data.success === "true") {
                             closeAjaxBox();
@@ -182,7 +205,7 @@ hotsiteInterface = function () {
 
     };
 
-    this.loadBlockEditInterface = function (id) {
+    this.loadBlockEditInterface = function(id) {
         var self = this;
         id = parseInt(id);
         if (isNaN(id)) {
@@ -195,13 +218,13 @@ hotsiteInterface = function () {
                 mode: "get_block_edit_form",
                 id: id
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     var infos = data.block;
                     loadAjaxBox(data.html);
                     var pickers = new Array();
-                    $("#hotsite-blockedit-form .color-value").each(function (index, element) {
+                    $("#hotsite-blockedit-form .color-value").each(function(index, element) {
                         var field = $(this).attr("var");
                         pickers[field] = new jscolor(element, {onFineChange: ' $("#hotsite-blockedit-form input[name=background-color-none]").attr("checked", false); '});
                         if (infos[field] !== null) {
@@ -226,7 +249,7 @@ hotsiteInterface = function () {
         });
     };
 
-    this.submitBlockEdit = function (id) {
+    this.submitBlockEdit = function(id) {
         if (isNaN(id)) {
             return;
         }
@@ -276,7 +299,7 @@ hotsiteInterface = function () {
             form.append("background_repeat", new_infos.background_repeat);
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === 2) {
             }
             if (xhr.readyState === 4 && xhr.status == 200) {
@@ -295,22 +318,22 @@ hotsiteInterface = function () {
 
     };
 
-    this.renderPreview = function (render) {
+    this.renderPreview = function(render) {
         $("#preview-hotsite").html(render);
     };
 
-    this.loadSideMenu = function (sidemenu) {
+    this.loadSideMenu = function(sidemenu) {
         var self = this;
         $(".hotsite-admnistrative-sidemenu .item").die("click");
         $("#leftbar-menu-hotsite").html(sidemenu);
         if ($(".hotsite-administrative-sidemenu .item[action=add-block]").length) {
-            $(".hotsite-administrative-sidemenu .item[action=add-block]").die().live("click", function () {
+            $(".hotsite-administrative-sidemenu .item[action=add-block]").die().live("click", function() {
                 self.hotsiteCreateBlock(0, 0);
             });
         }
     };
 
-    this.hotsiteCreateBlock = function (step, width) {
+    this.hotsiteCreateBlock = function(step, width) {
         var self = this;
         switch (step) {
             case 0:
@@ -328,10 +351,10 @@ hotsiteInterface = function () {
                 html += "<input type='button' id='block-add-submit' value='Criar Bloco'>";
                 html += "<input type='button' id='block-add-cancel' value='Cancelar'>";
                 $("#leftbar-menu-hotsite").html(html);
-                $("#block-add-cancel").die().live("click", function () {
+                $("#block-add-cancel").die().live("click", function() {
                     $("#leftbar-menu-hotsite").html(sidemenu);
                 });
-                $("#block-add-submit").die().live("click", function () {
+                $("#block-add-submit").die().live("click", function() {
                     var width = parseInt($("#block-add-width-select").val());
                     self.hotsiteCreateBlock(1, width);
                 });
@@ -346,7 +369,7 @@ hotsiteInterface = function () {
                         mode: "create_block",
                         width: width
                     },
-                    success: function (data) {
+                    success: function(data) {
                         data = eval("( " + data + " )");
                         if (data.success === "true") {
                             self.loadPageHotsiteInterface(self.loaded_page);
@@ -357,20 +380,20 @@ hotsiteInterface = function () {
         }
     };
 
-    this.loadHotsiteConfigInterface = function () {
+    this.loadHotsiteConfigInterface = function() {
         var self = this;
         $.ajax({
             url: self.root + "/interface/ajax",
             data: {
                 mode: "load_hotsite_config_interface"
             },
-            success: function (data) {
+            success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     loadAjaxBox(data.html);
                     var pickers = new Array();
                     var infos = data.hotsite_config;
-                    $("#hotsite-config-form .color-value").each(function (index, element) {
+                    $("#hotsite-config-form .color-value").each(function(index, element) {
                         var field = $(this).attr("var");
                         pickers[field] = new jscolor(element);
                         if (infos[field] !== null) {
@@ -384,7 +407,7 @@ hotsiteInterface = function () {
                         $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
                     }
 
-                    $("#hotsite-config-form-submit").die().live("click", function () {
+                    $("#hotsite-config-form-submit").die().live("click", function() {
                         self.saveHotsiteConfig(infos);
 
                     });
@@ -393,7 +416,7 @@ hotsiteInterface = function () {
         });
     };
 
-    this.saveHotsiteConfig = function (infos) {
+    this.saveHotsiteConfig = function(infos) {
         var self = this;
         var color_pattern = /^[0-9A-F]{6}$/;
         var new_infos = new Object();
@@ -447,7 +470,7 @@ hotsiteInterface = function () {
             form.append("background_repeat", new_infos.background_repeat);
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === 2) {
             }
             if (xhr.readyState === 4 && xhr.status == 200) {
@@ -465,7 +488,7 @@ hotsiteInterface = function () {
         xhr.send(form);
     };
 
-    this.hotsiteConfigError = function (message) {
+    this.hotsiteConfigError = function(message) {
         $("#hotsite-config-form .error-log").html(message);
     };
 };
