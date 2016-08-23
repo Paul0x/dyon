@@ -157,6 +157,11 @@ class hotsite {
             $hotsitefiles->removeBackgroundImage($this, $old_background);
             $this->background_image = $image_path;
         }
+        if(isset($hotsite_config['background_image_remove']) && $hotsite_config['background_image_remove']) {
+            $hotsitefiles = new hotsiteFiles();    
+            $hotsitefiles->removeBackgroundImage($this, $this->background_image);
+            $this->background_image = null;            
+        }
 
         if ($hotsite_config['background_repeat'] != $this->background_repeat && ($hotsite_config['background_repeat'] == 0 || $hotsite_config['background_repeat'] == 1)) {
             $this->background_repeat = $hotsite_config["background_repeat"];

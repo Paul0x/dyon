@@ -146,7 +146,7 @@ class hotsiteAdminController {
                 throw new Exception("Não foi possível carregar o hotsite.");
             }
 
-            $config_parameters = Array("text_color", "title_color", "background_color", "background_repeat");
+            $config_parameters = Array("text_color", "title_color", "background_color", "background_repeat","background_image_remove");
             $hotsite_config = Array();
             foreach ($config_parameters as $index => $parameter) {
                 $hotsite_config[$parameter] = filter_input(INPUT_POST, $parameter, FILTER_SANITIZE_FULL_SPECIAL_CHARS);

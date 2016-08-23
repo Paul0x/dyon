@@ -406,6 +406,19 @@ hotsiteInterface = function() {
                     if (infos.background_repeat === "true") {
                         $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
                     }
+                    
+                    if(infos.background_image !== "" && infos.background_image !== null) {
+                        var img = "<img src='/dyon/hotsite/background_image/"+infos.background_image+"' width='350'";
+                        if(infos.background_repeat === "true") {
+                            img+= " repeat";
+                        }
+                        img += "/>";
+                        $("#hotsite-config-form .item[ref=background-image] .image-value").html(img);
+                        $("#hotsite-config-form .item[ref=background-image] .image-value").after("<input type='checkbox' name='background-image-remove'/> Remover Imagem");
+                    } else {
+                        var img = "Sem Imagem";
+                        $("#hotsite-config-form .item[ref=background-image] .image-value").html(img);
+                    }
 
                     $("#hotsite-config-form-submit").die().live("click", function() {
                         self.saveHotsiteConfig(infos);
@@ -424,6 +437,7 @@ hotsiteInterface = function() {
         new_infos.text_color = $("#hotsite-config-form .item[ref=text-color] .value").html();
         new_infos.title_color = $("#hotsite-config-form .item[ref=title-color] .value").html();
         new_infos.background_color = $("#hotsite-config-form .item[ref=background-color] .value").html();
+        new_infos.background_image_remove = $("#hotsite-config-form .item[ref=background-image] input[name=background-image-remove]").is(":checked");
         new_infos.background_repeat = $("#hotsite-config-form .item[ref=background-image] input[name=background-image-repeat]").is(":checked");
         if (!color_pattern.test(new_infos.text_color)) {
             self.hotsiteConfigError("A cor do texto está em formato inválido.");
@@ -468,6 +482,9 @@ hotsiteInterface = function() {
         }
         if (new_infos.background_repeat !== infos.background_repeat) {
             form.append("background_repeat", new_infos.background_repeat);
+        }
+        if (new_infos.background_image_remove) {
+            form.append("background_image_remove", new_infos.background_image_remove);
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
         xhr.onreadystatechange = function() {
