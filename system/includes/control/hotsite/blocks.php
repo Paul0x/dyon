@@ -203,6 +203,14 @@ class block {
 
         return $info_array;
     }
+    
+    public function getId() {
+        if (!is_numeric($this->id)) {
+            throw new Exception("Bloco inválido.");
+        }
+        
+        return $this->id;
+    }
 
     public static function getFieldList() {
         return block::$field_list;

@@ -100,11 +100,45 @@ hotsiteInterface = function() {
                             return handle.className === 'fa fa-arrows move';
                         }
                     });
-
+                    self.drag.on('drop',function()
+                    {
+                       self.updateBlockWeights(page);
+                    });
                 }
             }
         });
-
+    };
+    
+    this.updateBlockWeights = function(page) {
+        var self = this;
+        var block_weights = new Array();
+        var i = 0;
+        $(".block").each(function() {
+            block_weights[i] = (parseInt($(this).attr("rel")));
+            i++;
+        });
+        
+        if(isNaN(page)) {
+            return;
+        }
+        
+        $.ajax({
+            url: self.root + "/interface/ajax",
+            data: {
+                mode: "update_block_weight",
+                page: page,
+                blocks: block_weights
+            },
+            success: function(data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    
+                }
+            }
+        });
+        
+        
+                
     };
 
     this.loadBlocks = function() {

@@ -86,7 +86,7 @@ class page {
             throw new Exception("A página não está carregada.");
         }
 
-        $this->conn->prepareselect("bloco", array_merge(array("id"), block::getFieldList()), "id_pagina", $this->id, "", "", "", PDO::FETCH_ASSOC, "all", "weight");
+        $this->conn->prepareselect("bloco", array_merge(array("id"), block::getFieldList()), "id_pagina", $this->id, "", "", "", PDO::FETCH_ASSOC, "all", array("weight","DESC"));
         if (!$this->conn->executa()) {
             throw new Exception("Nenhum bloco encontrado na página.");
         }
@@ -97,6 +97,41 @@ class page {
         }
 
         return $blocks;
+    }
+    
+    public function updateBlockWeight($block_weight) {
+        if(!is_numeric($this->id)) {
+            throw new Exception("A página não está carregada.");
+        }
+        
+        if (is_null($this->blocks) || !is_array($this->blocks)) {
+            throw new Exception("A página não tem blocos.");
+        }
+        
+        if(!is_array($block_weight)) {
+            throw new Exception("Lista de novos pesos inválidos.");
+        }
+       
+        if(count($this->blocks) != count($block_weight)-1) {
+            throw new Exception("O número de blocos listados difere do número de blocos na página. -".count($this->blocks)." / ".count($block_weight));
+        }
+        
+        foreach($this->blocks as $index => $block) {
+            if(!in_array($block->getId(), $block_weight)) {
+                throw new Exception("O bloco selecionado não existe na página.");
+            }            
+        }
+        
+        unset($block_weight[count($block_weight)-1]);
+        $max_weight = count($block_weight);
+        foreach($block_weight as $index => $id) {
+            $this->conn->prepareupdate($max_weight, "weight", "bloco", array($id,$this->id), array("id","id_pagina"));
+            if(!$this->conn->executa()) {
+                throw new Exception("Não foi possível alterar o peso do bloco. - ".$id);
+            }
+            $max_weight--;
+        }
+        
     }
 
     public function renderPage() {

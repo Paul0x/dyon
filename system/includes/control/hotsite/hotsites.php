@@ -108,6 +108,9 @@ class hotsiteAdminController {
             case "submit_block_edit":
                 $this->editBlock();
                 break;
+            case "update_block_weight":
+                $this->updateBlockWeight();
+                break;
         }
     }
 
@@ -159,6 +162,24 @@ class hotsiteAdminController {
             $hotsite->save("config");
             $hotsite->createCache();
             $_SESSION['hotsitecache'] = serialize($hotsite);
+            echo json_encode(array("success" => "true"));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
+    
+    
+    private function updateBlockWeight() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("Não foi possível carregar o hotsite.");
+            }
+
+            $page_id = filter_input(INPUT_POST, "page", FILTER_VALIDATE_INT);
+            $block_weight = filter_input(INPUT_POST, "blocks", FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY);
+            $page = $hotsite->getPageById($page_id);
+            $page->updateBlockWeight($block_weight);
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
