@@ -275,7 +275,8 @@ class hotsiteAdminController {
             $block_info['id'] = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             $block_info['width'] = filter_input(INPUT_POST, "width", FILTER_VALIDATE_FLOAT);
             $block_info['background_color'] = filter_input(INPUT_POST, "background_color", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            $block_info['background_image_repeat'] = filter_input(INPUT_POST, "background_repeat", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $block_info['background_image_repeat'] = filter_input(INPUT_POST, "background_repeat", FILTER_VALIDATE_INT);
+            $block_info['background_image_remove'] = filter_input(INPUT_POST, "background_image_remove", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             
             if ($_FILES['background_image']) {
                 $block_info['background_image'] = $_FILES['background_image'];

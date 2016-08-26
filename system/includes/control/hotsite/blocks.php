@@ -26,6 +26,7 @@ class block {
     private $conn;
     private $data_alteracao;
     private $weight;
+    private $background_image;
     private $width;
 
     public function __construct($block_id = null, &$page = null, $block_info = null) {
@@ -88,12 +89,11 @@ class block {
             }
         } else {
             $block_info = $this->getDatabaseInfo();
-            if(!$block_info) {
+            if (!$block_info) {
                 throw new Exception("Bloco não encontrado.");
             }
-            $this->setInfo($block_id,$page,$block_info);
+            $this->setInfo($block_id, $page, $block_info);
         }
-        
     }
 
     public function getDatabaseInfo() {
@@ -101,17 +101,17 @@ class block {
             throw new Exception("O identificador do bloco não está carregado para puxar informações.");
         }
 
-        $infos = array_merge(array("id","id_pagina"), block::$field_list);
+        $infos = array_merge(array("id", "id_pagina"), block::$field_list);
         $this->conn->prepareselect("bloco", $infos, "id", $this->id);
         if (!$this->conn->executa()) {
             throw new Exception("Não foi possível encontrar o bloco.");
         }
 
         $block = $this->conn->fetch;
-        if($block['id_pagina'] != $this->page_id) {
+        if ($block['id_pagina'] != $this->page_id) {
             throw new Exception("O bloco não pertece a página selecionada.");
         }
-        
+
         return $block;
     }
 
@@ -130,38 +130,66 @@ class block {
         $this->float = $block['float'];
         return $this;
     }
-    
+
     public function updateBlockInfo($block_info) {
-        $width_array = array (100,50,33.3,25,20,12.5);
+        $width_array = array(100, 50, 33.3, 25, 20, 12.5);
         $changed_fields = array();
-        if(!$this->id || !is_numeric($this->id)) {
+        if (!$this->id || !is_numeric($this->id)) {
             throw new Exception("O bloco não está carregado.");
         }
-        
-        if($block_info['background_color'] && $block_info['background_color'] != "remove") {
+
+        if ($block_info['background_color'] && $block_info['background_color'] != "remove") {
             $this->__set("background_color", $block_info['background_color']);
             $changed_fields[] = "background_color";
             $changed_values[] = $this->background_color;
-        } else if($block_info['background_color'] == "remove") {
-            $this->background_color = "remove";      
+        } else if ($block_info['background_color'] == "remove") {
+            $this->background_color = "remove";
             $changed_fields[] = "background_color";
-            $changed_values[] = 0;      
+            $changed_values[] = 0;
         }
-        
-        if($block_info['width'] != $this->width && in_array($block_info['width'], $width_array)) {
-            $this->__set("width", $block_info['width']);            
+
+        if ($block_info['width'] != $this->width && in_array($block_info['width'], $width_array)) {
+            $this->__set("width", $block_info['width']);
             $changed_fields[] = "width";
             $changed_values[] = $this->width;
         }
+
+
+        if (isset($block_info['background_image'])) {
+            $blockfiles = new blockFiles();
+            $image_path = $blockfiles->saveBackgroundImage($this, $block_info['background_image']);
+            if ($this->background_image != "") {
+                $old_background = $this->background_image;
+                $blockfiles->removeBackgroundImage($this, $old_background);
+            }
+            $this->background_image = $image_path;
+            $changed_fields[] = "background_image";
+            $changed_values[] = $image_path;
+        }
         
-        if($block_info['background_image']) {
-            $this->setBackgroundImage($block_info['background_image']);
-        } 
+        if (isset($block_info['background_image_remove']) && $block_info['background_image_remove']) {
+            $blockfiles = new blockFiles();
+            $blockfiles->removeBackgroundImage($this, $this->background_image);
+            $this->background_image = null;
+            $changed_fields[] = "background_image";
+            $changed_values[] = null;
+        }
         
-        
+        if ($block_info['background_image_repeat'] == 1) {
+            $this->background_image_repeat = 1;
+            $changed_fields[] = "background_image_repeat";
+            $changed_values[] = 1;
+        } else {
+            $this->background_image_repeat = 0;
+            $changed_fields[] = "background_image_repeat";
+            $changed_values[] = 0;         
+            
+        }
+
         $this->conn->prepareupdate($changed_values, $changed_fields, "bloco", $this->id, "id");
-        if(!$this->conn->executa()) {
-           throw new Exception("Não foi possível editar o bloco.");            
+        if (!$this->conn->executa()) {
+            echo $this->conn->query;
+            throw new Exception("Não foi possível editar o bloco.");
         }
     }
 
@@ -203,29 +231,28 @@ class block {
 
         return $info_array;
     }
-    
+
     public function getId() {
         if (!is_numeric($this->id)) {
             throw new Exception("Bloco inválido.");
         }
-        
+
         return $this->id;
     }
 
     public static function getFieldList() {
         return block::$field_list;
     }
-    
+
     public function removeBlock() {
-        if(!isset($this->id) || !is_numeric($this->id)) {
+        if (!isset($this->id) || !is_numeric($this->id)) {
             throw new Exception("Identificador do bloco inválido.");
         }
-        
+
         $this->conn->preparedelete("bloco", "id", $this->id);
-        if(!$this->conn->executa()) {
+        if (!$this->conn->executa()) {
             throw new Exception("Não foi possível remover o bloco.");
         }
-        
     }
 
 }

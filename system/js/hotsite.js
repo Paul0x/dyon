@@ -174,6 +174,15 @@ hotsiteInterface = function () {
             if (block.background_color !== 0 && color_pattern.test(block.background_color)) {
                 css += "background-color: #" + block.background_color + ";";
             }
+            if(block.background_image) {
+                css+= "background-image: url(/dyon/hotsite/block_image/"+block.background_image+");";
+            }
+            if(parseInt(block.background_image_repeat) === 1) {
+                css+= "background-repeat: repeat;";
+            } else {
+                css+= "background-repeat: no-repeat;";
+                
+            }
             css += "}";
 
             $("#preview-hotsite style").append(css);
@@ -282,9 +291,24 @@ hotsiteInterface = function () {
                     }
                     $("#hotsite-blockedit-form .item[ref=width] select option[value=" + infos.width + "]").attr("selected", true);
 
-                    if (infos.background_repeat === "true") {
+                    if (parseInt(infos.background_image_repeat) === 1) {
                         $("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
                     }
+                    
+                    
+                    if (infos.background_image !== "" && infos.background_image !== null) {
+                        var img = "<img src='/dyon/hotsite/block_image/" + infos.background_image + "' width='350'";
+                        if (infos.background_repeat === "true") {
+                            img += " repeat";
+                        }
+                        img += "/>";
+                        $("#hotsite-blockedit-form .item[ref=background-image] .image-value").html(img);
+                        $("#hotsite-blockedit-form .item[ref=background-image] .image-value").after("<input type='checkbox' name='background-image-remove'/> Remover Imagem");
+                    } else {
+                        var img = "Sem Imagem";
+                        $("#hotsite-blockedit-form .item[ref=background-image] .image-value").html(img);
+                    }
+                    
                     self.blockEditInfo = infos;
                 } else {
 
@@ -323,6 +347,10 @@ hotsiteInterface = function () {
                 return;
             }
         }
+        
+        if ($("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-remove]").is(":checked")) {
+            new_infos.background_remove = 'remove';
+        }
 
         var form = new FormData();
         var xhr = new XMLHttpRequest();
@@ -339,8 +367,13 @@ hotsiteInterface = function () {
             form.append("background_image", new_infos.background_image.file);
             form.append("background_image_filename", new_infos.background_image.filename);
         }
-        if (new_infos.background_repeat !== infos.background_repeat) {
-            form.append("background_repeat", new_infos.background_repeat);
+        if (new_infos.background_repeat) {
+            form.append("background_repeat", 1);
+        } else {
+            form.append("background_repeat", 0);
+        }
+        if(new_infos.background_remove) {
+            form.append("background_image_remove",  true);
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
         xhr.onreadystatechange = function () {
