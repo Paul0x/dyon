@@ -188,6 +188,11 @@ hotsiteInterface = function () {
             $("#preview-hotsite style").append(css);
             $("#preview-hotsite .hotsite-page").append(html);
         });
+        
+        if(!self.block_delimiters) {
+            self.block_delimiters = true;
+            self.toggleBlockBorders();
+        }
     };
 
     this.bindBlockController = function () {
