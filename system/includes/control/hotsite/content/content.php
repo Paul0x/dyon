@@ -35,10 +35,15 @@ class content {
     private $id;
     private $type;
     private $modification_date;
-    private $block_id;
+    private $parent_id;
+    private $parent_type;
     
-    public function __construct() {
+    public function __construct($id = false) {
         $this->conn = new conn();
+        
+        if($id && is_numeric($id)) {
+            $this->init($id);
+        }
     }
     
     public function getId() {
