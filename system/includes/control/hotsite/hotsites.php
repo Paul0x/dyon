@@ -23,6 +23,7 @@ require_once("includes/control/evento/events.php");
 require_once("includes/control/usuario/users.php");
 require_once("includes/lib/Twig/Autoloader.php");
 require_once("includes/control/hotsite/hotsite.php");
+require_once("includes/control/hotsite/content/content.php");
 require_once("includes/control/hotsite/files.php");
 include("includes/control/hotsite/render.php");
 
@@ -110,6 +111,9 @@ class hotsiteAdminController {
                 break;
             case "update_block_weight":
                 $this->updateBlockWeight();
+                break;
+            case "get_contents_create_types":
+                $this->getAvailableContentTypes();
                 break;
         }
     }
@@ -287,6 +291,20 @@ class hotsiteAdminController {
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }        
+    }
+    
+    private function getAvailableContentTypes() {
+        try {
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+            $contentcontroller = new content();
+            $content_types = $contentcontroller->getAvailableContentTypes();
+            echo json_encode(array("success" => "true", "content_types" => $content_types));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
     }
     
 }

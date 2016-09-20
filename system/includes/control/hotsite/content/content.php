@@ -47,4 +47,17 @@ class content {
         return $this->id;
     }
     
+    public function getAvailableContentTypes() {
+        $content_types = Array(
+            "text" => Array("id" => DYON_HOTSITE_CONTENT_TEXT),
+            "image" => Array("id" => DYON_HOTSITE_CONTENT_IMAGE),
+            "button" => Array("id" => DYON_HOTSITE_CONTENT_BUTTON),
+            "slide" => Array("id" => DYON_HOTSITE_CONTENT_SLIDE),
+            "menu" => Array("id" => DYON_HOTSITE_CONTENT_MENU),
+            "menu_item" => Array("id" => DYON_HOTSITE_CONTENT_MENU_ITEM),
+        );
+        
+        return $content_types;
+    }
+    
 }

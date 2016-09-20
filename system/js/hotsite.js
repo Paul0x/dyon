@@ -174,22 +174,22 @@ hotsiteInterface = function () {
             if (block.background_color !== 0 && color_pattern.test(block.background_color)) {
                 css += "background-color: #" + block.background_color + ";";
             }
-            if(block.background_image) {
-                css+= "background-image: url(/dyon/hotsite/block_image/"+block.background_image+");";
+            if (block.background_image) {
+                css += "background-image: url(/dyon/hotsite/block_image/" + block.background_image + ");";
             }
-            if(parseInt(block.background_image_repeat) === 1) {
-                css+= "background-repeat: repeat;";
+            if (parseInt(block.background_image_repeat) === 1) {
+                css += "background-repeat: repeat;";
             } else {
-                css+= "background-repeat: no-repeat;";
-                
+                css += "background-repeat: no-repeat;";
+
             }
             css += "}";
 
             $("#preview-hotsite style").append(css);
             $("#preview-hotsite .hotsite-page").append(html);
         });
-        
-        if(!self.block_delimiters) {
+
+        if (!self.block_delimiters) {
             self.block_delimiters = true;
             self.toggleBlockBorders();
         }
@@ -299,8 +299,8 @@ hotsiteInterface = function () {
                     if (parseInt(infos.background_image_repeat) === 1) {
                         $("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-repeat]").attr("checked", true);
                     }
-                    
-                    
+
+
                     if (infos.background_image !== "" && infos.background_image !== null) {
                         var img = "<img src='/dyon/hotsite/block_image/" + infos.background_image + "' width='350'";
                         if (infos.background_repeat === "true") {
@@ -313,7 +313,7 @@ hotsiteInterface = function () {
                         var img = "Sem Imagem";
                         $("#hotsite-blockedit-form .item[ref=background-image] .image-value").html(img);
                     }
-                    
+
                     self.blockEditInfo = infos;
                 } else {
 
@@ -352,7 +352,7 @@ hotsiteInterface = function () {
                 return;
             }
         }
-        
+
         if ($("#hotsite-blockedit-form .item[ref=background-image] input[name=background-image-remove]").is(":checked")) {
             new_infos.background_remove = 'remove';
         }
@@ -377,8 +377,8 @@ hotsiteInterface = function () {
         } else {
             form.append("background_repeat", 0);
         }
-        if(new_infos.background_remove) {
-            form.append("background_image_remove",  true);
+        if (new_infos.background_remove) {
+            form.append("background_image_remove", true);
         }
         xhr.open('POST', self.root + "/interface/ajax", true);
         xhr.onreadystatechange = function () {
@@ -413,6 +413,28 @@ hotsiteInterface = function () {
                 self.hotsiteCreateBlock(0, 0);
             });
         }
+        if ($(".hotsite-administrative-sidemenu .item[action=add-content]").length) {
+            $(".hotsite-administrative-sidemenu .item[action=add-content]").die().live("click", function () {
+                self.hotsiteCreateContentForm();
+            });
+
+        }
+    };
+
+
+    this.hotsiteCreateContentForm = function () {
+        $.ajax({
+            url: self.root + "/interface/ajax",
+            data: {
+                mode: "get_contents_create_types",
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                }
+            }
+        });
+
     };
 
     this.hotsiteCreateBlock = function (step, width) {
