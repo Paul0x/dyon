@@ -187,12 +187,39 @@ hotsiteInterface = function() {
 
             $("#preview-hotsite style").append(css);
             $("#preview-hotsite .hotsite-page").append(html);
+            self.loadContentByBlock(block.id);
         });
 
         if (!self.block_delimiters) {
             self.block_delimiters = true;
             self.toggleBlockBorders();
         }
+    };
+    
+    this.loadContentByBlock = function(id) {
+        var self = this;
+        if(isNaN(id) || $("#hotsite-block-"+id).length === 0) {
+            return;
+        }
+        
+        $.ajax({
+            url: self.root + "/interface/ajax",
+                    data: {
+                        mode: "load_block_content",
+                        id: id
+                    },
+                    success: function(data) {
+                        data = eval("( " + data + " )");
+                        if (data.success === "true") {
+                            $.each(data.contents, function(index, content) {
+                                $("#hotsite-block-"+id).append(content);
+                                
+                            });
+                            
+                        }
+                    }
+        });
+        
     };
 
     this.bindBlockController = function() {

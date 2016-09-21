@@ -16,16 +16,6 @@
  *  =====================================================================
  * 
  */
-
-define(DYON_HOTSITE_CONTENT_GENERIC,0);
-define(DYON_HOTSITE_CONTENT_TEXT,1);
-define(DYON_HOTSITE_CONTENT_IMAGE,2);
-define(DYON_HOTSITE_CONTENT_BUTTON,3);
-define(DYON_HOTSITE_CONTENT_SLIDE,4);
-define(DYON_HOTSITE_CONTENT_MENU,5);
-define(DYON_HOTSITE_CONTENT_MENU_ITEM,6);
-define(DYON_HOTSITE_CONTENT_LINK_LIST,7);
-define(DYON_HOTSITE_CONTENT_LINK_LIST_ITEM,8);
 class content {
     /* Database Connection */
 
@@ -54,16 +44,8 @@ class content {
         return $this->id;
     }
     
-    public function getAvailableContentTypes() {
-        $content_types = Array(
-            "text" => Array("id" => DYON_HOTSITE_CONTENT_TEXT, "label" => "Texto", "icon" => "fa-pencil"),
-            "image" => Array("id" => DYON_HOTSITE_CONTENT_IMAGE, "label" => "Imagem", "icon" => "fa-file-image-o"),
-            "button" => Array("id" => DYON_HOTSITE_CONTENT_BUTTON, "label" => "Botão", "icon" => "fa-hand-o-up"),
-            "slide" => Array("id" => DYON_HOTSITE_CONTENT_SLIDE, "label" => "Slideshow", "icon" => "fa-picture-o"),
-            "link_list" => Array("id" => DYON_HOTSITE_CONTENT_LINK_LIST, "label" => "Lista de Links", "icon" => "fa-link")
-        );
+    public function render() {
+        return "aylamao";
         
-        return $content_types;
     }
-    
 }

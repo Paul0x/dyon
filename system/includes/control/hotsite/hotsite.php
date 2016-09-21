@@ -44,7 +44,7 @@ class hotsite {
     private $database_info;
     private $variable_list = Array("text_color", "text_font", "title_color", "title_font", "background_image", "background_color", "background_repeat", "gallery_status", "contact_status", "schedule_status", "faq_status", "blog_status");
     private $current_page;
-    
+
     /* Hotsite CSS Structure */
     private $text_color;
     private $text_font;
@@ -91,6 +91,7 @@ class hotsite {
         }
         $hotsite_array = $this->conn->fetch;
         $this->setId($hotsite_array['id']);
+        $this->event_id = $event['id'];
         $variables = $this->loadHotsiteVariables($hotsite_array);
     }
 
@@ -157,10 +158,10 @@ class hotsite {
             $hotsitefiles->removeBackgroundImage($this, $old_background);
             $this->background_image = $image_path;
         }
-        if(isset($hotsite_config['background_image_remove']) && $hotsite_config['background_image_remove']) {
-            $hotsitefiles = new hotsiteFiles();    
+        if (isset($hotsite_config['background_image_remove']) && $hotsite_config['background_image_remove']) {
+            $hotsitefiles = new hotsiteFiles();
             $hotsitefiles->removeBackgroundImage($this, $this->background_image);
-            $this->background_image = null;            
+            $this->background_image = null;
         }
 
         if ($hotsite_config['background_repeat'] != $this->background_repeat && ($hotsite_config['background_repeat'] == 0 || $hotsite_config['background_repeat'] == 1)) {
@@ -210,10 +211,10 @@ class hotsite {
     }
 
     public function getPageById($page_id) {
-        if($page_id == CURRENT_PAGE) {
-            $page_id = $this->getCurrentPage();            
+        if ($page_id == CURRENT_PAGE) {
+            $page_id = $this->getCurrentPage();
         }
-        
+
         if (!is_numeric($page_id)) {
             throw new Exception("Identificador da página inválido.");
         }
@@ -227,21 +228,21 @@ class hotsite {
             throw new Exception("O identificador do hotsite é inválido.");
         }
     }
-    
+
     public function setCurrentPage($page_id) {
-        if(!is_numeric($page_id)) {
+        if (!is_numeric($page_id)) {
             throw new Exception("Formato do identificador da página é inválido.");
         }
-        
+
         $this->current_page = $page_id;
     }
-    
+
     public function getCurrentPage() {
-        if(!isset($this->current_page)) {
+        if (!isset($this->current_page)) {
             throw new Exception("O hotsite não está com nenhuma página carregada.");
         }
-        
-        return $this->current_page;        
+
+        return $this->current_page;
     }
 
     public function renderCss($inline = true) {
@@ -249,6 +250,32 @@ class hotsite {
         if ($inline) {
             return $render->bodyCss($this->getHTMLConfigVariables("array"));
         }
+    }
+
+    public function checkPermission($user) {
+        if (!is_a($user, "user") || !$user->getId()) {
+            throw new Exception("O usuário não está selecionado.");
+        }
+
+        $this->conn->prepareselect("evento", "id_instancia", "id", $this->event_id);
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível reconhecer o evento deste hotsite.");
+        }
+        
+        $instance = $this->conn->fetch[0];
+        $this->conn->prepareselect("instancia_usuario","status_usuario",array("id_instancia","id_usuario"),array($instance, $user->getId()));
+        if(!$this->conn->executa()) {
+            return false;
+        }
+        
+        $permission = $this->conn->fetch[0];
+        if(is_numeric($permission) && $permission > 5) {
+            return true;
+        } else {
+            return false;
+        }
+        
+        
     }
 
 }
