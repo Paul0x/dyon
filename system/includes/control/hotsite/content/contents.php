@@ -30,6 +30,7 @@ define(DYON_HOTSITE_CONTENT_LINK_LIST_ITEM, 8);
 
 require_once("includes/control/hotsite/content/content.php");
 require_once("includes/control/hotsite/content/menu.php");
+require_once("includes/control/hotsite/content/menu_link.php");
 
 class contentController {
     /* Database Connection */

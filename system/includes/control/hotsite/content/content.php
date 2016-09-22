@@ -19,14 +19,14 @@
 class content {
     /* Database Connection */
 
-    private $conn;
+    protected $conn;
 
     /* Content Basic Structure */
-    private $id;
-    private $type;
-    private $modification_date;
-    private $parent_id;
-    private $parent_type;
+    protected $id;
+    protected $type;
+    protected $modification_date;
+    protected $parent_id;
+    protected $parent_type;
     
     public function __construct($id = false) {
         $this->conn = new conn();
