@@ -21,6 +21,11 @@
 class menu extends content {
 
     private $links;
+    private $menu_align;
+    private $hover_color;
+    private $link_color;
+    private $text_color;
+    private $background_color;
 
     public function __construct() {
         parent::__construct();
@@ -44,6 +49,20 @@ class menu extends content {
             $this->links[] = new menuLink($link_id[0]);
         }
     }
+    
+    private function load() {
+        $fetched = $this->loadFromDb();
+        $info_database = unserialize($fetched['info']);
+        if (!is_array($info_database)) {
+            throw new Exception("Informações do conteúdo não registradas.");
+        }
+        
+        $this->setMenuAlign($info_database['menu_align']);
+        $this->setColor($info_database['hover_color'], "hover_color");
+        $this->setColor($info_database['link_color'], "link_color");
+        $this->setColor($info_database['text_color'], "text_color");
+        $this->setColor($info_database['background_color'], "background_color");
+    }
 
     public function init($id) {
         if (!is_numeric($id)) {
@@ -59,7 +78,9 @@ class menu extends content {
 
         $hotsite->checkPermission($user);
         $this->id = $id;
+        $this->type = DYON_HOTSITE_CONTENT_MENU;
         $this->getMenuLinks();
+        $this->load();
     }
 
     public function render() {
@@ -68,11 +89,32 @@ class menu extends content {
                 $menu_links[] = $link->render();
             }
         }
+        
+        $settings['menu_align'] = $this->menu_align;
+        $settings['hover_color'] = $this->hover_color;
+        $settings['link_color'] = $this->link_color;
+        $settings['text_color'] = $this->text_color;
+        $settings['background_color'] = $this->background_color;
 
 
         $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
         $this->twig = new Twig_Environment($this->twig_loader);
         return $this->twig->render("hotsite/content/menu.twig", Array("config" => config::$html_preload, "menu_settings" => $settings, "menu_links" => $menu_links));
+    }
+    
+    public function setMenuAlign($menu_align) {
+        if($menu_align != 0 && $menu_align != 1) {
+            throw new Exception("Alinhamento do menu inválido.");
+        }
+    }
+    
+    public function setColor($color, $var) {
+        $hex_check = "/^[0-9A-F]{6}$/";
+        if(!preg_match($hex_check,$color)) {
+            throw new Exception("Cor inválida.");
+        }
+        
+        $this->$var = $color;
     }
 
 }
