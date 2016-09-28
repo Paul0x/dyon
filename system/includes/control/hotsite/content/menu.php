@@ -32,7 +32,7 @@ class menu extends content {
         }
 
         $search_args = array("id_parente", "tipo_parente", "tipo");
-        $search_values = array($this->id, DYON_HOTSITE_CONTENT_MENU, DYON_HOTSITE_CONTENT_MENU_ITEM);
+        $search_values = array($this->id, DYON_HOTSITE_CONTENT_MENU, DYON_HOTSITE_CONTENT_MENU_LINK);
         $this->conn->prepareselect("conteudo", "id", $search_args, $search_values, "same", "", "", NULL, "all");
         if (!$this->conn->executa()) {
             throw new Exception("Esse menu não possui nenhum link.");
@@ -43,7 +43,6 @@ class menu extends content {
         foreach ($links_id as $index => $link_id) {
             $this->links[] = new menuLink($link_id[0]);
         }
-
     }
 
     public function init($id) {
@@ -64,7 +63,16 @@ class menu extends content {
     }
 
     public function render() {
-        
+        if(is_array($this->links)) {
+            foreach($this->links as $index => $link) {
+                $menu_links[] = $link->render();
+            }
+        }
+
+
+        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+        $this->twig = new Twig_Environment($this->twig_loader);
+        return $this->twig->render("hotsite/content/menu.twig", Array("config" => config::$html_preload, "menu_settings" => $settings, "menu_links" => $menu_links));
     }
 
 }

@@ -24,7 +24,7 @@ define(DYON_HOTSITE_CONTENT_IMAGE, 2);
 define(DYON_HOTSITE_CONTENT_BUTTON, 3);
 define(DYON_HOTSITE_CONTENT_SLIDE, 4);
 define(DYON_HOTSITE_CONTENT_MENU, 5);
-define(DYON_HOTSITE_CONTENT_MENU_ITEM, 6);
+define(DYON_HOTSITE_CONTENT_MENU_LINK, 6);
 define(DYON_HOTSITE_CONTENT_LINK_LIST, 7);
 define(DYON_HOTSITE_CONTENT_LINK_LIST_ITEM, 8);
 
@@ -94,7 +94,7 @@ class contentController {
             3 => "button",
             4 => "slideshow",
             5 => "menu",
-            6 => "menu_item",
+            6 => "menu_link",
             7 => "link_list",
             8 => "link_list_item"
         );

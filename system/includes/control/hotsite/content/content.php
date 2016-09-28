@@ -44,8 +44,22 @@ class content {
         return $this->id;
     }
     
-    public function render() {
-        return "aylamao";
+    protected function loadFromDb() {
+        $fields = Array("id","id_parente","data_alteracao","tipo","info","tipo_parente");
         
+        if(!is_numeric($this->id) || !is_numeric($this->type)) {
+            throw new Exception("Informações inválidas para buscar o conteúdo.");
+        }
+        
+        $this->conn->prepareselect("conteudo", $fields, array("id","tipo"), array($this->id,$this->type));
+        if(!$this->conn->executa()) {
+            throw new Exception("Conteúdo não encontrado.");
+        } 
+        
+        return $this->conn->fetch;
+    }
+    
+    public function render() {
+        return "aylamao";        
     }
 }
