@@ -195,43 +195,47 @@ hotsiteInterface = function() {
             self.toggleBlockBorders();
         }
     };
-    
+
     this.loadContentByBlock = function(id) {
         var self = this;
-        if(isNaN(id) || $("#hotsite-block-"+id).length === 0) {
+        if (isNaN(id) || $("#hotsite-block-" + id).length === 0) {
             return;
         }
-        
+
         $.ajax({
             url: self.root + "/interface/ajax",
-                    data: {
-                        mode: "load_block_content",
-                        id: id
-                    },
-                    success: function(data) {
-                        data = eval("( " + data + " )");
-                        if (data.success === "true") {
-                            $.each(data.contents, function(index, content) {
-                                $("#hotsite-block-"+id).append(content);
-                                
-                            });
-                            
-                        }
-                    }
+            data: {
+                mode: "load_block_content",
+                id: id
+            },
+            success: function(data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $.each(data.contents, function(index, content) {
+                        $("#hotsite-block-" + id).append(content);
+
+                    });
+
+                }
+            }
         });
-        
+
     };
 
     this.bindBlockController = function() {
         var self = this;
         $(".block").live("mouseover", function() {
-            var id = $(this).attr("rel");
-            $(".block-controller").css("display", "none");
-            $(".block-controller[rel=" + id + "]").css("display", "block");
+            if (self.block_delimiters) {
+                var id = $(this).attr("rel");
+                $(".block-controller").css("display", "none");
+                $(".block-controller[rel=" + id + "]").css("display", "block");
+            }
         });
         $(".block").live("mouseout, mouseleave", function() {
-            var id = $(this).attr("rel");
-            $(".block-controller[rel=" + id + "]").css("display", "none");
+            if (self.block_delimiters) {
+                var id = $(this).attr("rel");
+                $(".block-controller[rel=" + id + "]").css("display", "none");
+            }
         });
         $(".block-controller .edit").die("click").live("click", function() {
             var id = $(this).parent().attr("rel");
@@ -475,14 +479,14 @@ hotsiteInterface = function() {
                             return el.classList.contains('block');
                         }
                     });
-                     drag_content.on('drop', function (el, target, source, sibling)
-                     {
-                         var split = target.id.split("-");
-                         var id = parseInt(split[2]);
-                         if(split[0] != "hotsite" || split[1] != "block" || isNaN(id)) {
-                             drag_content.cancel(true);
-                         }
-                     });
+                    drag_content.on('drop', function(el, target, source, sibling)
+                    {
+                        var split = target.id.split("-");
+                        var id = parseInt(split[2]);
+                        if (split[0] != "hotsite" || split[1] != "block" || isNaN(id)) {
+                            drag_content.cancel(true);
+                        }
+                    });
 
 
                 }
