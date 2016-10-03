@@ -44,6 +44,14 @@ class content {
         return $this->id;
     }
     
+    public function getType() {
+        if(!is_numeric($this->type)) {
+            throw new Exception("Tipo do conteúdo não informado.");
+        }
+        
+        return $this->id;
+    }
+    
     protected function loadFromDb() {
         $fields = Array("id","id_parente","data_alteracao","tipo","info","tipo_parente");
         

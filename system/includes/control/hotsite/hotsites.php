@@ -117,7 +117,11 @@ class hotsiteAdminController {
                 break;
             case "load_block_content":
                 $this->loadBlockContent();
-                break;        }
+                break;
+            case "load_content_edit_interface":
+                $this->loadContentEditForm();
+                break;
+        }
     }
 
     private function loadHotsiteInterface() {
@@ -155,7 +159,7 @@ class hotsiteAdminController {
                 throw new Exception("Não foi possível carregar o hotsite.");
             }
 
-            $config_parameters = Array("text_color", "title_color", "background_color", "background_repeat","background_image_remove");
+            $config_parameters = Array("text_color", "title_color", "background_color", "background_repeat", "background_image_remove");
             $hotsite_config = Array();
             foreach ($config_parameters as $index => $parameter) {
                 $hotsite_config[$parameter] = filter_input(INPUT_POST, $parameter, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -173,8 +177,7 @@ class hotsiteAdminController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
-    
+
     private function updateBlockWeight() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
@@ -253,7 +256,7 @@ class hotsiteAdminController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function removeBlock() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
@@ -262,14 +265,14 @@ class hotsiteAdminController {
                 throw new Exception("O Hotsite não está carregado.");
             }
             $page = $hotsite->getPageById(CURRENT_PAGE);
-            $block = $page->getBlock($id,true);
+            $block = $page->getBlock($id, true);
             $block->removeBlock();
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
-        }        
+        }
     }
-    
+
     private function editBlock() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
@@ -277,13 +280,13 @@ class hotsiteAdminController {
                 throw new Exception("O Hotsite não está carregado.");
             }
             $page = $hotsite->getPageById(CURRENT_PAGE);
-            
+
             $block_info['id'] = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             $block_info['width'] = filter_input(INPUT_POST, "width", FILTER_VALIDATE_FLOAT);
             $block_info['background_color'] = filter_input(INPUT_POST, "background_color", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
             $block_info['background_image_repeat'] = filter_input(INPUT_POST, "background_repeat", FILTER_VALIDATE_INT);
             $block_info['background_image_remove'] = filter_input(INPUT_POST, "background_image_remove", FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            
+
             if ($_FILES['background_image']) {
                 $block_info['background_image'] = $_FILES['background_image'];
             }
@@ -292,9 +295,9 @@ class hotsiteAdminController {
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
-        }        
+        }
     }
-    
+
     private function getAvailableContentTypes() {
         try {
             $hotsite = unserialize($_SESSION['hotsitecache']);
@@ -308,7 +311,7 @@ class hotsiteAdminController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function loadBlockContent() {
         try {
             $block_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
@@ -316,11 +319,28 @@ class hotsiteAdminController {
             if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
                 throw new Exception("O Hotsite não está carregado.");
             }
-            
+
             $contentcontroller = new contentController($hotsite);
             $contents = $contentcontroller->getContentsByBlock($block_id, true);
-            
+
             echo json_encode(array("success" => "true", "contents" => $contents));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
+
+    private function loadContentEditForm() {
+        try {
+            $content_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            $hotsite = unserialize($_SESSION['hotsitecache']);
+            if (!is_object($hotsite) || !is_a($hotsite, "hotsite")) {
+                throw new Exception("O Hotsite não está carregado.");
+            }
+
+            $contentcontroller = new contentController($hotsite);
+            $content = $contentcontroller->getContentEditForm($content_id);
+
+            echo json_encode(array("success" => "true", "content" => $content));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }

@@ -20,6 +20,7 @@ hotsiteInterface = function() {
     var loaded_page;
     var loaded_blocks;
     var block_delimiters;
+    var content_show;
 
     this.root = $("#dir-root").val();
     this.init = function(id) {
@@ -43,6 +44,7 @@ hotsiteInterface = function() {
                     self.bindBlockController();
                     self.loaded_hotsite = data.hotsite.id;
                     self.block_delimiters = true;
+                    self.content_show = true;
                 }
             }
         });
@@ -212,8 +214,8 @@ hotsiteInterface = function() {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $.each(data.contents, function(index, content) {
-                        $("#hotsite-block-" + id).append(content);
-
+                        var html = "<div class='content-preview-wrap' content='" + content.id + "'><div class='content-preview-edit fa fa-cog' content='" + content.id + "'></div>" + content.render + "</div>";
+                        $("#hotsite-block-" + id).append(html);
                     });
 
                 }
@@ -237,6 +239,19 @@ hotsiteInterface = function() {
                 $(".block-controller[rel=" + id + "]").css("display", "none");
             }
         });
+        $(".content-preview-wrap").live("mouseover", function() {
+            if (self.content_show) {
+                var id = $(this).attr("content");
+                $(".content-preview-edit").css("display", "none");
+                $(".content-preview-edit[content=" + id + "]").css("display", "block");
+            }
+        });
+        $(".content-preview-wrap").live("mouseout, mouseleave", function() {
+            if (self.content_show) {
+                var id = $(this).attr("content");
+                $(".content-preview-edit[content=" + id + "]").css("display", "none");
+            }
+        });
         $(".block-controller .edit").die("click").live("click", function() {
             var id = $(this).parent().attr("rel");
             self.loadBlockEditInterface(id);
@@ -248,6 +263,11 @@ hotsiteInterface = function() {
         $("#hotsite-block-edit-submit").die().live("click", function() {
             var id = parseInt($(this).parent().attr("block"));
             self.submitBlockEdit(id);
+        });
+        $(".content-preview-edit").die().live("click", function() {
+            var id = parseInt($(this).attr("content"));
+            self.loadContentEditInterface(id);
+
         });
     };
 
@@ -669,5 +689,22 @@ hotsiteInterface = function() {
 
     this.hotsiteConfigError = function(message) {
         $("#hotsite-config-form .error-log").html(message);
+    };
+
+    this.loadContentEditInterface = function(id) {
+        $.ajax({
+            url: self.root + "/interface/ajax",
+            data: {
+                mode: "load_content_edit_interface",
+                id: id
+            },
+            success: function(data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#content-edit-wrap").html(data.form);
+                    $("#content-edit-wrap").css("display","block").animate({height:'300px'},300);
+                }
+            }
+        });
     };
 };

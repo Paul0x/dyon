@@ -77,7 +77,9 @@ class contentController {
         foreach($contents_fetched as $index => $content) {
             $content_object = $this->generateContent($content);
             if($rendered_contents) {
-                $contents[] = $content_object->render();
+                $contents[$index]['id'] = $content_object->getId();
+                $contents[$index]['type'] = $content_object->getType();
+                $contents[$index]['render'] = $content_object->render();
             } else {
                 $contents[] = $content_object;
             }
@@ -103,5 +105,10 @@ class contentController {
         $obj->init($content['id']);
         
         return $obj;        
+    }
+    
+    public function getContentEditForm($content_id) {
+        return true;
+        
     }
 }

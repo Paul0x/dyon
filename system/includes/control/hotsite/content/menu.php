@@ -90,6 +90,7 @@ class menu extends content {
             }
         }
         
+        $settings['id'] = $this->id;
         $settings['menu_align'] = $this->menu_align;
         $settings['hover_color'] = $this->hover_color;
         $settings['link_color'] = $this->link_color;
