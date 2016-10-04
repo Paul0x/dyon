@@ -701,8 +701,8 @@ hotsiteInterface = function() {
             success: function(data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    $("#content-edit-wrap").html(data.form);
-                    $("#content-edit-wrap").css("display","block").animate({height:'300px'},300);
+                    $("#content-edit-wrap").html(data.content.form);
+                    $("#content-edit-wrap").css("display","block").animate({height:'350px'},300);
                 }
             }
         });

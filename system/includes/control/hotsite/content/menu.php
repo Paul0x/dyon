@@ -117,5 +117,24 @@ class menu extends content {
         
         $this->$var = $color;
     }
+    
+    public function getEditForm() { 
+        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+        $this->twig = new Twig_Environment($this->twig_loader);
+        
+   
+        if(!is_numeric($this->id)) {
+            throw new Exception("Conteúdo não carregado.");
+        }
+        
+        $form['id'] = $this->id;
+        $form['menu_align'] = $this->menu_align;
+        $form['hover_color'] = $this->hover_color;
+        $form['link_color'] = $this->link_color;
+        $form['text_color'] = $this->text_color;
+        $form['background_color'] = $this->background_color;
+        $form['form'] = $this->twig->render("hotsite/content_edit_form/menu.twig", Array("config" => config::$html_preload, "params" => $form));
+        return $form;
+    }
 
 }

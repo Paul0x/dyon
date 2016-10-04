@@ -107,8 +107,25 @@ class contentController {
         return $obj;        
     }
     
+    public function getContentType($content_id) {       
+        if(!is_numeric($content_id)) {
+            throw new Exception("Identificador do conteúdo inválido.");
+        }
+        
+        $this->conn->prepareselect("conteudo", "tipo", "id", $content_id);
+        if(!$this->conn->executa()) {
+            throw new Exception("Nenhum conteúdo encontrado.");            
+        }
+        
+        return $this->conn->fetch[0];
+        
+    }
     public function getContentEditForm($content_id) {
-        return true;
+        $content_info['tipo'] = $this->getContentType($content_id);
+        $content_info['id'] = $content_id;
+        
+        $content = $this->generateContent($content_info);
+        return $content->getEditForm();
         
     }
 }
