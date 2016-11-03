@@ -1,7 +1,0 @@
-{% if events_select %}
-      <select id="control-event-select"> }}
-            {% for event in events_select %}
-                  <option value="{{ event.id }}" {% if event.id == user.evento_padrao %} selected {% endif %} >{{ event.nome }}</option>
-            {% endfor %}
-      </select>
-{% endif %}

@@ -15,7 +15,6 @@
 
 require("includes/system/setup.php");
 
-
 session_start();
 $setup = new setup();
 $setup->init();

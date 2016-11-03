@@ -1,9 +1,0 @@
-{% if config.javascript|length > 0 %}
-    {% for script in config.javascript %}
-        {% if script|slice(0, 4) == "http" %}
-            <script src="{{ script }}"></script>
-        {% else %}                
-            <script src="{{ config.system_path }}/js/{{ script }}.js"></script>
-        {% endif %}
-    {% endfor %}
-{% endif %}
