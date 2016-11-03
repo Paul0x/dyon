@@ -1,0 +1,40 @@
+<div id="house-info-wrap">
+    <div class='title'>{{ house.nome }}</div>
+    <div class='house-infos'>
+        <div class='item item-endereco'>
+            <label>Endereço</label>
+            <span>{{ house.endereco }}</span>
+        </div>
+
+        <div class='item item-numero-valor'>
+            <label>Vagas</label>
+            <span>{{ house.numero_vagas }}un x R${{ house.valor_pessoa }} = R${{ house.valor_total }}</span>
+        </div>
+    </div>
+    <div class='buttons'>
+    </div>
+    <div class='house-list-rooms'>
+        {% for room in house.rooms %}
+            <div class='room 
+                 {% if room.ocupados == 0 %}
+                     room-empty
+                 {% elseif room.ocupados < room.numero_vagas %}
+                     room-fill
+                 {% else %}
+                     room-full
+                 {% endif %}
+                 ' room='{{ room.id }}'>
+                <div class='number'>{{ room.numero }}</div>
+                <div class='vagas'>                    
+                    {% if room.suite == 's' %}
+                        <div class='suite' title="Suíte">S</div>
+                    {% endif %}
+                    {{ room.ocupados }}/{{ room.numero_vagas }}                    
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class='clear'></div>
+    <div class="comments-box" id="comments-box-8-{{house.id}}">
+    </div>
+</div>

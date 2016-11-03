@@ -1,0 +1,41 @@
+{% for grupo in grupos %}
+    <div class="list {% if loop.index % 2 == 0  %} list-even {% else %} list-odd {% endif %}" id='list-group-{{ grupo.id }}'>
+        <div class="header">
+            <div class='counter'>{{ loop.index }}</div>
+            <div class="title view-group" grupo='{{ grupo.id }}'>{{ grupo.nome }} ( {{grupo.codigo_acesso }} ) <span>[ Visualizar ]</span></div>
+            <div class='date'>{{ grupo.data_criacao|date('d/m/Y') }}</div>
+        </div>
+        <div class="members">
+            {% if not grupo.members_error %}
+                {% for membro in grupo.members %}
+                    <div class="member">
+                        <div class="column-name">{{ membro.nome }}</div>
+                        <div class="column-status">
+                            {% if membro.status_pacote == 0 %} <span class='group-list-status-cancelado'>C</span> {% endif %}
+                            {% if membro.status_pacote == 1 %} <span class='group-list-status-pendente'>P</span> {% endif %}
+                            {% if membro.status_pacote == 2 %} <span class='group-list-status-aprovado'>A</span> {% endif %}
+                            {% if membro.status_pacote == 3 %} <span class='group-list-status-quitado'>Q</span> {% endif %}
+                            {% if membro.status_pacote == 4 %} <span class='group-list-status-cadastrado'>C</span> {% endif %}
+                        </div>
+                        <div class='clear'></div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="footer-info">
+            <div class="info info-border">
+                <label>Nº de Membros</label>
+                <span>{{ grupo.num_membros }}</span>
+            </div>
+            <div class="info">                
+                <label>Casa de Apoio</label>
+                <span>{{ grupo.nome_casa }}</span>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="footer-control">
+            <div class="button button-comments" grupo='{{ grupo.id }}'>Observações</div>
+            <div class="button button-casa" grupo='{{ grupo.id }}'>Casa de Apoio</div>
+        </div>
+    </div>
+{% endfor %}      

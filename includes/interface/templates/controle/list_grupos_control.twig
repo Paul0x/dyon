@@ -1,0 +1,66 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+    <script type="text/javascript">
+        control_interface = new controlInterface;
+    </script>
+    <div id="sidebar-menu-events" class="sidebar-menu sidebar-control-menu">
+        {% include "controle/menu_control.twig" %}
+    </div>
+    <div id="right-content-control" class="right-content right-content-control">
+        <div class="list-info-wrap">
+            <header>
+                <div class="title">Listagem de Grupos</div>
+            </header>
+            <div class="search-info-wrap">
+                <form method="post" action="" id="list-pacote-form-wrap">
+                    <select name="fieldquery">
+                        <option value="codigo">Código</option>
+                        <option value="nome">Nome</option>
+                        <option value="lider">Líder</option>
+                    </select>
+                    <input class="big-search-input" name="querystring" type="text" />
+                    <input type="submit" value="Pesquisar" name="submit-button" class="btn-02" />
+                    <div class="advanced-search-wrap">
+                        <strong class="title">Pesquisa Avançada</strong>
+                        <div>
+                            <select name="query_ordernar">
+                                <option value="">Ordernar Por</option>
+                                <option value="1">Data de Fechamento</option>
+                            </select>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% if not error_flag %}
+                <div class="item-list-info">
+                    <input type="hidden" id="query-searched" value="{{ search.query_searched }}" />
+                    <input type="hidden" id="field-searched" value="{{ search.field_searched }}" />
+                    <input type="hidden" id="order-searched" value="{{ search.status_searched }}" />
+                </div>
+                <section class="item-list-groups">
+                    {% include "controle/list_grupos_list.twig" %}
+                </section>
+            {% else %}
+                <div class="error-message01">{{ error_flag }}</div>
+            {% endif %}
+
+            <div class="clear"></div>           
+        </div>
+    </div>
+    <script>
+        group_interface = new groupInterface();
+        group_interface.init();
+        group_interface.bindButtons();
+        commentsinterface = new commentsInterface();
+        commentsinterface.bindCommentsButtons();
+    </script>
+{% endblock %}

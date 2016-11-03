@@ -1,0 +1,58 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+
+{% block content_ajax %}
+    {% if not error_add_flag and not confirm_add_flag %}
+        <div class="content-ajax-wrap" id="content-ajax-event-lote">
+            <div class="box-info">Insira as informações do lote nos campos abaixo.</div>
+            <div class='form'>
+                <input type="text" class="event-add-lote-input input-ajax-row" placeholder="Insira o nome do lote. Ex: 1º Lote Ouro" name="nome" />
+                <select type="text" class="event-add-lote-select-tipo event-add-lote-select input-ajax-row" name="tipo">
+                    <option value="0">Lote</option>
+                    <option value="2">Sub-lote</option>
+                    <option value="1">Cabeçalho</option>
+                </select>
+                <select type="text" class="event-add-lote-select-tipo event-add-lote-select input-ajax-row" disabled name="parent">
+                    <option value=''>Selecione o Lote-pai</option>
+                    {% for lote in event.lista_lotes %}%}
+                        <option value='{{ lote.id }}'>{{ lote.nome }}</option>
+                        {% else %}
+                            <option value=''>Nenhum lote encontrado</option>
+                            {% endfor %}
+                            </select>
+                            <input type="text" class="event-add-lote-input-small input-ajax-row" placeholder="Número máximo de vendas" name="max_venda" />
+                            <select type="text" class="event-add-lote-select-sexo event-add-lote-select input-ajax-row" name="genero">
+                                <option value="">Unissex</option>
+                                <option value="m">Masculino</option>
+                                <option value="f">Feminino</option>
+                            </select>
+
+
+
+
+                            <input type="button" class="btn-01" value="Adicionar" id="event-add-lote-btn"/>
+                            <input type="button" class="btn-03 ajax-close-box" value="Fechar" />
+                            <div id="lote-add-flag"></div>
+                        </div>
+                    </div>
+              
+                    {% endif %}
+                        {% if error_add_flag %}
+                            <div class="lote-add-error error-message01">
+                                {{ error_add_flag }}
+                            </div>
+                        {% endif %}
+                        {% if confirm_add_flag %}
+                            <div class="lote-add-confirm dialog-message01">
+                                Lote adicionado com sucesso.
+                            </div>
+                        {% endif %}
+
+                        {% endblock %}

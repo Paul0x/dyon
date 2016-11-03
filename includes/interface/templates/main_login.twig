@@ -1,0 +1,20 @@
+{% extends "base_layout.twig" %}
+
+{% block content %}
+<div id="login-form-wrap">
+      <div class="title">Login</div>
+      <div class="info">Entre com seu email e sua senha para ter acesso ao painel de controle de eventos.</div>
+      <form method="post" action="">
+      <div class="input"><input type="email" placeholder="Digite seu email" name="login[email]" id="login-input-email" /></div>
+      <div class="input"><input type="password" placeholder="Digite sua senha" name="login[senha]" id="login-input-senha" /></div>
+      <div class="button"><input type="submit" value="Entrar" name="login[submit]" id="login-input-submit" /></div>
+      </form>
+</div>
+{% if login_error_flag %}
+      <div class="login-error error-message01">Não foi possível realizar seu login, confira email e senha.</div>
+{% endif %}
+<div id="login-register-wrap">
+      <strong>Não tem acesso?</strong>
+      <p>Essa é uma área administrativa, para conseguir acesso entre em contato com o administrador do sistema.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+      {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+      {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+      <div id="sidebar-menu-events" class="sidebar-menu sidebar-control-menu">
+            {% include "controle/menu_control.twig" %}
+            {% include "controle/cliente_overview_menu.twig" %}
+      </div>
+      <div id="right-content-control" class="right-content right-content-control cliente-overview">
+            <header>
+                  <div class="top-image"></div>
+                  <div class="header-info">
+                        <div class="title">{{ cliente.nome }}</div>
+                        <strong>Membro desde</strong> {{ cliente.data_criacao }}
+                        <ul>
+                              <li><strong>Email</strong> {{ cliente.email }}</li>
+                              <li><strong>RG</strong> {{ cliente.rg }}</li>
+                              <li><strong>Endereço</strong> {{ cliente.cidade }} - {{ cliente.estado }}</li>      
+                              <li><strong>Sexo</strong> 
+                                  {% if  cliente.sexo == "m" %} Masculino {% endif %}
+                                  {% if  cliente.sexo == "f" %} Feminino {% endif %}
+                              </li>                            
+
+                        </ul>
+                  </div>
+                  <div class="clear"></div>
+            </header>
+
+            <section id="pacotes">
+                  <div class="title">Pacotes</div>
+                  {% if cliente.pacotes %}
+                        {% for pacote in cliente.pacotes.list %}
+                              <div class="item" id="item-pacote-{{ pacote.id_pacote }}">
+                                    <div class="field">
+                                          <label>Evento</label>
+                                          <div class="value">{{ pacote.nome_evento }}</div>
+                                    </div>
+                                    <div class="field ">
+                                          <label>Lote</label>
+                                          <div class="value field-lote">{{ pacote.lote }}</div>
+                                    </div>
+                                    <div class="field field-status">
+                                          <label>Status</label>
+                                          <div class="value">
+                                                {% if pacote['status_pacote'] == 0 %}
+                                                      <div class="list-cliente-pagamento-cancelado">Cancelado</div>
+                                                {% elseif pacote['status_pacote'] == 1 %}
+                                                      <div class="list-cliente-pagamento-pendente">Pendente</div>
+                                                {% elseif pacote['status_pacote'] == 2 %}
+                                                      <div class="list-cliente-pagamento-aprovado">Aprovado</div>
+                                                {% elseif pacote['status_pacote'] == 3 %}
+                                                      <div class="list-cliente-pagamento-aprovado">Quitado</div>
+                                                {% elseif pacote['status_pacote'] == 4 %}
+                                                      <div class="list-cliente-pagamento-cadastrado">Cadastrado</div>
+                                                {% endif %}
+                                          </div>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="field">
+                                          <label>Forma de Pagamento</label>
+                                          <div class="value">{{ pacote.tipo_pagamento }}</div>
+                                    </div><div class="field">
+                                          <label>Pagamento</label>
+                                          <div class="value">{{ pacote.valor_total }} ({{ pacote.desconto }}% de desconto) - em {{ pacote.parcelas }}x</div>
+                                    </div>
+                                    <div class="field ">
+                                          <label>Código do Grupo</label>
+                                          <div class="value field-grupo">{{ pacote.codigo_acesso }} ({{ pacote.nome_grupo }})</div>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div class="control">
+                                          <div class="buttons">
+                                                <div class="button-pacote-change-status button" id="button-pacote-change-status-{{ pacote.id_pacote}}">Alterar Status</div>
+                                                <div class="button-pacote-watchlog button" id="button-pacote-watchlog-{{ pacote.id_pacote}}">Alterar Informações</div>
+                                                <div class="button-pacote-comments button" id="button-pacote-comments-{{ pacote.id_pacote}}">Comentários</div>
+                                                <div class="button-pacote-parcelas button" id="button-pacote-parcelas-{{ pacote.id_pacote}}">Ver Parcelas</div>
+                                          </div>
+                                          <div class="clear"></div>
+                                    </div>
+
+                              </div>
+                        {% endfor %}
+                  {% endif%}
+            </section>
+      </div>
+      <script>
+            var clio_interface = new clienteOverviewInterface();
+            clio_interface.bindPacoteButtons();
+            var comments_interface = new commentsInterface();
+            comments_interface.bindCommentsButtons();
+      </script>
+{% endblock %}

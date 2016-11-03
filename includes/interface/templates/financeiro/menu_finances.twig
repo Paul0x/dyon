@@ -1,0 +1,19 @@
+{% if events_select %}
+      <select id="finance-event-select"> }}
+            {% for event in events_select %}
+                  <option value="{{ event.id }}" {% if event.id == user.evento_padrao %} selected {% endif %} >{{ event.nome }}</option>
+            {% endfor %}
+      </select>
+{% endif %}
+<script>
+      finance_interface = new financeInterface;
+      finance_interface.bindSelectEvent();
+</script>
+<a href="{{ config.system_path }}/financeiro/"><div class="item">Resumo</div></a>
+<div class="header">Compras</div>
+<a href="{{ config.system_path }}/financeiro/compras"><div class="item">Por Categoria</div></a>
+<a href="{{ config.system_path }}/financeiro/compras/vencimento"><div class="item">Status e Vencimento</div></a>
+<div class="header">Caixa</div>
+<a href="{{ config.system_path }}/financeiro/fluxo"><div class="item">Fluxo de Caixa</div></a>
+<a href="{{ config.system_path }}/financeiro/extrato"><div class="item">Extrato</div></a>
+<a href="{{ config.system_path }}/financeiro/relatorios"><div class="item">Relatórios</div></a>

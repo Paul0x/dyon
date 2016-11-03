@@ -1,0 +1,23 @@
+{% if events_select %}
+      <select id="control-event-select"> }}
+            {% for event in events_select %}
+                  <option value="{{ event.id }}" {% if event.id == user.evento_padrao %} selected {% endif %} >{{ event.nome }}</option>
+            {% endfor %}
+      </select>
+{% endif %}
+<div class="header">Controle</div>
+<a href="{{ config.system_path }}/controle/pacote/parcelas/"><div class="item">Confirmar Parcelas</div></a>
+<a href="{{ config.system_path }}/controle/pacote/parcelas/1"><div class="item">Parcelas Pendentes</div></a>
+<a href="{{ config.system_path }}/controle/pacote/parcelas/0"><div class="item">Parcelas Canceladas</div></a>
+<div class="header">Pacotes</div>
+
+<script>
+      control_interface = new controlInterface;
+      control_interface.bindSelectEvent();
+</script>
+<a href="{{ config.system_path }}/controle/pacote"><div class="item">Listar</div></a>
+<a href="{{ config.system_path }}/controle/pacote/grupos"><div class="item">Grupos</div></a>
+<a href="{{ config.system_path }}/controle/pacote/add"><div class="item">Adicionar</div></a>
+<div class="header">Clientes</div>
+<a href="{{ config.system_path }}/controle/cliente"><div class="item">Listar</div></a>
+<a href="{{ config.system_path }}/controle/cliente/add"><div class="item">Adicionar</div></a>
