@@ -34,12 +34,12 @@ class boardController {
     
     private function loadBoardInfo($board_id) {
         if(!is_numeric($board_id)) {
-            throw new Exception("O identificador da diretoria Ã© invÃ¡lido.");
+            throw new Exception("O identificador da diretoria é inválido.");
         }        
         $fields = array("id","nome","acesso_minimo","id_usuario","id_instancia");
         $this->conn->prepareselect("diretoria",$fields, "id", $board_id);
         if(!$this->conn->executa() || $this->conn->rowcount != 1) {
-            throw new Exception("NÃ£o foi possÃ­vel encontrar a board.");
+            throw new Exception("Não foi possível encontrar a board.");
         }        
         $board = $this->conn->fetch;
         return $board;        
@@ -47,7 +47,7 @@ class boardController {
     
     private function isBoardMember($user_id, $board_id) {
         if(!is_numeric($user_id) || !is_numeric($board_id)) {
-            throw new Exception("Os identificadores precisam ser numÃ©ricos.");
+            throw new Exception("Os identificadores precisam ser numéricos.");
         }
         
         $this->conn->prepareselect("diretoria_usuarios", "id_usuario", array("id_usuario","id_diretoria"), array($user_id,$board_id));
