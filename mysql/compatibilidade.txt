@@ -1,0 +1,18 @@
+Tabelas onde há a necessidade de realizar migração:
+
+- Categoria Compra 
+- Comentario
+- Compra *
+- Evento *
+- Grupo *
+- Lote *
+- Pacote *
+- Parcela Compra *
+- Parcela Pacote *
+- Usuário *
+
+* - Prioritário
+
+===
+Tabela Usuário:
+
