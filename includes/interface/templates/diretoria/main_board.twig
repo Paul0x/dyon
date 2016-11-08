@@ -5,21 +5,24 @@
 {% endblock %}
 
 {% block top_menu %}
-      {% include "main_menu.twig" %}
+    {% include "main_menu.twig" %}
 {% endblock %}
 {% block content %}
-      <div id="right-content-boards" class="right-content-big right-content-boards">
-          <div id='board-list-wrap'>
-              <div class='title'>Lista de Diretorias</div>
-              <div class='items'>
-              </div>
-              <div class='clear'></div>
-          </div>
-          <div id='board-wrap'>
-          </div>
-      </div>
-            <script>
-                board_interface = new boardInterface();
-                board_interface.initBoards();
-            </script>
+    <div id="dashboard-sidebar"></div>
+    <div id="right-content-boards" class="right-content-boards">
+        <div id='board-list-wrap'>
+            <div class='title'>Lista de Diretorias</div>
+            <div class='items'>
+            </div>
+            <div class='clear'></div>
+        </div>
+        <div id='board-wrap'>
+        </div>
+    </div>
+    <script>
+        board_interface = new boardInterface();
+        board_interface.initBoards();
+        dashboard_interface = new dashboardInterface();
+        dashboard_interface.load();
+    </script>
 {% endblock %}

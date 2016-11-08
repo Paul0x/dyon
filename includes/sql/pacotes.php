@@ -359,5 +359,24 @@ class pacoteModel {
         
         return $rooms;
     }
+    
+    public function countPacotes($event_id, $status) {
+        if(!is_numeric($event_id)) {
+            throw new Exception("O identificador do evento é inválido para busca de pacotes.");
+        }
+        
+        if($status < 0 || $status > 4 || !is_numeric($status)) {
+            throw new Exception("Status do pacote inválido.");
+        }
+        
+        $query = "SELECT count(DISTINCT p.id) FROM pacote p INNER JOIN lote l ON l.id = p.id_lote INNER JOIN evento e ON e.id = l.id_evento"
+                . " WHERE p.status >= $status AND e.id = $event_id";
+        try {
+            $count = $this->conn->freeQuery($query, false, true, PDO::FETCH_NUM);
+        } catch (Exception $error) {
+            throw new Exception("Não foi possível calcular o número de pacotes.");
+        }
+        return $count[0];
+    }
 
 }
