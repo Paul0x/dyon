@@ -73,6 +73,7 @@ class flowController {
     private function loadCashFlowInterface() {
         try {
             $eventcontroller = new eventController();
+            $eventcontroller->setUser($this->user);
             $events_select = $eventcontroller->listEvents(array(), true);
             $event_selected = $this->user->getSelectedEvent();
             echo $this->twig->render("financeiro/cashflow.twig", Array("user" => $this->user->getBasicInfo(), "events_select" => $events_select, "config" => config::$html_preload, "selected_event" => $event_selected));
@@ -171,6 +172,8 @@ class flowController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+    
+    
 
     private function loadMonthlyFlow() {
         try {

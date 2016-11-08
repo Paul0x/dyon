@@ -3,48 +3,55 @@
     Olá, <strong>{{ user.nome }}</strong>, selecionamos algumas informações importantes sobre seu evento.
 </div>
 <div class="info">
-        <div class="title">Vendas</div>
-        <div class="block-50">
-            <div class="subtitle">Hoje</div>
-            <div class="value">
-                {% if event.vendas_date.day > 0 %} + {% endif %}
-                {{event.vendas_date.day}}</div>
-        </div>
-        <div class="block-50">
-            <div class="subtitle">Semana</div>
-            <div class="value">                
-                {% if event.vendas_date.week > 0 %} + {% endif %}
-                {{event.vendas_date.week}}</div>
-        </div>
-        <div class="block-100">
-            <div class="subtitle">Total</div>
-            <div class="value">
-                {{ event.n_vendas}}
-                {% if event.max_venda > 0 %}
-                    / {{ event.max_venda }}
-                {% endif %}</div>
-        </div>
+    <div class="title">Vendas</div>
+    <div class="block-50">
+        <div class="subtitle">Hoje</div>
+        <div class="value">
+            {% if event.vendas_date.day > 0 %} + {% endif %}
+            {{event.vendas_date.day}}</div>
+    </div>
+    <div class="block-50">
+        <div class="subtitle">Semana</div>
+        <div class="value">                
+            {% if event.vendas_date.week > 0 %} + {% endif %}
+            {{event.vendas_date.week}}</div>
+    </div>
+    <div class="block-100">
+        <div class="subtitle">Total</div>
+        <div class="value">
+            {{ event.n_vendas}}
+            {% if event.max_venda > 0 %}
+                / {{ event.max_venda }}
+            {% endif %}</div>
+    </div>
 </div>
 <div class="info">
-        <div class="title">Balanço Financeiro</div>
-        <div class="block-50">
-            <div class="subtitle">Hoje</div>
-            <div class="value">
-                {% if event.vendas_hoje > 0 %} + {% endif %}
-                6{{event.vendas_hoje}}</div>
-        </div>
-        <div class="block-50">
-            <div class="subtitle">Semana</div>
-            <div class="value">                
-                {% if event.vendas_semana > 0 %} + {% endif %}
-                18{{event.vendas_semana}}</div>
-        </div>
-        <div class="block-100">
-            <div class="subtitle">Saldo Total</div>
-            <div class="value">
-                {{ event.n_vendas}}
-                {% if event.max_venda > 0 %}
-                    / {{ event.max_venda }}
-                {% endif %}</div>
-        </div>
+    <div class="title">Balanço Financeiro</div>
+    <div class="block-50">
+        <div class="subtitle">Hoje</div>
+        <div class="value">
+            {% if event.finances_date.day.t >= 0 %} + 
+            {% else %}
+                - 
+            {% endif %}
+            R${{event.finances_date.day.t}}</div>
+    </div>
+    <div class="block-50">
+        <div class="subtitle">Semana</div>
+        <div class="value">                
+            {% if event.finances_date.week.t >= 0 %} + 
+            {% else %}
+                - 
+            {% endif %}
+            R${{event.finances_date.week.t}}</div>
+    </div>
+    <div class="block-100">
+        <div class="subtitle">Saldo Total</div>
+        <div class="value">                
+            {% if event.finances_date.total.t >= 0 %} + 
+            {% else %}
+                - 
+            {% endif %}
+            R${{event.finances_date.total.t}}</div>
+    </div>
 </div>

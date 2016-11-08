@@ -196,16 +196,16 @@ class financesController {
         $summary["pacotes_info"]["total_arrecadado"] = "R$" . number_format($summary["pacotes_info"]["total_arrecadado"], 2, ",", ".");
         $summary["evento_info"]["saldo_total"] = "R$" . number_format($summary["evento_info"]["saldo_total"], 2, ",", ".");
         $summary["pacotes_info"]["total_planejado"] = "R$" . number_format($summary["pacotes_info"]["total_planejado"], 2, ",", ".");
-        
+
         $summary["compras"]['total_vencido'] = "R$" . number_format($summary["compras"]['total_vencido'], 2, ",", ".");
         $summary["compras"]['total_planejado'] = "R$" . number_format($summary["compras"]['total_planejado'], 2, ",", ".");
-        
-        foreach($summary['list'] as $index => $list) {
-            foreach($list as $idx => $item) {
+
+        foreach ($summary['list'] as $index => $list) {
+            foreach ($list as $idx => $item) {
                 $summary['list'][$index][$idx]['valor'] = "R$" . number_format($item['valor'], 2, ",", ".");
             }
         }
-        
+
         echo $this->twig->render("financeiro/summary_finances.twig", Array("user" => $user->getBasicInfo(), "summary" => $summary, "events_select" => $events_select, "config" => config::$html_preload));
     }
 
@@ -286,8 +286,7 @@ class financesController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
-    
+
     private function editCompraType() {
         try {
             $usercontroller = new userController();
@@ -299,8 +298,8 @@ class financesController {
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
-    }    
-    
+    }
+
     private function editCompraQuantity() {
         try {
             $usercontroller = new userController();
@@ -329,7 +328,7 @@ class financesController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function addParcela() {
         try {
             $usercontroller = new userController();
@@ -375,7 +374,7 @@ class financesController {
             echo json_encode(Array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function cancelParcelaSubmit() {
         try {
             $parcela_id = filter_input(INPUT_POST, "parcela_id", FILTER_VALIDATE_INT);
@@ -386,78 +385,43 @@ class financesController {
             echo json_encode(Array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     public function getReceitaByDate($id_event, $day = true, $week = false, $total = false) {
-         if (!is_numeric($id_event)) {
+        if (!is_numeric($id_event)) {
             throw new Exception("Informações inválidas para captar número de vendas.");
         }
-        
+
         try {
+            $flowmodel = new flowModel($this->conn);
             $financemodel = new financeModel($this->conn);
-            if($day) {
-                $datetime_start = new DateTime();
-                $datetime_start->modify("-24 hours");
-                $datetime_end = new DateTime();
-                $datequery = Array(
-                    "field" => "data_pagamento",
-                    "datetime_start" => $datetime_start,
-                    "datetime_end" => $datetime_end
-                );
-                $pacotes['day'] = $financemodel->getReceita($id_event, $datequery);
+            if ($day) {
+                $datetime = new DateTime();
+                $pacotes['day']['r'] = $flowmodel->getReceitaDia($datetime, $id_event);
+                $pacotes['day']['d'] = $flowmodel->getDespesaDia($datetime, $id_event);
+                $pacotes['day']['t'] = number_format($pacotes['day']['r']['p'] - $pacotes['day']['d']['t'], 2, ",", ".");
             }
-            if($week) {
-                $datetime_start = new DateTime();
-                $datetime_start->modify("-7 days");
-                $datetime_end = new DateTime();
-                $datequery = Array(
-                    "field" => "data_pagamento",
-                    "datetime_start" => $datetime_start,
-                    "datetime_end" => $datetime_end
-                );
-                $pacotes['week'] = $financemodel->getReceita($id_event, $datequery);
+            if ($week) {
+                $datetime = new DateTime();
+                $pacotes['week']['r'] = $flowmodel->getReceitaSemana($datetime, $id_event);
+                $pacotes['week']['d'] = $flowmodel->getDespesaSemana($datetime, $id_event);
+                $pacotes['week']['t'] = number_format($pacotes['week']['r']['p'] - $pacotes['week']['d']['t'], 2, ",", ".");
             }
-            if($total) {
-                $pacotes['total'] = $financemodel->getReceita($id_event);
-                
-            }
-            return $pacotes;
-        } catch (Exception $ex) {
-            throw new Exception("Não foi possível contabilizar a receita do evento.");
-        }
-    }
-    
-    public function getDespesasByDate($id_event, $day = true, $week = false, $total = false) {
-         if (!is_numeric($id_event)) {
-            throw new Exception("Informações inválidas para captar número de vendas.");
-        }
-        
-        try {
-            $financemodel = new financeModel($this->conn);
-            if($day) {
-                $datetime_start = new DateTime();
-                $datetime_start->modify("-24 hours");
-                $datetime_end = new DateTime();
-                $datequery = Array(
-                    "field" => "data_pagamento",
-                    "datetime_start" => $datetime_start,
-                    "datetime_end" => $datetime_end
-                );
-                $pacotes['day'] = $financemodel->getDespesa($id_event, $datequery);
-            }
-            if($week) {
-                $datetime_start = new DateTime();
-                $datetime_start->modify("-7 days");
-                $datetime_end = new DateTime();
-                $datequery = Array(
-                    "field" => "data_pagamento",
-                    "datetime_start" => $datetime_start,
-                    "datetime_end" => $datetime_end
-                );
-                $pacotes['week'] = $financemodel->getDespesa($id_event, $datequery);
-            }
-            if($total) {
-                $pacotes['total'] = $financemodel->getDespesa($id_event);
-                
+            if ($total) {
+                $datetime = new DateTime();
+                $pacotes['total']['r'] = $financemodel->getReceita($id_event);
+                $receita = 0;
+                foreach ($pacotes['total']['r'] as $idx => $receitas) {
+                    if ($receitas['status_pacote'] > 1) {
+                        foreach ($receitas['parcelas'] as $i => $parcela) {
+                            if ($parcela['status_parcela'] == 2) {
+                                $receita += $parcela['valor_parcelas'];
+                            }
+                        }
+                    }
+                }
+                $pacotes['total']['d'] = $financemodel->getDespesa($id_event, $datetime);
+                $despesa = $pacotes['total']['d']['total_vencido'];
+                $pacotes['total']['t'] = number_format($receita - $despesa, 2, ",", ".");
             }
             return $pacotes;
         } catch (Exception $ex) {

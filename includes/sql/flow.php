@@ -54,12 +54,16 @@ class flowModel {
     }
     
     public function getReceitaDia(Datetime $datetime, $evento) {
+        if(!is_numeric($evento)) {
+            return;
+        }
         $date_query = $datetime->format("Y-m-d");
         $query = "SELECT "
                 . "sum(a.valor) "
                 . "FROM parcela_pacote a "
                 . "INNER JOIN pacote b ON a.id_pacote = b.id "
-                . "WHERE b.status IN(2,3) AND a.status = 2 AND a.data_pagamento BETWEEN '".$date_query." 00:00:00' AND '".$date_query." 23:59:59'";
+                . "INNER JOIN lote l ON b.id_lote = l.id "
+                . "WHERE b.status IN(2,3) AND a.status = 2 AND l.id_evento = $evento AND a.data_pagamento BETWEEN '".$date_query." 00:00:00' AND '".$date_query." 23:59:59'";
         $result['p'] = $this->conn->freeQuery($query);
         $result['p'] = $result['p'][0];
                 
@@ -67,7 +71,8 @@ class flowModel {
                 . "sum(a.valor) "
                 . "FROM parcela_pacote a "
                 . "INNER JOIN pacote b ON a.id_pacote = b.id "
-                . "WHERE b.status IN(2,3) AND a.status = 1 AND a.data_vencimento BETWEEN '".$date_query." 00:00:00' AND '".$date_query." 23:59:59'";
+                . "INNER JOIN lote l ON b.id_lote = l.id "
+                . "WHERE b.status IN(2,3) AND a.status = 1 AND l.id_evento = $evento AND a.data_vencimento BETWEEN '".$date_query." 00:00:00' AND '".$date_query." 23:59:59'";
         $result['np'] = $this->conn->freeQuery($query);
         $result['np'] = $result['np'][0];
         
@@ -76,12 +81,62 @@ class flowModel {
     }
     
     public function getDespesaDia(Datetime $datetime, $evento) {
+        if(!is_numeric($evento)) {
+            return;
+        }
         $date_query = $datetime->format("Y-m-d");
         $query = "SELECT "
                 . "sum(a.valor) "
                 . "FROM parcela_compra a "
                 . "INNER JOIN compra b ON a.id_compra = b.id "
-                . "WHERE b.status = 2 AND b.tipo = 0 AND a.data_vencimento BETWEEN '".$date_query." 00:00:00' AND '".$date_query." 23:59:59'";
+                . "WHERE b.status = 2 AND b.tipo = 0 AND b.id_evento = $evento AND a.data_vencimento BETWEEN '".$date_query." 00:00:00' AND '".$date_query." 23:59:59'";
+        $result['p'] = $this->conn->freeQuery($query);
+        $result['t'] = $result['p'][0]; 
+        return $result;        
+    }
+    
+    
+    public function getReceitaSemana(Datetime $datetime, $evento) {
+        if(!is_numeric($evento)) {
+            return;
+        }
+        $date_query = $datetime->format("Y-m-d");
+        $datetime->modify("-7 Days");
+        $date_start = $datetime->format("Y-m-d");
+        $query = "SELECT "
+                . "sum(a.valor) "
+                . "FROM parcela_pacote a "
+                . "INNER JOIN pacote b ON a.id_pacote = b.id "
+                . "INNER JOIN lote l ON b.id_lote = l.id "
+                . "WHERE b.status IN(2,3) AND a.status = 2 AND l.id_evento = $evento AND a.data_pagamento BETWEEN '".$date_start." 00:00:00' AND '".$date_query." 23:59:59'";
+        $result['p'] = $this->conn->freeQuery($query);
+        $result['p'] = $result['p'][0];
+                
+        $query = "SELECT "
+                . "sum(a.valor) "
+                . "FROM parcela_pacote a "
+                . "INNER JOIN pacote b ON a.id_pacote = b.id "
+                . "INNER JOIN lote l ON b.id_lote = l.id "
+                . "WHERE b.status IN(2,3) AND a.status = 1 AND l.id_evento = $evento AND a.data_vencimento BETWEEN '".$date_start." 00:00:00' AND '".$date_query." 23:59:59'";
+        $result['np'] = $this->conn->freeQuery($query);
+        $result['np'] = $result['np'][0];
+        
+        $result['t'] = $result['p'] + $result['np'];        
+        return $result;        
+    }
+    
+    public function getDespesaSemana(Datetime $datetime, $evento) {
+        if(!is_numeric($evento)) {
+            return;
+        }
+        $date_query = $datetime->format("Y-m-d");
+        $datetime->modify("-7 Days");
+        $date_start = $datetime->format("Y-m-d");
+        $query = "SELECT "
+                . "sum(a.valor) "
+                . "FROM parcela_compra a "
+                . "INNER JOIN compra b ON a.id_compra = b.id "
+                . "WHERE b.status = 2 AND b.tipo = 0 AND b.id_evento = $evento AND a.data_vencimento BETWEEN '".$date_start." 00:00:00' AND '".$date_query." 23:59:59'";
         $result['p'] = $this->conn->freeQuery($query);
         $result['t'] = $result['p'][0]; 
         return $result;        

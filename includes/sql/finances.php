@@ -30,8 +30,7 @@ class financeModel {
 
         $summary = Array();
         $summary["pacotes"] = $this->getReceita($id_event);
-        $summary["compras"] = $this->getDespesa($id_event, $datequery);
-
+        $summary["compras"] = $this->getDespesa($id_event, $date);
         /**
          *  5 Últimas Parcelas Pagas
          */
@@ -95,7 +94,7 @@ class financeModel {
         return $compras;
     }
 
-    public function getReceita($id_event, $datequery = false) {
+    public function getReceita($id_event) {
         /**
          *  Busca dos Pacotes e Parcelas
          */
@@ -107,18 +106,6 @@ class financeModel {
                 . "INNER JOIN lote b ON a.id_lote = b.id "
                 . "INNER JOIN parcela_pacote c ON c.id_pacote = a.id "
                 . "WHERE id_evento = $id_event AND c.status != 0 ";
-
-        if (is_array($datequery) && ($datequery['field'] == 'data_pagamento')) {
-            if ($datequery['datetime_start'] && is_a($datequery['datetime_start'], "DateTime")) {
-                $date_start = $datequery['datetime_start']->format("Y-m-d h:i:s");
-                $query.= "AND c." . $datequery['field'] . " >= '$date_start' ";
-            }
-            if ($datequery['datetime_end'] && is_a($datequery['datetime_end'], "DateTime")) {
-                $date_end = $datequery['datetime_end']->format("Y-m-d h:i:s");
-                $query.= "AND c." . $datequery['field'] . " <= '$date_end' ";
-            }
-        }
-
         $query .= "GROUP BY a.status ORDER BY a.status DESC";
         $receitas = $this->conn->freeQuery($query, true, PDO::FETCH_ASSOC);
 
@@ -132,16 +119,6 @@ class financeModel {
                     . "INNER JOIN pacote b ON a.id_pacote = b.id "
                     . "INNER JOIN lote c ON b.id_lote = c.id "
                     . "WHERE c.id_evento = $id_event AND b.status = " . $pacotes["status_pacote"]." ";
-            if (is_array($datequery) && ($datequery['field'] == 'data_pagamento')) {
-                if ($datequery['datetime_start'] && is_a($datequery['datetime_start'], "DateTime")) {
-                    $date_start = $datequery['datetime_start']->format("Y-m-d h:i:s");
-                    $query.= "AND a." . $datequery['field'] . " >= '$date_start' ";
-                }
-                if ($datequery['datetime_end'] && is_a($datequery['datetime_end'], "DateTime")) {
-                    $date_end = $datequery['datetime_end']->format("Y-m-d h:i:s");
-                    $query.= "AND a." . $datequery['field'] . " <= '$date_end' ";
-                }
-            }
             $query .= " GROUP BY a.status";
             $receitas[$index]["parcelas"] = $this->conn->freeQuery($query, true, PDO::FETCH_ASSOC);
         }
@@ -149,16 +126,20 @@ class financeModel {
         return $receitas;
     }
     
-    public function getDespesa($id_event, $datequery) {        
+    public function getDespesa($id_event, $date) {
+        
         /**
          *  Busca das Compras
          */
         $query = "SELECT sum(p.valor) FROM parcela_compra p INNER JOIN compra c ON p.id_compra = c.id WHERE c.status = 2 AND p.data_vencimento < '" . $date->format("Y-m-d") . "' AND c.id_evento = $id_event AND c.tipo = 0";
-        $summary["compras"]['total_vencido'] = $this->conn->freeQuery($query);
-        $summary["compras"]['total_vencido'] = $summary["compras"]["total_vencido"][0];
+        $compras['total_vencido'] = $this->conn->freeQuery($query);
+        $compras['total_vencido'] = $compras["total_vencido"][0];
         $query = "SELECT sum(p.valor) FROM parcela_compra p INNER JOIN compra c ON p.id_compra = c.id WHERE c.status = 2 AND c.id_evento = $id_event AND c.tipo = 0";
-        $summary["compras"]['total_planejado'] = $this->conn->freeQuery($query);
-        $summary["compras"]['total_planejado'] = $summary["compras"]["total_planejado"][0];
-    }
+        $compras['total_planejado'] = $this->conn->freeQuery($query);
+        $compras['total_planejado'] = $compras["total_planejado"][0];
+        
+        return $compras;
 
+    }
+    
 }
