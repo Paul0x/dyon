@@ -1,6 +1,6 @@
 <div class="title">{{ event.nome}}</div>
 <div class="welcome">
-    Olá, <strong>{{ user.nome }}</strong>, selecionamos algumas informações importantes sobre seu evento.
+    Olá, <strong>{{ user.nome }}</strong>, selecionamos algumas informações importantes sobre o seu evento.
 </div>
 <div class="info">
     <div class="title">Vendas</div>
@@ -54,4 +54,19 @@
             {% endif %}
             R${{event.finances_date.total.t}}</div>
     </div>
+</div>
+{% if event.pacotes_aprovacao > 0 %}
+    <a href="{{ config.system_path }}/controle/pacote/parcelas">
+        <div class="info">
+            <div class="block-100">
+                <div class="value big-value">{{ event.pacotes_aprovacao }}</div>
+                <div class="subtitle">pacote{% if event.pacotes_aprovacao > 1 %}s{% endif %} aguardando aprovação.</div>
+            </div>
+        </div>
+    </a>
+{% endif %}
+<div class="buttons">
+    <a href="{{ config.system_path }}/eventos/{{ event.id }}"><div class="button" title="Informações do Evento"><i class="fa fa-info" aria-hidden="true"></i></div></a>
+    <a href="{{ config.system_path }}/controle/pacote/add"><div class="button" title="Adicionar Pacote"><i class="fa fa-plus" aria-hidden="true"></i></div></a>
+    <a href="{{ config.system_path }}/financeiro/fluxo"><div class="button" title="Fluxo de Caixa"><i class="fa fa-usd" aria-hidden="true"></i></div></a>
 </div>
