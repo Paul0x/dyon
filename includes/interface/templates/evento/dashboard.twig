@@ -7,14 +7,14 @@
         <div class="block-50">
             <div class="subtitle">Hoje</div>
             <div class="value">
-                {% if event.vendas_hoje > 0 %} + {% endif %}
-                6{{event.vendas_hoje}}</div>
+                {% if event.vendas_date.day > 0 %} + {% endif %}
+                {{event.vendas_date.day}}</div>
         </div>
         <div class="block-50">
             <div class="subtitle">Semana</div>
             <div class="value">                
-                {% if event.vendas_semana > 0 %} + {% endif %}
-                18{{event.vendas_semana}}</div>
+                {% if event.vendas_date.week > 0 %} + {% endif %}
+                {{event.vendas_date.week}}</div>
         </div>
         <div class="block-100">
             <div class="subtitle">Total</div>
@@ -26,7 +26,7 @@
         </div>
 </div>
 <div class="info">
-        <div class="title">Financeiro</div>
+        <div class="title">Balanço Financeiro</div>
         <div class="block-50">
             <div class="subtitle">Hoje</div>
             <div class="value">
@@ -40,7 +40,7 @@
                 18{{event.vendas_semana}}</div>
         </div>
         <div class="block-100">
-            <div class="subtitle">Total</div>
+            <div class="subtitle">Saldo Total</div>
             <div class="value">
                 {{ event.n_vendas}}
                 {% if event.max_venda > 0 %}

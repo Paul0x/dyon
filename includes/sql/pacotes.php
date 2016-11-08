@@ -352,25 +352,36 @@ class pacoteModel {
         foreach ($rooms as $index => $room) {
             $search_query = "SELECT p.id, u.id, u.nome FROM pacote p "
                     . "INNER JOIN usuario u ON p.id_usuario = u.id "
-                    . "WHERE p.id_quarto = ".$room['id_quarto'];
-            
+                    . "WHERE p.id_quarto = " . $room['id_quarto'];
+
             $rooms[$index]['members'] = $this->conn->freeQuery($search_query, true, true, PDO::FETCH_ASSOC);
         }
-        
+
         return $rooms;
     }
-    
-    public function countPacotes($event_id, $status) {
-        if(!is_numeric($event_id)) {
+
+    public function countPacotes($event_id, $status, $datequery = false) {
+        if (!is_numeric($event_id)) {
             throw new Exception("O identificador do evento é inválido para busca de pacotes.");
         }
-        
-        if($status < 0 || $status > 4 || !is_numeric($status)) {
+
+        if ($status < 0 || $status > 4 || !is_numeric($status)) {
             throw new Exception("Status do pacote inválido.");
         }
-        
+
         $query = "SELECT count(DISTINCT p.id) FROM pacote p INNER JOIN lote l ON l.id = p.id_lote INNER JOIN evento e ON e.id = l.id_evento"
-                . " WHERE p.status >= $status AND e.id = $event_id";
+                . " WHERE p.status >= $status AND e.id = $event_id ";
+
+        if (is_array($datequery) && ($datequery['field'] == 'data_criacao' || $datequery['field'] == 'data_aprovacao' || $datequery['field'] == 'data_alteracao')) {
+            if ($datequery['datetime_start'] && is_a($datequery['datetime_start'], "DateTime")) {
+                $date_start = $datequery['datetime_start']->format("Y-m-d h:i:s");
+                $query.= "AND ".$datequery['field']." >= '$date_start' ";
+            }
+            if ($datequery['datetime_end'] && is_a($datequery['datetime_end'], "DateTime")) {
+                $date_end = $datequery['datetime_end']->format("Y-m-d h:i:s");
+                $query.= "AND ".$datequery['field']." <= '$date_end' ";
+            }
+        }
         try {
             $count = $this->conn->freeQuery($query, false, true, PDO::FETCH_NUM);
         } catch (Exception $error) {

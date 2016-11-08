@@ -386,6 +386,84 @@ class financesController {
             echo json_encode(Array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+    
+    public function getReceitaByDate($id_event, $day = true, $week = false, $total = false) {
+         if (!is_numeric($id_event)) {
+            throw new Exception("Informações inválidas para captar número de vendas.");
+        }
+        
+        try {
+            $financemodel = new financeModel($this->conn);
+            if($day) {
+                $datetime_start = new DateTime();
+                $datetime_start->modify("-24 hours");
+                $datetime_end = new DateTime();
+                $datequery = Array(
+                    "field" => "data_pagamento",
+                    "datetime_start" => $datetime_start,
+                    "datetime_end" => $datetime_end
+                );
+                $pacotes['day'] = $financemodel->getReceita($id_event, $datequery);
+            }
+            if($week) {
+                $datetime_start = new DateTime();
+                $datetime_start->modify("-7 days");
+                $datetime_end = new DateTime();
+                $datequery = Array(
+                    "field" => "data_pagamento",
+                    "datetime_start" => $datetime_start,
+                    "datetime_end" => $datetime_end
+                );
+                $pacotes['week'] = $financemodel->getReceita($id_event, $datequery);
+            }
+            if($total) {
+                $pacotes['total'] = $financemodel->getReceita($id_event);
+                
+            }
+            return $pacotes;
+        } catch (Exception $ex) {
+            throw new Exception("Não foi possível contabilizar a receita do evento.");
+        }
+    }
+    
+    public function getDespesasByDate($id_event, $day = true, $week = false, $total = false) {
+         if (!is_numeric($id_event)) {
+            throw new Exception("Informações inválidas para captar número de vendas.");
+        }
+        
+        try {
+            $financemodel = new financeModel($this->conn);
+            if($day) {
+                $datetime_start = new DateTime();
+                $datetime_start->modify("-24 hours");
+                $datetime_end = new DateTime();
+                $datequery = Array(
+                    "field" => "data_pagamento",
+                    "datetime_start" => $datetime_start,
+                    "datetime_end" => $datetime_end
+                );
+                $pacotes['day'] = $financemodel->getDespesa($id_event, $datequery);
+            }
+            if($week) {
+                $datetime_start = new DateTime();
+                $datetime_start->modify("-7 days");
+                $datetime_end = new DateTime();
+                $datequery = Array(
+                    "field" => "data_pagamento",
+                    "datetime_start" => $datetime_start,
+                    "datetime_end" => $datetime_end
+                );
+                $pacotes['week'] = $financemodel->getDespesa($id_event, $datequery);
+            }
+            if($total) {
+                $pacotes['total'] = $financemodel->getDespesa($id_event);
+                
+            }
+            return $pacotes;
+        } catch (Exception $ex) {
+            throw new Exception("Não foi possível contabilizar a receita do evento.");
+        }
+    }
 
 }
 
