@@ -1,0 +1,191 @@
+<?php
+
+/* * ****************************************
+ *     _____                    
+ *    |  __ \                   
+ *    | |  | |_   _  ___  _ __  
+ *    | |  | | | | |/ _ \| '_ \ 
+ *    | |__| | |_| | (_) | | | |
+ *    |_____/ \__, |\___/|_| |_|
+ *             __/ |            
+ *            |___/  
+ *           
+ *       Paulo Felipe Possa Parrira [ paul (dot) 0 (at) live (dot) de ]
+ *  =====================================================================
+ *  File: thread.php
+ *  Type: Controller
+ *  =====================================================================
+ * 
+ */
+
+class threadController {
+
+    /**
+     * Constrói o objeto e inicializa a conexão com o banco de dados.
+     */
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
+
+    public function loadBoardThreads($board_id = 1, $status = 1) {
+        if (!is_numeric($board_id)) {
+            throw new Exception("Identificador da board é inválido.");
+        }
+
+        if (($status != 0 && $status != 1) || !is_numeric($status)) {
+            throw new Exception("Status da thread indefinido.");
+        }
+
+        $fields = array("id", "id_board", "id_usuario", "titulo", "descricao", "data_vencimento", "data_criacao", "prioridade");
+        $this->conn->prepareselect("thread", $fields, array("id_board", "status"), array($board_id, $status), "", "", "", PDO::FETCH_ASSOC, "all", array("prioridade", "DESC"));
+        if (!$this->conn->executa()) {
+            throw new Exception("Nenhuma thread encontrada nessa board.");
+        }
+
+        $threads = $this->conn->fetch;
+
+        foreach ($threads as $index => $thread) {
+            if (strlen($thread['descricao']) > 100) {
+                $threads[$index]['descricao'] = substr($thread['descricao'], 0, 100) . "...";
+            }
+            if ($thread['data_vencimento']) {
+                $datetime = new DateTime($thread['data_vencimento']);
+                $threads[$index]['data_vencimento'] = $datetime->format("d/m/Y");
+            }
+            $datetime2 = new DateTime($thread['data_criacao']);
+            $threads[$index]['data_criacao'] = $datetime2->format("d/m/Y");
+        }
+
+        return $threads;
+    }
+
+    public function loadThread($thread_id) {
+        if (!is_numeric($thread_id)) {
+            throw new Exception("Identificador da thread é inválido.");
+        }
+
+        $fields = array("id", "id_board", "id_usuario", "titulo", "descricao", "data_vencimento", "data_criacao", "prioridade", "status");
+        $this->conn->prepareselect("thread", $fields, "id", $thread_id);
+        if (!$this->conn->executa() || $this->conn->rowcount != 1) {
+            throw new Exception("Nenhuma thread encontrada.");
+        }
+
+        $thread = $this->conn->fetch;
+        $thread['descricao_nl'] = $thread['descricao'];
+        $thread['data_vencimento_uf'] = $thread['data_vencimento'];
+        if ($thread['data_vencimento']) {
+            $datetime = new DateTime($thread['data_vencimento']);
+            $thread['data_vencimento'] = $datetime->format("d/m/Y");
+        }
+        $thread['descricao'] = nl2br($thread['descricao']);
+        $datetime2 = new DateTime($thread['data_criacao']);
+        $thread['data_criacao'] = $datetime2->format("d/m/Y");
+
+        $usercontroller = new userController();
+        $user = $usercontroller->getUser(5);
+        if ($thread['id_usuario'] == $user->getId() || $user->getPermission() == 10) {
+            $thread['is_owner'] = true;
+        }
+        try {
+            $user_thread = $usercontroller->getUser(0, false);
+            $user_thread->setId($thread['id_usuario']);
+            $user_thread->setInfo();
+            $userinfo = $user_thread->getBasicInfo();
+            $thread['usuario'] = $userinfo['nome'];
+        } catch (Exception $ex) {
+            throw new Exception("Criador da thread não encontrado.");
+        }
+        return $thread;
+    }
+
+    public function addThread($thread) {
+        if (!is_numeric($thread['board_id'])) {
+            throw new Exception("O identificador da board é inválido.");
+        }
+
+        $thread['titulo'] = trim($thread['titulo']);
+        $thread['desc'] = trim($thread['desc']);
+
+        if (!is_numeric($thread['prioridade']) || ($thread['prioridade'] < 0 && $thread['prioridade'] > 3)) {
+            $thread['prioridade'] = 0;
+        }
+
+        if ($thread['titulo'] == "") {
+            throw new Exception("O título da thread não pode estar vazio.");
+        }
+
+        $fields = Array("id_usuario", "id_board", "titulo", "descricao", "prioridade");
+        $values = Array($thread['user_id'], $thread['board_id'], $thread['titulo'], $thread['desc'], $thread['prioridade']);
+        if (!is_null($thread['vencimento']) && trim($thread['vencimento']) != "") {
+            $vencimento = explode("/", $thread['vencimento']);
+            if (!checkdate($vencimento[1], $vencimento[0], $vencimento[2])) {
+                throw new Exception("A data de vencimento é inválida.");
+            }
+            $date = $vencimento[2] . "-" . $vencimento[1] . "-" . $vencimento[0] . " 23:59:59";
+            $datetime = new DateTime($date);
+            $thread['vencimento'] = $datetime->format("Y-m-d h:i:s");
+            $fields[] = "data_vencimento";
+            $values[] = $thread['vencimento'];
+        }
+
+
+        $this->conn->prepareinsert("thread", $values, $fields);
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível adicionar a thread.");
+        }
+    }
+
+    public function editThread($thread) {
+        $thread_old = $this->loadThread($thread['thread_id']);
+        $usercontroller = new userController();
+        $user = $usercontroller->getUser(5);        
+        if($thread_old['id_usuario'] != $user->getId() && $user->getPermission() != 10) {
+            throw new Exception("O usuário não tem permissão para editar a thread.");
+        }        
+        $thread['titulo'] = trim($thread['titulo']);
+        $thread['desc'] = trim($thread['desc']);
+        if (!is_numeric($thread['prioridade']) || ($thread['prioridade'] < 0 && $thread['prioridade'] > 3)) {
+            $thread['prioridade'] = 0;
+        }
+        if ($thread['titulo'] == "") {
+            throw new Exception("O título da thread não pode estar vazio.");
+        }
+        $fields = Array("titulo", "descricao", "prioridade");
+        $values = Array($thread['titulo'], $thread['desc'], $thread['prioridade']);
+        if (!is_null($thread['vencimento']) && trim($thread['vencimento']) != "") {
+            $vencimento = explode("/", $thread['vencimento']);
+            if (!checkdate($vencimento[1], $vencimento[0], $vencimento[2])) {
+                throw new Exception("A data de vencimento é inválida.");
+            }
+            $date = $vencimento[2] . "-" . $vencimento[1] . "-" . $vencimento[0] . " 23:59:59";
+            $datetime = new DateTime($date);
+            $thread['vencimento'] = $datetime->format("Y-m-d h:i:s");
+            $fields[] = "data_vencimento";
+            $values[] = $thread['vencimento'];
+        }
+        $this->conn->prepareupdate($values, $fields, "thread", $thread_old['id'], "id");
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível editar a thread.");
+        }
+        return $thread_old['id'];
+    }
+
+    public function changeThreadStatus($thread_id) {
+        $thread = $this->loadThread($thread_id);
+        if ($thread['is_owner'] == false) {
+            throw new Exception("O usuário não tem permissão para alterar o status da thread.");
+        }
+
+        if ($thread['status'] == 1) {
+            $new_status = 0;
+        } else {
+            $new_status = 1;
+        }
+
+        $this->conn->prepareupdate($new_status, "status", "thread", $thread_id, "id", "INT");
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível alterar o status da thread.");
+        }
+    }
+
+}

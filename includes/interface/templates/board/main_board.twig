@@ -10,9 +10,14 @@
 {% block content %}
     <div id="dashboard-sidebar"></div>
     <div id="right-content-boards" class="right-content-boards">
-        <div id='board-list-wrap'>
-            <div class='title'>Lista de Diretorias</div>
-            <div class='items'>
+        <div id='board-control-wrap'>
+            <div class='title'><strong>Gerencia da Equipe</strong> | Discussões e Tarefas</div>
+            <div class='selection'>
+                <select id="board-select">
+                    <option value="">Selecione uma Board</option>
+                </select>
+                <div class="control" id="board-user-control" title="Gerenciar Time e Usuários"><i class="fa fa-users" aria-hidden="true"></i></div>
+                <div class="control" id="board-add-board" title="Adicionar Board"><i class="fa fa-plus" aria-hidden="true"></i></div>
             </div>
             <div class='clear'></div>
         </div>

@@ -21,23 +21,21 @@ boardInterface = function () {
     this.initBoards = function () {
         var self = this;
         self.loadBoardsBoxes();
-        self.loadUserBoard();
+        alert('topkek');
     };
 
     this.loadBoardsBoxes = function () {
         var self = this;
         $.ajax({
-            url: self.root + "/diretorias",
+            url: self.root + "/boards",
             data: {
                 mode: "load_boards_boxes"
             },
             success: function (data) {
+                alert('a');
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    $.each(data.diretorias, function (index, diretoria) {
-                        $("#board-list-wrap .items").append("<div class='item' diretoria='" + diretoria.id + "'>" + diretoria.nome + "</div>");
-                    });
-                    self.bindBoardSelection();
+                    
                 }
             }
         });

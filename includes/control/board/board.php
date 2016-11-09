@@ -21,7 +21,7 @@
 require_once("includes/sql/sqlcon.php");
 require_once("includes/control/usuario/users.php");
 require_once("includes/lib/Twig/Autoloader.php");
-require_once("includes/control/diretoria/task.php");
+require_once("includes/control/board/thread.php");
 
 class boardController {
 
@@ -34,12 +34,12 @@ class boardController {
     
     private function loadBoardInfo($board_id) {
         if(!is_numeric($board_id)) {
-            throw new Exception("O identificador da diretoria é inválido.");
+            throw new Exception("O identificador da board ï¿½ invï¿½lido.");
         }        
         $fields = array("id","nome","acesso_minimo","id_usuario","id_instancia");
-        $this->conn->prepareselect("diretoria",$fields, "id", $board_id);
+        $this->conn->prepareselect("board",$fields, "id", $board_id);
         if(!$this->conn->executa() || $this->conn->rowcount != 1) {
-            throw new Exception("Não foi possível encontrar a board.");
+            throw new Exception("Nï¿½o foi possï¿½vel encontrar a board.");
         }        
         $board = $this->conn->fetch;
         return $board;        
@@ -47,10 +47,10 @@ class boardController {
     
     private function isBoardMember($user_id, $board_id) {
         if(!is_numeric($user_id) || !is_numeric($board_id)) {
-            throw new Exception("Os identificadores precisam ser numéricos.");
+            throw new Exception("Os identificadores precisam ser numï¿½ricos.");
         }
         
-        $this->conn->prepareselect("diretoria_usuarios", "id_usuario", array("id_usuario","id_diretoria"), array($user_id,$board_id));
+        $this->conn->prepareselect("board_usuarios", "id_usuario", array("id_usuario","id_board"), array($user_id,$board_id));
         if(!$this->conn->executa() || $this->conn->rowcount != 1) {
             return false;
         }
@@ -64,12 +64,12 @@ class boardController {
             $user = $usercontroller->getUser(5);
             $instance = $user->getUserInstance();
             
-            $this->conn->prepareselect("diretoria",array("id","nome"),"id_instancia",$instance['id'],"", "", "", PDO::FETCH_ASSOC, "all");
+            $this->conn->prepareselect("board",array("id","nome"),"id_instancia",$instance['id'],"", "", "", PDO::FETCH_ASSOC, "all");
             if(!$this->conn->executa()) {
-                throw new Exception("Nenhuma diretoria encontrada.");
+                throw new Exception("Nenhuma board encontrada.");
             }
-            $diretorias = $this->conn->fetch;
-            echo json_encode(array("success" => "true", "diretorias" => $diretorias));
+            $boards = $this->conn->fetch;
+            echo json_encode(array("success" => "true", "boards" => $boards));
         } catch(Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
@@ -105,14 +105,14 @@ class boardController {
         }
     }
     
-    private function loadBoardTasks() {
+    private function loadBoardThreads() {
         try {
             $board_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             $usercontroller = new userController();
             $user = $usercontroller->getUser(5);
-            $taskcontroller = new taskController($this->conn);
-            $tasks = $taskcontroller->loadBoardTasks($board_id);
-            echo json_encode(array("success" => "true", "tasks" => $tasks));
+            $threadcontroller = new threadController($this->conn);
+            $threads = $threadcontroller->loadBoardThreads($board_id);
+            echo json_encode(array("success" => "true", "threads" => $threads));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }        
@@ -124,7 +124,7 @@ class boardController {
             $usercontroller = new userController();
             $user = $usercontroller->getUser(5);
             
-            $this->conn->prepareselect("diretoria_usuarios a", array("a.id_usuario as 'id'","b.nome"), "id_diretoria", $board_id, "same", "", array("INNER","usuario b ON b.id = a.id_usuario"), PDO::FETCH_ASSOC, "all");
+            $this->conn->prepareselect("board_usuarios a", array("a.id_usuario as 'id'","b.nome"), "id_board", $board_id, "same", "", array("INNER","usuario b ON b.id = a.id_usuario"), PDO::FETCH_ASSOC, "all");
             if(!$this->conn->executa() || $this->conn->rowcount == 0) {
                 throw new Exception("Nenhum membro encontrado.");
             }
@@ -136,62 +136,62 @@ class boardController {
         }        
     }
     
-    private function loadTask() {
+    private function loadThread() {
         try {
-            $task_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            $thread_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             $usercontroller = new userController();
             $user = $usercontroller->getUser(5);
-            $taskcontroller = new taskController($this->conn);
-            $task = $taskcontroller->loadTask($task_id);
-            echo json_encode(array("success" => "true", "task" => $task));
+            $threadcontroller = new threadController($this->conn);
+            $thread = $threadcontroller->loadThread($thread_id);
+            echo json_encode(array("success" => "true", "thread" => $thread));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }        
     }    
     
-    private function addTask() {
+    private function addThread() {
         try {
-            $task['board_id'] = filter_input(INPUT_POST, "board", FILTER_VALIDATE_INT);
-            $task['titulo'] = filter_input(INPUT_POST, "titulo", FILTER_SANITIZE_SPECIAL_CHARS);
-            $task['vencimento'] = filter_input(INPUT_POST, "vencimento", FILTER_SANITIZE_SPECIAL_CHARS);
-            $task['desc'] = filter_input(INPUT_POST, "desc", FILTER_SANITIZE_SPECIAL_CHARS);
-            $task['prioridade'] = filter_input(INPUT_POST, "prioridade", FILTER_VALIDATE_INT);
+            $thread['board_id'] = filter_input(INPUT_POST, "board", FILTER_VALIDATE_INT);
+            $thread['titulo'] = filter_input(INPUT_POST, "titulo", FILTER_SANITIZE_SPECIAL_CHARS);
+            $thread['vencimento'] = filter_input(INPUT_POST, "vencimento", FILTER_SANITIZE_SPECIAL_CHARS);
+            $thread['desc'] = filter_input(INPUT_POST, "desc", FILTER_SANITIZE_SPECIAL_CHARS);
+            $thread['prioridade'] = filter_input(INPUT_POST, "prioridade", FILTER_VALIDATE_INT);
             $usercontroller = new userController();
             $user = $usercontroller->getUser(5);
-            $task['user_id'] = $user->getId();
+            $thread['user_id'] = $user->getId();
             
-            if(!$this->isBoardMember($user->getId(), $task['board_id']) && $user->getPermission() != 10) {
+            if(!$this->isBoardMember($user->getId(), $thread['board_id']) && $user->getPermission() != 10) {
                 throw new Exception("O usuÃ¡rio nÃ£o tem permissÃ£o para adicionar tarefas na board.");
             }
             
-            $taskcontroller = new taskController($this->conn);
-            $taskcontroller->addTask($task);            
+            $threadcontroller = new threadController($this->conn);
+            $threadcontroller->addThread($thread);            
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }        
     }  
     
-    private function editTask() {
+    private function editThread() {
         try {
-            $task['task_id'] = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
-            $task['titulo'] = filter_input(INPUT_POST, "titulo", FILTER_SANITIZE_SPECIAL_CHARS);
-            $task['vencimento'] = filter_input(INPUT_POST, "vencimento", FILTER_SANITIZE_SPECIAL_CHARS);
-            $task['desc'] = filter_input(INPUT_POST, "desc", FILTER_SANITIZE_SPECIAL_CHARS);
-            $task['prioridade'] = filter_input(INPUT_POST, "prioridade", FILTER_VALIDATE_INT);                        
-            $taskcontroller = new taskController($this->conn);
-            $id = $taskcontroller->editTask($task);            
-            echo json_encode(array("success" => "true", "task" => $id));
+            $thread['thread_id'] = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            $thread['titulo'] = filter_input(INPUT_POST, "titulo", FILTER_SANITIZE_SPECIAL_CHARS);
+            $thread['vencimento'] = filter_input(INPUT_POST, "vencimento", FILTER_SANITIZE_SPECIAL_CHARS);
+            $thread['desc'] = filter_input(INPUT_POST, "desc", FILTER_SANITIZE_SPECIAL_CHARS);
+            $thread['prioridade'] = filter_input(INPUT_POST, "prioridade", FILTER_VALIDATE_INT);                        
+            $threadcontroller = new threadController($this->conn);
+            $id = $threadcontroller->editThread($thread);            
+            echo json_encode(array("success" => "true", "thread" => $id));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }        
     }  
     
-    private function changeTaskStatus() {
+    private function changeThreadStatus() {
         try {
-            $task_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
-            $taskcontroller = new taskController($this->conn);
-            $taskcontroller->changeTaskStatus($task_id);
+            $thread_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            $threadcontroller = new threadController($this->conn);
+            $threadcontroller->changeThreadStatus($thread_id);
             echo json_encode(array("success" => "true"));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
@@ -206,7 +206,7 @@ class boardController {
             $this->usercontroller = new userController();
             $user = $this->usercontroller->getUser(5);
             if ($url['ajax'] == false) {
-                echo $this->twig->render("diretoria/main_board.twig", Array("config" => config::$html_preload, "login_error_flag" => $login_error_flag, "user" => $user->getBasicInfo()));
+                echo $this->twig->render("board/main_board.twig", Array("config" => config::$html_preload, "login_error_flag" => $login_error_flag, "user" => $user->getBasicInfo()));
             } else {
                 switch($_POST['mode']) {
                     case "load_boards_boxes":
@@ -218,23 +218,23 @@ class boardController {
                     case "update_user_board":
                         $this->updateUserBoard();
                         break;
-                    case "load_board_tasks":
-                        $this->loadBoardTasks();
+                    case "load_board_threads":
+                        $this->loadBoardThreads();
                         break;
                     case "load_board_members":
                         $this->loadBoardMembers();
                         break;
-                    case "load_task":
-                        $this->loadTask();
+                    case "load_thread":
+                        $this->loadThread();
                         break;
-                    case "board_add_task":
-                        $this->addTask();
+                    case "board_add_thread":
+                        $this->addThread();
                         break;
-                    case "change_task_status":
-                        $this->changeTaskStatus();
+                    case "change_thread_status":
+                        $this->changeThreadStatus();
                         break;
-                    case "board_edit_task":
-                        $this->editTask();
+                    case "board_edit_thread":
+                        $this->editThread();
                         break;
                 }
             }
