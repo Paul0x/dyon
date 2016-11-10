@@ -23,8 +23,8 @@ function sideMenuHeightFix()
     var body = document.body;
     var html = document.documentElement;
     var height = Math.max( body.scrollHeight, body.offsetHeight, 
-                       html.clientHeight, html.scrollHeight, html.offsetHeight );
-    $(".sidebar-menu").css("height",height);
+                       html.clientHeight, html.scrollHeight, html.offsetHeight, window.innerHeight );
+    $(".sidebar-menu, #dashboard-sidebar").css("height",$(document).height()+50);
 }
 
 function formatStr()

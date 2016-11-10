@@ -461,7 +461,7 @@ class user {
             throw new Exception("Usuário não tem permissão para realizar a ação.");
         }
 
-        $this->conn->prepareselect("diretoria", "id_instancia", "id", $board_id);
+        $this->conn->prepareselect("board", "id_instancia", "id", $board_id);
         if (!$this->conn->executa()) {
             throw new Exception("Não foi possível pesquisar a diretoria selecionada.");
         }
@@ -471,12 +471,12 @@ class user {
             throw new Exception("O usuário não está na mesma instância da diretoria selecionada.");
         }
 
-        $this->conn->prepareupdate($board_id, "diretoria_padrao", "instancia_usuario", array($this->id, $instance['id']), array("id_usuario", "id_instancia"), "INT");
+        $this->conn->prepareupdate($board_id, "board_padrao", "instancia_usuario", array($this->id, $instance['id']), array("id_usuario", "id_instancia"), "INT");
         if (!$this->conn->executa()) {
             throw new Exception("Não foi possível alterar a diretoria.");
         }
 
-        $this->admin_info['diretoria_padrao'] = $board_id;
+        $this->admin_info['board_padrao'] = $board_id;
         $this->updateSerializedUser();
     }
 
@@ -522,11 +522,11 @@ class user {
     }
 
     public function getSelectedBoard() {
-        if (!isset($this->admin_info['diretoria_padrao'])) {
+        if (!isset($this->admin_info['board_padrao'])) {
             throw new Exception("Diretoria não encontrada.");
         }
 
-        return $this->admin_info['diretoria_padrao'];
+        return $this->admin_info['board_padrao'];
     }
 
     public function getSelectedFlow() {

@@ -36,17 +36,17 @@ class threadController {
             throw new Exception("Status da thread indefinido.");
         }
 
-        $fields = array("id", "id_board", "id_usuario", "titulo", "descricao", "data_vencimento", "data_criacao", "prioridade");
-        $this->conn->prepareselect("thread", $fields, array("id_board", "status"), array($board_id, $status), "", "", "", PDO::FETCH_ASSOC, "all", array("prioridade", "DESC"));
-        if (!$this->conn->executa()) {
+        $query = "SELECT t.id, t.id_board, t.id_usuario, t.titulo, t.post, t.data_vencimento, t.data_criacao, t.prioridade, t.status, t.tipo, t.info, u.nome as 'nome_usuario' FROM thread t INNER JOIN usuario u ON t.id_usuario = u.id WHERE  id_board = $board_id AND  status = $status ORDER BY prioridade DESC, data_criacao DESC LIMIT 0, 25";
+        $threads = $this->conn->freeQuery($query,true,true,PDO::FETCH_ASSOC);
+        if (!$threads) {
             throw new Exception("Nenhuma thread encontrada nessa board.");
         }
 
-        $threads = $this->conn->fetch;
-
         foreach ($threads as $index => $thread) {
-            if (strlen($thread['descricao']) > 100) {
-                $threads[$index]['descricao'] = substr($thread['descricao'], 0, 100) . "...";
+            $breaks = array("<br />", "<br>", "<br/>");
+            $thread['post'] = str_ireplace($breaks, "\r\n", $thread['post']);
+            if (strlen($thread['post']) > 100) {
+                $threads[$index]['post'] = substr($thread['post'], 0, 300) . "...";
             }
             if ($thread['data_vencimento']) {
                 $datetime = new DateTime($thread['data_vencimento']);
@@ -138,10 +138,10 @@ class threadController {
     public function editThread($thread) {
         $thread_old = $this->loadThread($thread['thread_id']);
         $usercontroller = new userController();
-        $user = $usercontroller->getUser(5);        
-        if($thread_old['id_usuario'] != $user->getId() && $user->getPermission() != 10) {
+        $user = $usercontroller->getUser(5);
+        if ($thread_old['id_usuario'] != $user->getId() && $user->getPermission() != 10) {
             throw new Exception("O usuário não tem permissão para editar a thread.");
-        }        
+        }
         $thread['titulo'] = trim($thread['titulo']);
         $thread['desc'] = trim($thread['desc']);
         if (!is_numeric($thread['prioridade']) || ($thread['prioridade'] < 0 && $thread['prioridade'] > 3)) {

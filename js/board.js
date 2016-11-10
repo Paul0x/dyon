@@ -21,7 +21,117 @@ boardInterface = function () {
     this.initBoards = function () {
         var self = this;
         self.loadBoardsBoxes();
-        alert('topkek');
+        self.loadUserBoard();
+        self.bindBoardSelection();
+        self.bindBoardFunctions();
+    };
+
+    this.bindBoardFunctions = function () {
+        var self = this;
+        $("#board-add-board").bind("click", function () {
+            self.loadAddBoardForm();
+        });
+        $("#board-control-form-close").die().live("click", function () {
+            self.loadUserBoard();
+        });
+        $("#board-control-rename").die().live("click", function () {
+            self.loadRenameBoardForm();
+        });
+    };
+
+    this.loadRenameBoardForm = function () {
+        var self = this;
+        var board_name = $("#board-wrap .board-header .title").html();
+        var board_id = $("#board-id-ref").val();
+        var html = "<div class='board-control-form' id='board-rename-form'>";
+        html += "<div class='title'>Renomear a Board: " + board_name + "</div>";
+        html += "<div class='info'>Utilize o formulário abaixo para renomear a board.</div>";
+        html += "<div class='item'>";
+        html += "<label>Nome da Board</label>";
+        html += "<input type='text' name='board-name' value='" + board_name + "'/>";
+        html += "</div>";
+        html += "<input type='button' id='board-control-form-close' class='btn-03' value='Voltar'/>";
+        html += "<input type='button' id='board-rename-form-submit' class='btn-01' value='Adicionar'/>";
+        html += "</div>";
+        $("#board-wrap").html(html);
+        $("#board-rename-form-submit").die().live("click", function () {
+            var nome = $("input[name='board-name']").val();
+            if (nome === "") {
+                self.loadBoardControlFormErrorMessage("O campo nome é obrigatório.");
+                return;
+            }
+            $.ajax({
+                url: self.root + "/boards",
+                data: {
+                    mode: "rename_board",
+                    nome: nome,
+                    board_id: board_id
+                },
+                success: function (data) {
+                    data = eval("( " + data + " )");
+                    if (data.success === "true") {
+                        self.removeBoardControlFormErrorMessage();
+                        self.loadUserBoard();
+                        $("#board-select option[value='" + board_id + "']").html(data.nome);
+                    } else {
+                        self.loadBoardControlFormErrorMessage(data.error);
+                    }
+                }
+            });
+        });
+    };
+
+    this.loadAddBoardForm = function () {
+        var self = this;
+        if ($("#board-add-form").length === 0) {
+            var html = "<div class='board-control-form' id='board-add-form'>";
+            html += "<div class='title'>Adicionar Nova Board</div>";
+            html += "<div class='info'>Utilize o formulário abaixo para criar uma nova board, onde será possível criar tarefas e discussões.</div>";
+            html += "<div class='item'>";
+            html += "<label>Nome da Board</label>";
+            html += "<input type='text' name='board-name'/>";
+            html += "</div>";
+            html += "<input type='button' id='board-control-form-close' class='btn-03' value='Voltar'/>";
+            html += "<input type='button' id='board-add-form-submit' class='btn-01' value='Adicionar'/>";
+            html += "</div>";
+            $("#board-wrap").html(html);
+            $("#board-add-form-submit").die().live("click", function () {
+                var nome = $("input[name='board-name']").val();
+                if (nome === "") {
+                    self.loadBoardControlFormErrorMessage("O campo nome é obrigatório.");
+                    return;
+                }
+                $.ajax({
+                    url: self.root + "/boards",
+                    data: {
+                        mode: "create_new_board",
+                        nome: nome
+                    },
+                    success: function (data) {
+                        data = eval("( " + data + " )");
+                        if (data.success === "true") {
+                            self.removeBoardControlFormErrorMessage();
+                            self.loadUserBoard();
+                            self.loadBoardsBoxes();
+                        } else {
+                            self.loadBoardControlFormErrorMessage(data.error);
+                        }
+                    }
+                });
+            });
+        }
+    };
+
+    this.loadBoardControlFormErrorMessage = function (message) {
+        if ($(".error-message").length !== 0)
+            $(".error-message").remove();
+        $("#board-wrap").append("<div class='error-message'>" + message + "</div>");
+    };
+
+    this.removeBoardControlFormErrorMessage = function (message) {
+        if ($(".error-message").length !== 0)
+            $(".error-message").remove();
+        $("#board-wrap").append("<div class='error-message'>" + message + "</div>");
     };
 
     this.loadBoardsBoxes = function () {
@@ -32,10 +142,12 @@ boardInterface = function () {
                 mode: "load_boards_boxes"
             },
             success: function (data) {
-                alert('a');
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    
+                    $("#board-select").html('<option value="select">Selecione uma Board</option>');
+                    $.each(data.boards, function (idx, board) {
+                        $("#board-select").append("<option value='" + board.id + "'>" + board.nome + "</option>");
+                    });
                 }
             }
         });
@@ -44,34 +156,38 @@ boardInterface = function () {
     this.loadUserBoard = function () {
         var self = this;
         $.ajax({
-            url: self.root + "/diretorias",
+            url: self.root + "/boards",
             data: {
                 mode: "load_user_board"
             },
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    var html = "<div class='container' board='" + data.board.id + "'>";
-                    html += "<div class='title'>" + data.board.nome + "</div>";
-                    html += "<div class='controllers'></div>";
-                    html += "<div class='tasks'><div class='subtitle'>Tarefas</div>";
-                    if (data.board.is_member === true) {
-                        html += "<div class='task-add-button' board='" + data.board.id + "'>Add Tarefa</div>";
-                    }
-                    html += "<section></section></div>";
-                    html += "<div class='members'><div class='subtitle'>Integrantes</div><section></section></div>";
-                    html += "<div class='clear'></div>";
-                    html += "</div>";
-                    $("#board-wrap").html(html);
-                    self.loadBoardTasks(data.board.id);
-                    self.loadBoardMembers(data.board.id);
-                    if (data.board.is_member === true) {
-                        self.bindAddTask(data.board.id);
-                    }
+                    $("#board-wrap").html(data.html);
+                    sideMenuHeightFix()
+
                 }
             }
         });
     };
+
+    this.loadBoardThreads = function (board_id, status) {
+        var self = this;
+        $.ajax({
+            url: self.root + "/boards",
+            data: {
+                mode: "load_board_threads",
+                id: board_id,
+                status: status
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                }
+            }
+        });
+    };
+
 
 
     this.bindAddTask = function (board_id) {
@@ -135,8 +251,11 @@ boardInterface = function () {
 
     this.bindBoardSelection = function () {
         var self = this;
-        $("#board-list-wrap .item").die().live("click", function () {
-            var id = $(this).attr("diretoria");
+        $("#board-select").bind("change", function () {
+            var id = $(this).val();
+            if (isNaN(id)) {
+                return;
+            }
             $.ajax({
                 url: self.root + "/diretorias",
                 data: {
@@ -153,65 +272,6 @@ boardInterface = function () {
         });
     };
 
-    this.loadBoardTasks = function (board_id) {
-        var self = this;
-        $.ajax({
-            url: self.root + "/diretorias",
-            data: {
-                mode: "load_board_tasks",
-                id: board_id
-            },
-            success: function (data) {
-                data = eval("( " + data + " )");
-                if (data.success === "true") {
-                    var html = "";
-                    $.each(data.tasks, function (index, task) {
-                        html += "<div class='task' task='" + task.id + "'>";
-                        html += "<div class='prioridade pri-" + task.prioridade + "'>";
-                        if (task.data_vencimento !== null) {
-                            html += "Vencimento em " + task.data_vencimento;
-                        }
-                        html += "</div>";
-                        html += "<div class='main'>";
-                        html += task.titulo;
-                        html += "<div class='date'>" + task.data_criacao + "</div>";
-                        html += "</div>";
-                        html += "<summary>" + task.descricao + "</summary>";
-                        html += "</div>";
-                        if ((index + 1) % 3 === 0) {
-                            html += "<div class='clear'></div>";
-                        }
-                    });
-
-                    $("#board-wrap .tasks section").html(html);
-                    $("#board-wrap .tasks .task").die().live("click", function () {
-                        self.loadTask($(this).attr("task"));
-                    });
-                }
-            }
-        });
-    };
-
-    this.loadBoardMembers = function (board_id) {
-        var self = this;
-        $.ajax({
-            url: self.root + "/diretorias",
-            data: {
-                mode: "load_board_members",
-                id: board_id
-            },
-            success: function (data) {
-                data = eval("( " + data + " )");
-                if (data.success === "true") {
-                    var html = "";
-                    $.each(data.users, function (index, member) {
-                        html += "<a href='" + self.root + "/cliente/" + member.id + "'><div class='member'>" + member.nome + "</div></a>";
-                    });
-                    $("#board-wrap .members section").html(html);
-                }
-            }
-        });
-    };
 
     this.loadTask = function (task_id) {
         var self = this;
@@ -266,122 +326,4 @@ boardInterface = function () {
         });
     };
 
-    this.bindChangeTaskStatus = function () {
-        var self = this;
-        $(".button-archive").die().live("click", function () {
-            var id = parseInt($(this).attr('task'));
-            $.ajax({
-                url: self.root + "/diretorias",
-                data: {
-                    mode: "change_task_status",
-                    id: id
-                },
-                success: function (data) {
-                    data = eval("( " + data + " )");
-                    if (data.success === "true") {
-                        console.log("changed");
-                    }
-                }
-            });
-        });
-    };
-
-    this.bindEditTask = function () {
-        var self = this;
-        $(".button-edit").die().live("click", function () {
-            var id = parseInt($(this).attr('task'));
-            $.ajax({
-                url: self.root + "/diretorias",
-                data: {
-                    mode: "load_task",
-                    id: id
-                },
-                success: function (data) {
-                    data = eval("( " + data + " )");
-                    if (data.success === "true") {
-                        var vencimento_string;
-                        if (data.task.data_vencimento_uf !== null) {
-                            vencimento_string = data.task.data_vencimento_uf.split(" ");
-                            vencimento_string = vencimento_string[0].split("-");
-                            vencimento_string = vencimento_string[2] + "/" + vencimento_string[1] + "/" + vencimento_string[0];
-                        } else
-                        {
-                            vencimento_string = "";
-                        }
-
-                        var html = "<div class='ajax-box-title'>Editar Tarefa</div>";
-                        html += "<div id='task-edit-form'>";
-                        html += "<input type='hidden' name='task-id' value='" + data.task.id + "' />";
-                        html += "<div class='item'>";
-                        html += "<label>Título</label>";
-                        html += "<input type='text' value='"+data.task.titulo+"' name='task-titulo' placeholder='Título' />";
-                        html += "</div>";
-                        html += "<div class='item'>";
-                        html += "<label>Prioridade</label>";
-                        html += "<select name='task-prioridade'>";
-                        for (var i = 0; i <= 3; i++) {
-                            html += "<option value='" + i + "' ";
-                            if (parseInt(data.task.prioridade) === i)
-                                html += " selected";
-                            html += ">";
-                            switch (parseInt(i)) {
-                                case 3:
-                                    html += "Alta Prioridade";
-                                    break;
-                                case 2:
-                                    html += "Média Prioridade";
-                                    break;
-                                case 1:
-                                    html += "Baixa Prioridade";
-                                    break;
-                                default:
-                                    html += "Sem Prioridade";
-                                    break;
-                            }
-                            html += "</option>";
-                        }
-                        html += "</select>";
-                        html += "</div>";
-                        html += "<div class='item'>";
-                        html += "<label>Vencimento</label>";
-                        html += "<input type='date' value='' name='task-vencimento' placeholder='Vencimento (Opcional)' />";
-                        html += "</div>";
-                        html += "<div class='item'>";
-                        html += "<label>Descrição</label>";
-                        html += "<textarea name='task-desc'>" + data.task.descricao_nl + "</textarea>";
-                        html += "</div>";
-                        html += "<input type='button' class='btn-01' value='Editar' name='submit' id='task-edit-button' />";
-                        html += "<input type='button' class='btn-03 ajax-close-box' value='Fechar' name='submit' id='task-edit-button' />";
-                        html += "</div>";
-                        loadAjaxBox(html);
-                        $("input[name='task-vencimento']").mask("99/99/9999").val(vencimento_string);
-                        $("#task-edit-button").die().live("click", function () {
-                            var id = parseInt($("input[name='task-id']").val());
-                            var titulo = $("input[name='task-titulo']").val();
-                            var vencimento = $("input[name='task-vencimento']").val();
-                            var prioridade = $("select[name='task-prioridade']").val();
-                            var desc = $("textarea[name='task-desc']").val();
-                            $.ajax({
-                                url: self.root + "/diretorias",
-                                data: {
-                                    mode: "board_edit_task",
-                                    titulo: titulo,
-                                    vencimento: vencimento,
-                                    prioridade: prioridade,
-                                    desc: desc,
-                                    id: id
-                                },
-                                success: function (data) {
-                                    data = eval("( " + data + " )");
-                                    if (data.success === "true") {
-                                        self.loadTask(data.task);
-                                    }
-                                }
-                            });
-                        });
-                    }
-                }
-            });
-        });
-    };
 };
