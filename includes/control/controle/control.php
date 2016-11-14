@@ -442,13 +442,13 @@ class controlController {
             if ($user_info['tipo'] <= 1) {
                 switch ($forma_pagamento) {
                     case 1:
-                        $max_parcelas = 3;
+                        $max_parcelas = 4;
                         break;
                     case 2:
                         $max_parcelas = 1;
                         break;
                     case 3:
-                        $max_parcelas = 3;
+                        $max_parcelas = 4;
                 }
             } else {
                 $max_parcelas = 12;

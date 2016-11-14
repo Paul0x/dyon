@@ -3,12 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/dyon/js/board.js</file>
-            <file>file:/C:/wamp/www/dyon/includes/interface/templates/board/threads_load.twig</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/evento/lotes.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/api/api.php</file>
             <file>file:/C:/wamp/www/dyon/includes/control/board/thread.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/control/board/board.php</file>
-            <file>file:/C:/wamp/www/dyon/css/core.css</file>
-            <file>file:/C:/wamp/www/dyon/includes/interface/templates/board/board_load.twig</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/controle/control.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/evento/events.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/system/config.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/evento/pacotes.php</file>
         </group>
     </open-files>
 </project-private>

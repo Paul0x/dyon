@@ -75,7 +75,7 @@ class threadController {
         }
         $thread['post'] = nl2br($thread['post']);
         $datetime2 = new DateTime($thread['data_criacao']);
-        $thread['data_criacao'] = $datetime->format("d/m/Y \à\s h:i");
+        $thread['data_criacao'] = $datetime2->format("d/m/Y \à\s h:i");
 
         $usercontroller = new userController();
         $user = $usercontroller->getUser(5);

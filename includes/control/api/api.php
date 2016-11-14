@@ -233,7 +233,7 @@ class apiController {
             $user = $usercontroller->getUser();
             $data = $data['data'];
             $pacote = Array(
-                "evento" => 1,
+                "evento" => 2,
                 "lote" => $data['lote']['id'],
                 "desconto" => 0,
                 "cliente" => $user->getId(),
