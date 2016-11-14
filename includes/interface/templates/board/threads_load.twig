@@ -1,0 +1,27 @@
+{% for thread in board.threads %}
+    <a href="#"><div class="thread" id="{{ thread.id }}" tipo="{{thread.tipo}}" prioridade="{{thread.prioridade}}">
+            <div class="content">
+                <div class="title">{{ thread.titulo }} <i class="fa fa-reply" aria-hidden="true"></i>
+                </div>
+                <div class="info">0 respostas - criado por {{ thread.nome_usuario }} em {{ thread.data_criacao }}</div>
+            </div>
+            <div class="controls">
+                {% if thread.tipo == 0 %}
+                    <div class="status-info tipo-discussao">Discussão</div>
+                {% elseif thread.tipo == 1 %}
+                    <div class="status-info tipo-tarefa">Tarefa</div>
+                {% endif %}
+                {% if thread.prioridade == 0%}
+                    <div class="status-info prioridade-baixa">Prioridade Normal</div>
+                {% elseif thread.prioridade == 1 %}
+                    <div class="status-info prioridade-media"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Prioridade Média</div>
+                {% elseif thread.prioridade == 2 %}
+                    <div class="status-info prioridade-alta"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Prioridade Alta</div>
+                {% endif %}
+                {% if thread.status == 0 %}
+                    <div class="status-info status-archived">Arquivado</div>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+{% endfor %}

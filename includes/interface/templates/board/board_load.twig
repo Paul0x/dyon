@@ -2,40 +2,17 @@
     <div class="title">{{ board.nome }}</div>
     <div class="controls">
         <input type="hidden" value="{{ board.id }}" id="board-id-ref" />
-        <div class="control" ref="add-discussion">CRIAR DISCUSSÃO</div>
-        <div class="control" ref="add-task">CRIAR TAREFA</div>
+        <div class="control"  id="add-thread">CRIAR THREAD</div>
         <div class="control control-right" id="board-control-rename" ref="archived-switch" title="Renomear Board"><i class="fa fa-cog" aria-hidden="true"></i></div>
-        <div class="control control-right" ref="archived-switch" title="Ver Arquivo"><i class="fa fa-trash" aria-hidden="true"></i></div>
-        <div class="control control-right" ref="view-by-type" title="Visualização por Tipo"><i class="fa fa-columns" aria-hidden="true"></i></div>
-        <div class="control control-right selected-view" ref="view-by-list" title="Visualização em Lista"><i class="fa fa-list-alt" aria-hidden="true"></i></div>
+        <div class="control control-right" id="board-control-archive" ref="archived-switch" title="Ver Arquivo"><i class="fa fa-trash" aria-hidden="true"></i></div>
+        <div class="control control-right" id="board-control-switch-view" ref="view-by-type" title="Visualização por Tipo"><i class="fa fa-columns" aria-hidden="true"></i></div>
+
     </div>
 </div>
 <div class="threads-wrap">
     {% if board.no_thread %}
         <div class="no-thread">Seja o primeiro a começar uma discussão ou delegar uma tarefa.</div>
     {% else %}
-        {% for thread in board.threads %}
-            <div class="thread" id="{{ thread.id }}" tipo="{{thread.tipo}}" prioridade="{{thread.prioridade}}">
-                <div class="content">
-                    <div class="title">{{ thread.titulo }} <i class="fa fa-reply" aria-hidden="true"></i>
-</div>
-                    <div class="info">0 respostas - criado por {{ thread.nome_usuario }} em {{ thread.data_criacao }}</div>
-                </div>
-                <div class="controls">
-                    {% if thread.tipo == 0 %}
-                        <div class="status-info tipo-discussao">Discussão</div>
-                    {% elseif thread.tipo == 1 %}
-                        <div class="status-info tipo-tarefa">Tarefa</div>
-                    {% endif %}
-                    {% if thread.prioridade == 0%}
-                        <div class="status-info prioridade-baixa">Prioridade Normal</div>
-                    {% elseif thread.prioridade == 1 %}
-                        <div class="status-info prioridade-media"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Prioridade Média</div>
-                    {% elseif thread.prioridade == 2 %}
-                        <div class="status-info prioridade-alta"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Prioridade Alta</div>
-                    {% endif %}
-                </div>
-            </div>
-        {% endfor %}
+        {% include "board/threads_load.twig" %}
     {% endif %}
 </div>

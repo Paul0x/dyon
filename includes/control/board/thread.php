@@ -36,18 +36,14 @@ class threadController {
             throw new Exception("Status da thread indefinido.");
         }
 
-        $query = "SELECT t.id, t.id_board, t.id_usuario, t.titulo, t.post, t.data_vencimento, t.data_criacao, t.prioridade, t.status, t.tipo, t.info, u.nome as 'nome_usuario' FROM thread t INNER JOIN usuario u ON t.id_usuario = u.id WHERE  id_board = $board_id AND  status = $status ORDER BY prioridade DESC, data_criacao DESC LIMIT 0, 25";
-        $threads = $this->conn->freeQuery($query,true,true,PDO::FETCH_ASSOC);
+        $query = "SELECT t.id, t.id_board, t.id_usuario, t.titulo, t.data_vencimento, t.data_criacao, t.prioridade, t.status, t.tipo, t.info, u.nome as 'nome_usuario' FROM thread t INNER JOIN usuario u ON t.id_usuario = u.id WHERE  id_board = $board_id AND  status = $status ORDER BY prioridade DESC, data_criacao DESC LIMIT 0, 25";
+        $threads = $this->conn->freeQuery($query, true, true, PDO::FETCH_ASSOC);
         if (!$threads) {
             throw new Exception("Nenhuma thread encontrada nessa board.");
         }
 
         foreach ($threads as $index => $thread) {
-            $breaks = array("<br />", "<br>", "<br/>");
-            $thread['post'] = str_ireplace($breaks, "\r\n", $thread['post']);
-            if (strlen($thread['post']) > 100) {
-                $threads[$index]['post'] = substr($thread['post'], 0, 300) . "...";
-            }
+
             if ($thread['data_vencimento']) {
                 $datetime = new DateTime($thread['data_vencimento']);
                 $threads[$index]['data_vencimento'] = $datetime->format("d/m/Y");
@@ -64,22 +60,22 @@ class threadController {
             throw new Exception("Identificador da thread é inválido.");
         }
 
-        $fields = array("id", "id_board", "id_usuario", "titulo", "descricao", "data_vencimento", "data_criacao", "prioridade", "status");
+        $fields = array("id", "id_board", "id_usuario", "titulo", "post", "data_vencimento", "data_criacao", "prioridade", "status", "info", "tipo");
         $this->conn->prepareselect("thread", $fields, "id", $thread_id);
         if (!$this->conn->executa() || $this->conn->rowcount != 1) {
             throw new Exception("Nenhuma thread encontrada.");
         }
 
         $thread = $this->conn->fetch;
-        $thread['descricao_nl'] = $thread['descricao'];
+        $thread['post_nl'] = $thread['post'];
         $thread['data_vencimento_uf'] = $thread['data_vencimento'];
         if ($thread['data_vencimento']) {
             $datetime = new DateTime($thread['data_vencimento']);
             $thread['data_vencimento'] = $datetime->format("d/m/Y");
         }
-        $thread['descricao'] = nl2br($thread['descricao']);
+        $thread['post'] = nl2br($thread['post']);
         $datetime2 = new DateTime($thread['data_criacao']);
-        $thread['data_criacao'] = $datetime2->format("d/m/Y");
+        $thread['data_criacao'] = $datetime->format("d/m/Y \à\s h:i");
 
         $usercontroller = new userController();
         $user = $usercontroller->getUser(5);
@@ -90,8 +86,7 @@ class threadController {
             $user_thread = $usercontroller->getUser(0, false);
             $user_thread->setId($thread['id_usuario']);
             $user_thread->setInfo();
-            $userinfo = $user_thread->getBasicInfo();
-            $thread['usuario'] = $userinfo['nome'];
+            $thread['user'] = $user_thread->getBasicInfo();
         } catch (Exception $ex) {
             throw new Exception("Criador da thread não encontrado.");
         }
@@ -170,22 +165,17 @@ class threadController {
         return $thread_old['id'];
     }
 
-    public function changeThreadStatus($thread_id) {
-        $thread = $this->loadThread($thread_id);
-        if ($thread['is_owner'] == false) {
-            throw new Exception("O usuário não tem permissão para alterar o status da thread.");
+    public function getThreadReplys($thread_id) {
+        if (!is_numeric($thread_id)) {
+            throw new Exception("O identificador da thread é inválido.");
         }
-
-        if ($thread['status'] == 1) {
-            $new_status = 0;
-        } else {
-            $new_status = 1;
+        try {
+            $commentcontroller = new commentsController();
+            $replys = $commentcontroller->listComments(6, $thread_id);
+        } catch (Exception $ex) {
+            return false;
         }
-
-        $this->conn->prepareupdate($new_status, "status", "thread", $thread_id, "id", "INT");
-        if (!$this->conn->executa()) {
-            throw new Exception("Não foi possível alterar o status da thread.");
-        }
+        return $replys;
     }
 
 }

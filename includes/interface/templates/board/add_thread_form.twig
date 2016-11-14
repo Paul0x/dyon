@@ -1,0 +1,46 @@
+<div class="add-thread-form form-edit-infos">
+    <div class="header">Adicionar Thread</div>
+    <div class="column-1">
+        <div class="item">            
+            <label>Título</label>
+            <input type="text" name="titulo"/>
+        </div>
+        <div class="item">
+            <label>Conteúdo</label>
+            <textarea rows="15" name="post"></textarea>
+        </div>
+        <div class="item">
+            <input type="button" value="Criar Thread" class="btn-01" id="add-thread-submit"/> 
+        </div>
+    </div>
+    <div class="column-2">
+        <div class="item">
+            <label>Tipo da Thread</label>
+            <select name="tipo">
+                <option value="0">Discussão</option>
+                <option value="1">Tarefa</option>
+            </select>
+        </div>
+        <div class="item">
+            <label>Prioridade</label>
+            <select name="prioridade">
+                <option value="0">Prioridade Normal</option>
+                <option value="1">Prioridade Média</option>
+                <option value="2">Prioridade Alta</option>
+            </select>
+        </div>
+        <div class="item">
+            <label>Anexos</label>
+            <div id="attachment-files-list">
+                <input type="file" name="anexo[]" />
+            </div>
+            <div class="add-more-files"><i class="fa fa-plus" aria-hidden="true"></i> ADICIONAR MAIS ARQUIVOS</div>
+        </div>
+        <div class="item">
+            <label>Extra</label>
+            <div class="extra-fields" id="add-create-checklist">Criar Checklist</div>
+            <div class="extra-fields" id="add-expiring-date">Atribuir Data de Vencimento</div>
+            <div class="extra-fields" id="add-status-system">Sistema de Status</div>
+        </div>
+    </div>
+</div>

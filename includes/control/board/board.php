@@ -22,6 +22,7 @@ require_once("includes/sql/sqlcon.php");
 require_once("includes/control/usuario/users.php");
 require_once("includes/lib/Twig/Autoloader.php");
 require_once("includes/control/board/thread.php");
+require_once("includes/control/comentario/comments.php");
 
 class boardController {
 
@@ -30,6 +31,19 @@ class boardController {
      */
     public function __construct() {
         $this->conn = new conn();
+    }
+
+    private function loadAddThreadForm() {
+        $form_type = filter_input(INPUT_POST, "thread_type", FILTER_VALIDATE_INT);
+        Twig_Autoloader::register();
+        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+        $this->twig = new Twig_Environment($this->twig_loader);
+        if ($form_type == 0) {
+            $html = $this->twig->render("board/add_thread_form.twig", Array("config" => config::$html_preload));
+        } else {
+            $html = $this->twig->render("board/add_task_form.twig", Array("config" => config::$html_preload));
+        }
+        echo json_encode(array("success" => "true", "html" => $html));
     }
 
     private function createBoard($name = false) {
@@ -54,7 +68,7 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function renameBoard($name = false, $board_id = false) {
         try {
             if (!$name) {
@@ -70,7 +84,7 @@ class boardController {
                 throw new Exception("Identificador da board inválido.");
             }
             $instance = $this->user->getUserInstance();
-            $this->conn->prepareupdate($name, "nome", "board", array($board_id,$instance['id']), array("id","id_instancia"), "STR");
+            $this->conn->prepareupdate($name, "nome", "board", array($board_id, $instance['id']), array("id", "id_instancia"), "STR");
             if (!$this->conn->executa()) {
                 throw new Exception("Não foi possível criar a board.");
             }
@@ -186,6 +200,21 @@ class boardController {
         }
     }
 
+    private function loadBoardThreadsInterface() {
+        try {
+            $board_id = filter_input(INPUT_POST, "board_id", FILTER_VALIDATE_INT);
+            $status = filter_input(INPUT_POST, "status", FILTER_VALIDATE_INT);
+            $board['threads'] = $this->loadBoardThreads($board_id, $status);
+            Twig_Autoloader::register();
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig = new Twig_Environment($this->twig_loader);
+            $html = $this->twig->render("board/threads_load.twig", Array("config" => config::$html_preload, "board" => $board));
+            echo json_encode(array("success" => "true", "html" => $html));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
+
     private function loadBoardMembers() {
         try {
             $board_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
@@ -206,61 +235,17 @@ class boardController {
 
     private function loadThread() {
         try {
+            Twig_Autoloader::register();
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig = new Twig_Environment($this->twig_loader);
             $thread_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             $usercontroller = new userController();
             $user = $usercontroller->getUser(5);
             $threadcontroller = new threadController($this->conn);
             $thread = $threadcontroller->loadThread($thread_id);
-            echo json_encode(array("success" => "true", "thread" => $thread));
-        } catch (Exception $ex) {
-            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
-        }
-    }
-
-    private function addThread() {
-        try {
-            $thread['board_id'] = filter_input(INPUT_POST, "board", FILTER_VALIDATE_INT);
-            $thread['titulo'] = filter_input(INPUT_POST, "titulo", FILTER_SANITIZE_SPECIAL_CHARS);
-            $thread['vencimento'] = filter_input(INPUT_POST, "vencimento", FILTER_SANITIZE_SPECIAL_CHARS);
-            $thread['desc'] = filter_input(INPUT_POST, "desc", FILTER_SANITIZE_SPECIAL_CHARS);
-            $thread['prioridade'] = filter_input(INPUT_POST, "prioridade", FILTER_VALIDATE_INT);
-            $usercontroller = new userController();
-            $user = $usercontroller->getUser(5);
-            $thread['user_id'] = $user->getId();
-
-            if (!$this->isBoardMember($user->getId(), $thread['board_id']) && $user->getPermission() != 10) {
-                throw new Exception("O usuário não tem permissão para adicionar tarefas na board.");
-            }
-
-            $threadcontroller = new threadController($this->conn);
-            $threadcontroller->addThread($thread);
-            echo json_encode(array("success" => "true"));
-        } catch (Exception $ex) {
-            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
-        }
-    }
-
-    private function editThread() {
-        try {
-            $thread['thread_id'] = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
-            $thread['titulo'] = filter_input(INPUT_POST, "titulo", FILTER_SANITIZE_SPECIAL_CHARS);
-            $thread['vencimento'] = filter_input(INPUT_POST, "vencimento", FILTER_SANITIZE_SPECIAL_CHARS);
-            $thread['desc'] = filter_input(INPUT_POST, "desc", FILTER_SANITIZE_SPECIAL_CHARS);
-            $thread['prioridade'] = filter_input(INPUT_POST, "prioridade", FILTER_VALIDATE_INT);
-            $threadcontroller = new threadController($this->conn);
-            $id = $threadcontroller->editThread($thread);
-            echo json_encode(array("success" => "true", "thread" => $id));
-        } catch (Exception $ex) {
-            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
-        }
-    }
-
-    private function changeThreadStatus() {
-        try {
-            $thread_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
-            $threadcontroller = new threadController($this->conn);
-            $threadcontroller->changeThreadStatus($thread_id);
-            echo json_encode(array("success" => "true"));
+            $thread['replys'] = $threadcontroller->getThreadReplys($thread['id']);
+            $html = $this->twig->render("board/main_thread.twig", Array("config" => config::$html_preload, "thread" => $thread, "user" => $this->user->getBasicInfo()));
+            echo json_encode(array("success" => "true", "thread" => $thread, "html" => $html ));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
@@ -289,6 +274,9 @@ class boardController {
                     case "load_board_members":
                         $this->loadBoardMembers();
                         break;
+                    case "load_boad_threads":
+                        $this->loadBoardThreadsInterface();
+                        break;
                     case "load_thread":
                         $this->loadThread();
                         break;
@@ -306,6 +294,9 @@ class boardController {
                         break;
                     case "rename_board":
                         $this->renameBoard();
+                        break;
+                    case "add_thread_form":
+                        $this->loadAddThreadForm();
                         break;
                 }
             }

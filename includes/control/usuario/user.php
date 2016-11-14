@@ -34,9 +34,9 @@
  */
 
 /* Bibliotecas necessárias para funcionamento da classe */
-require_once(config::$syspath."includes/sql/sqlcon.php");
-require_once(config::$syspath."includes/lib/imagemanager.php");
-require_once(config::$syspath."includes/control/instancia/instances.php");
+require_once(config::$syspath . "includes/sql/sqlcon.php");
+require_once(config::$syspath . "includes/lib/imagemanager.php");
+require_once(config::$syspath . "includes/control/instancia/instances.php");
 
 define("DYON_USER_ADMIN", 5);
 define("DYON_USER_CLIENTE", 1);
@@ -105,7 +105,7 @@ class user {
         if ($this->id == "") {
             throw new Exception("Usuário inexistente.", 201);
         }
-        $campos_sql = array("nome", "sexo", "cidade", "estado", "senha", "email", "tipo", "rg", "data_criacao");
+        $campos_sql = array("nome", "sexo", "cidade", "estado", "senha", "email", "tipo", "rg", "data_criacao", "image");
         $this->conn->prepareselect("usuario", $campos_sql, "id", $this->id);
         if (!$this->conn->executa()) {
             if ($this->conn->rowcount == 0) {
@@ -123,6 +123,11 @@ class user {
         $this->rg = $infos["rg"];
         $this->data_criacao = $infos['data_criacao'];
         $this->tipo = $infos["tipo"];
+        if ($infos["image"]) {
+            $this->image = $infos["image"];
+        } else {
+            $this->image = "noimage.jpg";
+        }
         $this->is_auth = true;
 
         if ($this->tipo >= DYON_USER_ADMIN) {
@@ -168,6 +173,7 @@ class user {
         $infos["evento_padrao"] = $this->admin_info["evento_padrao"];
         $infos["nome_instancia"] = $this->instance["nome"];
         $infos["id_instancia"] = $this->instance["id"];
+        $infos["image"] = $this->image;
 
         return $infos;
     }
@@ -596,9 +602,9 @@ class user {
             if ($instance['id'] == $instance_id) {
                 $this->instance = $instance;
                 $this->admin_info = $instance["user_info"];
-                
+
                 $instancecontroller = new instanceController();
-                $instancecontroller->setDefaultInstance($this,$this->instance);
+                $instancecontroller->setDefaultInstance($this, $this->instance);
                 $changed = true;
             }
         }

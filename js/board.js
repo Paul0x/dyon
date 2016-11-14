@@ -31,12 +31,185 @@ boardInterface = function () {
         $("#board-add-board").bind("click", function () {
             self.loadAddBoardForm();
         });
+
         $("#board-control-form-close").die().live("click", function () {
             self.loadUserBoard();
         });
+
         $("#board-control-rename").die().live("click", function () {
             self.loadRenameBoardForm();
         });
+
+        $("#board-control-archive").die().live("click", function () {
+            self.switchThreadStatusView();
+        });
+
+        $("#board-control-switch-view").die().live("click", function () {
+            self.switchThreadView();
+        });
+
+        $("#add-thread").die().live("click", function () {
+            self.loadAddThreadForm(0);
+        });
+
+        $("#board-wrap .thread").die().live("click", function () {
+            self.loadThread(this);
+        });
+    };
+
+    this.loadThread = function (thread) {
+        var self = this;
+        var id = parseInt($(thread).attr("id"));
+        $.ajax({
+            url: self.root + "/boards",
+            data: {
+                mode: "load_thread",
+                id: id
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#board-wrap .threads-wrap").html(data.html);
+                    self.loadBackButton();
+                } else {
+                }
+            }
+        });
+    };
+
+    this.loadAddThreadForm = function (thread_type) {
+        var self = this;
+        if (thread_type !== 1 && thread_type !== 0) {
+            return;
+        }
+
+        $.ajax({
+            url: self.root + "/boards",
+            data: {
+                mode: "add_thread_form",
+                thread_type: thread_type
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#board-wrap .threads-wrap").html(data.html);
+                    self.initAddThreadForm();
+
+                } else {
+                    self.loadBoardControlFormErrorMessage(data.error);
+                }
+            }
+        });
+
+    };
+
+    this.initAddThreadForm = function () {
+        var self = this;
+        $(".add-thread-form .add-more-files").die().live("click", function () {
+            self.addMoreLinksThreadForm();
+        });
+
+        self.loadBackButton();
+    };
+
+    this.loadBackButton = function () {
+        var self = this;
+        if (!$("#thread-add-backbutton").length) {
+            $("#add-thread").css("display", "none");
+            $(".board-header .control-right").css("display", "none");
+            $("#add-thread").after("<div class='control' id='thread-add-backbutton'>Voltar</div>");
+            $("#thread-add-backbutton").die().live("click", function () {
+                self.loadUserBoard();
+                $(".board-header .control-right").css("display", "block");
+                $("#add-thread").css("display", "block");
+                $(this).remove();
+            });
+        }
+    };
+
+    this.addMoreLinksThreadForm = function () {
+        var self = this;
+        $("#attachment-files-list").append("<input type='file' name='anexo[]' />");
+        var num_files = $("#attachment-files-list input").length;
+        if (num_files >= 10) {
+            $(".add-thread-form .add-more-files").die().html("LIMITE DE ARQUIVOS POR THREAD ALCANÇADO");
+        }
+    };
+
+    this.updateThreadObjects = function () {
+        var self = this;
+        self.viewstyle = 'list';
+        self.threads_list = $(".threads-wrap .thread");
+        self.threads_column = new Object();
+        self.threads_column.tasks = new Array();
+        self.threads_column.discussions = new Array();
+        $.each(self.threads_list, function (idx, thread) {
+            if (parseInt($(thread).attr("tipo")) === 0) {
+                self.threads_column.discussions.push(thread);
+            } else {
+                self.threads_column.tasks.push(thread);
+            }
+        });
+    }
+    this.switchThreadView = function () {
+        var self = this;
+        if (self.viewstyle === undefined || self.viewstyle === 'list') {
+            self.viewstyle = 'column';
+            $("#board-control-switch-view").html('<i class="fa fa-list-alt" aria-hidden="true"></i>').attr("title", "Visualizar por Lista");
+            var html = "<div class='column-50 discussion-threads-wrap'>";
+            html += "<div class='title'>Discussões</div>";
+            if (self.threads_column.discussions.length > 0) {
+                $.each(self.threads_column.discussions, function (idx, thread) {
+                    html += thread.outerHTML;
+                });
+            } else {
+                html += "<div class='no-thread'>Nenhuma Thread Encontrada</div>";
+            }
+            html += "</div>";
+            html += "<div class='column-50 task-threads-wrap'>";
+            html += "<div class='title'>Tarefas</div>";
+            if (self.threads_column.tasks.length > 0) {
+                $.each(self.threads_column.tasks, function (idx, thread) {
+                    html += thread.outerHTML;
+                });
+            } else {
+                html += "<div class='no-thread'>Nenhuma Thread Encontrada</div>";
+            }
+            html += "</div>";
+            $(".threads-wrap").html(html);
+        } else {
+            self.viewstyle = 'list';
+            $("#board-control-switch-view").html('<i class="fa fa-columns" aria-hidden="true"></i>').attr("title", "Visualizar por Tipo");
+            var html = "";
+            if (self.threads_list.length > 0) {
+                $.each(self.threads_list, function (idx, thread) {
+                    html += thread.outerHTML;
+                });
+            } else {
+                html += "<div class='no-thread'>Nenhuma Thread Encontrada</div>";
+            }
+            $(".threads-wrap").html(html);
+
+        }
+
+
+
+
+    };
+
+    this.switchThreadStatusView = function () {
+        var self = this;
+        var board_id = $("#board-id-ref").val();
+        if (self.statusview === undefined || self.statusview === 1) {
+            self.statusview = 0;
+            $("#board-control-archive").html('<i class="fa fa-check" aria-hidden="true"></i>').attr("title", "Ver Ativos");
+        } else {
+            self.statusview = 1;
+            $("#board-control-archive").html('<i class="fa fa-trash" aria-hidden="true"></i>').attr("title", "Ver Arquivo");
+        }
+
+        self.loadBoardThreads(board_id, self.statusview);
+
     };
 
     this.loadRenameBoardForm = function () {
@@ -51,7 +224,7 @@ boardInterface = function () {
         html += "<input type='text' name='board-name' value='" + board_name + "'/>";
         html += "</div>";
         html += "<input type='button' id='board-control-form-close' class='btn-03' value='Voltar'/>";
-        html += "<input type='button' id='board-rename-form-submit' class='btn-01' value='Adicionar'/>";
+        html += "<input type='button' id='board-rename-form-submit' class='btn-01' value='Renomear'/>";
         html += "</div>";
         $("#board-wrap").html(html);
         $("#board-rename-form-submit").die().live("click", function () {
@@ -164,7 +337,8 @@ boardInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap").html(data.html);
-                    sideMenuHeightFix()
+                    sideMenuHeightFix();
+                    self.updateThreadObjects();
 
                 }
             }
@@ -176,75 +350,24 @@ boardInterface = function () {
         $.ajax({
             url: self.root + "/boards",
             data: {
-                mode: "load_board_threads",
-                id: board_id,
+                mode: "load_boad_threads",
+                board_id: board_id,
                 status: status
             },
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                }
-            }
-        });
-    };
+                    $("#board-wrap .threads-wrap").html(data.html);
+                    self.updateThreadObjects();
+                } else {
+                    if (status === 1) {
+                        $("#board-wrap .threads-wrap").html("<div class='no-thread'>Nenhuma Thread Encontrada</div>");
+                    } else {
+                        $("#board-wrap .threads-wrap").html("<div class='no-thread'>Nenhuma Thread Arquivada</div>");
 
-
-
-    this.bindAddTask = function (board_id) {
-        var self = this;
-        $(".task-add-button").die().live("click", function () {
-            if ($("#task-add-form").length === 0) {
-                var html = "<div id='task-add-form'>";
-                html += "<input type='text' placeholder='Insira o título da tarefa' name='task-titulo' />";
-                html += "<input type='text' placeholder='Data de Vencimento (Opcional)' name='task-vencimento' id='task-vencimento-input' />";
-                html += "<select name='task-prioridade'>";
-                html += "<option value=''>Prioridade</option>";
-                html += "<option value='1'>Baixa</option>";
-                html += "<option value='2'>Média</option>";
-                html += "<option value='3'>Alta</option>";
-                html += "<option value='0'>Nenhuma</option>";
-                html += "</select>";
-                html += "<textarea placeholder='Insira a descrição da tarefa' name='task-desc'></textarea>";
-                html += "<input type='button' class='btn-01' id='add-task-submit' board='" + board_id + "' value='Adicionar' />";
-                html += "</div>";
-                $(".task-add-button").after(html);
-                $("#task-vencimento-input").mask("99/99/9999");
-                $("#add-task-submit").die().live("click", function () {
-                    var titulo = $("input[name='task-titulo']").val();
-                    var vencimento = $("input[name='task-vencimento']").val();
-                    var prioridade = $("select[name='task-prioridade']").val();
-                    var desc = $("textarea[name='task-desc']").val();
-                    var board = parseInt($(this).attr('board'));
-
-                    if (isNaN(board)) {
-                        return;
                     }
-
-                    $.ajax({
-                        url: self.root + "/diretorias",
-                        data: {
-                            mode: "board_add_task",
-                            titulo: titulo,
-                            vencimento: vencimento,
-                            prioridade: prioridade,
-                            desc: desc,
-                            board: board
-                        },
-                        success: function (data) {
-                            data = eval("( " + data + " )");
-                            if (data.success === "true") {
-                                self.loadBoardTasks(board);
-                                $("#task-add-form").fadeOut(function () {
-                                    $("#task-add-form").remove();
-                                });
-                            }
-                        }
-                    });
-                });
-            } else {
-                $("#task-add-form").fadeOut(function () {
-                    $("#task-add-form").remove();
-                });
+                    self.updateThreadObjects();
+                }
             }
         });
     };
@@ -269,60 +392,6 @@ boardInterface = function () {
                     }
                 }
             });
-        });
-    };
-
-
-    this.loadTask = function (task_id) {
-        var self = this;
-        $.ajax({
-            url: self.root + "/diretorias",
-            data: {
-                mode: "load_task",
-                id: task_id
-            },
-            success: function (data) {
-                data = eval("( " + data + " )");
-                if (data.success === "true") {
-                    var html = "<div class='task-box'>";
-                    html += '<input type="button" class="ajax-close-top ajax-close-box" value="Fechar">';
-                    html += "<div class='title'>" + data.task.titulo + "</div>";
-                    switch (parseInt(data.task.prioridade)) {
-                        case 3:
-                            html += "<div class='task-prioridade-3'>Alta Prioridade</div>";
-                            break;
-                        case 2:
-                            html += "<div class='task-prioridade-2'>Média Prioridade</div>";
-                            break;
-                        case 1:
-                            html += "<div class='task-prioridade-1'>Baixa Prioridade</div>";
-                            break;
-                        default:
-                            html += "<div class='task-prioridade-none'>Sem Prioridade</div>";
-                            break;
-                    }
-                    html += "<div class='info'>";
-                    if (data.task.is_owner === true) {
-                        html += "<div class='task-button button-edit' task='" + data.task.id + "'>Editar Tarefa</div>";
-                        if (parseInt(data.task.status) === 1)
-                            html += "<div class='task-button button-archive' task='" + data.task.id + "'>Arquivar Tarefa</div>";
-                        else
-                            html += "<div class='task-button button-archive' task='" + data.task.id + "'>Desarquivar Tarefa</div>";
-                    }
-
-                    html += "Criado por <strong>" + data.task.usuario + "</strong> em <strong>" + data.task.data_criacao + "</strong>";
-                    html += "<div class='clear'></div></div>";
-                    html += "<div class='desc'>" + data.task.descricao + "</div>";
-                    html += "<div id='comments-box-6-" + data.task.id + "'></div>";
-                    html += "</div>";
-                    loadBigAjaxBox(html);
-                    self.bindChangeTaskStatus();
-                    self.bindEditTask();
-                    var commentsinterface = new commentsInterface();
-                    commentsinterface.bindCommentsButtons();
-                    commentsinterface.loadComments("#comments-box-6-" + data.task.id, 6, data.task.id);
-                }
-            }
         });
     };
 

@@ -77,15 +77,15 @@ class commentsController {
         $datetime = new DateTime($comment['data_criacao']);
         $comment['data_criacao'] = $datetime->format("d/m/Y \à\s h:i");
         $comment['texto'] = nl2br($comment['texto']);
-        
-        if($comment['image'] == "") {
+
+        if ($comment['image'] == "") {
             $comment['image'] = "noimage.jpg";
         }
-        
+
         return $comment;
     }
 
-    private function listComments($node_type, $node_id) {
+    public function listComments($node_type, $node_id) {
         if (!$this->checkNode($node_id, $node_type)) {
             throw new Exception("Não foi possível listar os comentários do conteúdo selecionado.");
         }
@@ -93,13 +93,11 @@ class commentsController {
         $usercontroller = new userController();
         $user = $usercontroller->getUser();
 
-        $fields = Array("a.id", "b.nome", "a.id_usuario", "a.texto", "a.data_criacao", "a.id_node", "b.image");
-        $this->conn->prepareselect("comentario a", $fields, array("a.node", "a.id_node"), array($node_type, $node_id), "same", "", array("INNER", "usuario b ON a.id_usuario = b.id"), PDO::FETCH_ASSOC, "all", array("a.data_criacao", "DESC"));
-        if (!$this->conn->executa()) {
+        $query = "SELECT a.id, b.nome, a.id_usuario, a.texto, a.data_criacao, a.id_node, b.image FROM comentario a INNER JOIN usuario b ON a.id_usuario = b.id WHERE  a.node = $node_type AND  a.id_node = $node_id ORDER BY a.data_criacao DESC LIMIT 0, 25";
+        if (!$comments = $this->conn->freeQuery($query, true, true, PDO::FETCH_ASSOC)) {            
             throw new Exception("Nenhum comentário encontrado.");
         }
 
-        $comments = $this->conn->fetch;
         foreach ($comments as $index => $comment) {
             $datetime = new DateTime($comment['data_criacao']);
             $comments[$index]['data_criacao'] = $datetime->format("d/m/Y \à\s h:i");
@@ -107,14 +105,14 @@ class commentsController {
             if ($comment['id_usuario'] == $user->getId() || $user->getPermission() == 10) {
                 $comments[$index]['buttons'] = "true";
             }
-            if($comment['image'] == "") {
+            if ($comment['image'] == "") {
                 $comments[$index]['image'] = "noimage.jpg";
             }
         }
         return $comments;
     }
-    
-     private function countComments($node_type, $node_id) {
+
+    public function countComments($node_type, $node_id) {
         if (!$this->checkNode($node_id, $node_type)) {
             throw new Exception("Não foi possível contar os comentários do conteúdo selecionado.");
         }
@@ -169,6 +167,10 @@ class commentsController {
     }
 
     private function checkNode($node_id, $node_type) {
+        if(!is_numeric($node_id) || !is_numeric($node_type)) {
+            return false;
+        }
+        
         if (!in_array($node_type, config::$nodes_ids) || !is_numeric($node_id)) {
             return false;
         }
@@ -223,7 +225,7 @@ class commentsController {
             echo json_encode(Array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function countCommentsInterface() {
         try {
             $node_id = filter_input(INPUT_POST, "node_id", FILTER_VALIDATE_INT);

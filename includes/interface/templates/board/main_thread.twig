@@ -1,0 +1,31 @@
+<div threadid="{{thread.id}}" class="thread-wrap">
+    <div class="main-post">
+        <div class="title">{{ thread.titulo }}</div>
+        <div class="user-content">
+            <div class="image">
+                <img src="{{ config.system_path}}/images/avatar/{{ thread.user.image }}" alt="Imagem do Usuário" />
+            </div>
+            <div class="name">{{ thread.user.nome }}</div>
+            <div class="date">Postado em: {{ thread.data_criacao }}</div>
+        </div>
+        <div class="thread-content">
+            <div class="post">{{ thread.post|raw }}</div>
+        </div>
+    </div>
+    <div class="replys">
+        {% for reply in thread.replys %}
+            <div class="reply">
+                <div class="user-content">
+                    <div class="image">
+                        <img src="{{ config.system_path}}/images/avatar/{{ reply.image }}" alt="Imagem do Usuário" />
+                    </div>
+                    <div class="name">{{ reply.nome }}</div>
+                    <div class="date">Postado em: {{ reply.data_criacao }}</div>
+                </div>
+                <div class="thread-content">
+                    <div class="post">{{ reply.texto|raw }}</div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
