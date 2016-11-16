@@ -18,6 +18,17 @@ function htmlEncode(string)
 
 };
 
+
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\//g, "&#x2F;")
+};
+
 function sideMenuHeightFix() 
 {
     var body = document.body;
@@ -25,7 +36,7 @@ function sideMenuHeightFix()
     var height = Math.max( body.scrollHeight, body.offsetHeight, 
                        html.clientHeight, html.scrollHeight, html.offsetHeight, window.innerHeight );
     $(".sidebar-menu, #dashboard-sidebar").css("height",$(document).height()+50);
-}
+};
 
 function formatStr()
 {

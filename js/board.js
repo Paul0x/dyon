@@ -64,7 +64,10 @@ boardInterface = function () {
     this.createCheckList = function() {
         var self = this;
         var checkcontroller = new checkList();
-        checkcontroller.init();
+        checkcontroller.init(function() {
+            alert("aylamao");
+        });
+        
     };
 
     this.loadThread = function (thread) {
@@ -110,7 +113,6 @@ boardInterface = function () {
                 }
             }
         });
-
     };
 
     this.initAddThreadForm = function () {
@@ -160,7 +162,8 @@ boardInterface = function () {
                 self.threads_column.tasks.push(thread);
             }
         });
-    }
+    };
+    
     this.switchThreadView = function () {
         var self = this;
         if (self.viewstyle === undefined || self.viewstyle === 'list') {
