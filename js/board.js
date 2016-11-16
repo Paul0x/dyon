@@ -55,6 +55,16 @@ boardInterface = function () {
         $("#board-wrap .thread").die().live("click", function () {
             self.loadThread(this);
         });
+
+        $("#add-create-checklist").die().live("click", function () {
+            self.createCheckList();
+        });
+    };
+    
+    this.createCheckList = function() {
+        var self = this;
+        var checkcontroller = new checkList();
+        checkcontroller.init();
     };
 
     this.loadThread = function (thread) {
