@@ -43,7 +43,7 @@ checkList = function() {
             self.errorMessage("Você precisa inserir ao menos 01 item na checklist.");
             return;
         } 
-        self.callback_function();
+        self.callback_function(self.checklistobj);
     };
 
     this.bindButtons = function() {
