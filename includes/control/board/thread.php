@@ -94,75 +94,8 @@ class threadController {
     }
 
     public function addThread($thread) {
-        if (!is_numeric($thread['board_id'])) {
-            throw new Exception("O identificador da board é inválido.");
-        }
-
-        $thread['titulo'] = trim($thread['titulo']);
-        $thread['desc'] = trim($thread['desc']);
-
-        if (!is_numeric($thread['prioridade']) || ($thread['prioridade'] < 0 && $thread['prioridade'] > 3)) {
-            $thread['prioridade'] = 0;
-        }
-
-        if ($thread['titulo'] == "") {
-            throw new Exception("O título da thread não pode estar vazio.");
-        }
-
-        $fields = Array("id_usuario", "id_board", "titulo", "descricao", "prioridade");
-        $values = Array($thread['user_id'], $thread['board_id'], $thread['titulo'], $thread['desc'], $thread['prioridade']);
-        if (!is_null($thread['vencimento']) && trim($thread['vencimento']) != "") {
-            $vencimento = explode("/", $thread['vencimento']);
-            if (!checkdate($vencimento[1], $vencimento[0], $vencimento[2])) {
-                throw new Exception("A data de vencimento é inválida.");
-            }
-            $date = $vencimento[2] . "-" . $vencimento[1] . "-" . $vencimento[0] . " 23:59:59";
-            $datetime = new DateTime($date);
-            $thread['vencimento'] = $datetime->format("Y-m-d h:i:s");
-            $fields[] = "data_vencimento";
-            $values[] = $thread['vencimento'];
-        }
-
-
-        $this->conn->prepareinsert("thread", $values, $fields);
-        if (!$this->conn->executa()) {
-            throw new Exception("Não foi possível adicionar a thread.");
-        }
-    }
-
-    public function editThread($thread) {
-        $thread_old = $this->loadThread($thread['thread_id']);
-        $usercontroller = new userController();
-        $user = $usercontroller->getUser(5);
-        if ($thread_old['id_usuario'] != $user->getId() && $user->getPermission() != 10) {
-            throw new Exception("O usuário não tem permissão para editar a thread.");
-        }
-        $thread['titulo'] = trim($thread['titulo']);
-        $thread['desc'] = trim($thread['desc']);
-        if (!is_numeric($thread['prioridade']) || ($thread['prioridade'] < 0 && $thread['prioridade'] > 3)) {
-            $thread['prioridade'] = 0;
-        }
-        if ($thread['titulo'] == "") {
-            throw new Exception("O título da thread não pode estar vazio.");
-        }
-        $fields = Array("titulo", "descricao", "prioridade");
-        $values = Array($thread['titulo'], $thread['desc'], $thread['prioridade']);
-        if (!is_null($thread['vencimento']) && trim($thread['vencimento']) != "") {
-            $vencimento = explode("/", $thread['vencimento']);
-            if (!checkdate($vencimento[1], $vencimento[0], $vencimento[2])) {
-                throw new Exception("A data de vencimento é inválida.");
-            }
-            $date = $vencimento[2] . "-" . $vencimento[1] . "-" . $vencimento[0] . " 23:59:59";
-            $datetime = new DateTime($date);
-            $thread['vencimento'] = $datetime->format("Y-m-d h:i:s");
-            $fields[] = "data_vencimento";
-            $values[] = $thread['vencimento'];
-        }
-        $this->conn->prepareupdate($values, $fields, "thread", $thread_old['id'], "id");
-        if (!$this->conn->executa()) {
-            throw new Exception("Não foi possível editar a thread.");
-        }
-        return $thread_old['id'];
+        print_r($thread);
+        
     }
 
     public function getThreadReplys($thread_id) {

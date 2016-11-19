@@ -250,6 +250,18 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+    
+    private function createThread() {
+        try {
+            $thread = filter_input(INPUT_POST, "thread", FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+            $thread['checklist'] = json_decode(filter_input(INPUT_POST, "thread_checklist"));
+            print_r($thread);
+            $threadcontroller = new threadController($this->conn);
+            $threadcontroller->addThread($thread);            
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
 
     public function init($url) {
         try {
@@ -297,6 +309,9 @@ class boardController {
                         break;
                     case "add_thread_form":
                         $this->loadAddThreadForm();
+                        break;
+                    case "add_thread":
+                        $this->createThread();
                         break;
                 }
             }
