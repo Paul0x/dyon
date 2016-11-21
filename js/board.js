@@ -190,6 +190,9 @@ boardInterface = function () {
         if (self.newthread.checklist) {
             form.append("thread_checklist", JSON.stringify(self.newthread.checklist));
         }
+        if(self.newthread.statussystem === true) {
+            form.append("thread[statussystem]", true);
+        }
         xhr.open('POST', self.root + "/boards", true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onreadystatechange = function () {

@@ -94,8 +94,134 @@ class threadController {
     }
 
     public function addThread($thread) {
-        print_r($thread);
+        if (!is_array($thread)) {
+            throw new Exception("Thread enviada é inválida.");
+        }
+
+        $pattern['title'] = "/^[A-Za-zÀ-ú0-9\\ ]*$/";
+        if (trim($thread['title']) == "" || !preg_match($pattern['title'], $thread['title'])) {
+            throw new Exception("Seu título contém caracteres inválidos ou está em branco.");
+        }
+
+        if (!$thread['post']) {
+            throw new Exception("Sua postagem é inválida.");
+        }
+
+        if ($thread['type'] != 0 && $thread['type'] != 1) {
+            $thread['type'] = 0;
+        }
+
+        if ($thread['priority'] != 0 && $thread['priority'] != 1 && $thread['priority'] != 2) {
+            $thread['priority'] = 0;
+        }
+
+        if ($thread['attachments']) {
+            $thread['attachments'] = $this->addThreadAttachments($thread['attachments']);
+        }
+        if ($thread['checklist']) {
+            $thread['checklist'] = $this->addThreadCheckList($thread['checklist']);
+        }
+
+        $datetime = new Datetime();
+
+        if ($thread['expiring_date']) {
+            $expiring_date = DateTime::createFromFormat("d/m/Y", $thread['expiring_date']);
+            if (!$expiring_date) {
+                throw new Exception("A data de vencimento informada está em formato inválido.");
+            }
+            if ($datetime->getTimestamp() > $expiring_date->getTimeStamp()) {
+                throw new Exception("A data de vencimento é inferior a data atual.");
+            }
+        }
+
+        if ($thread['statussystem']) {
+            $thread['ss']['current_status'] = 0;
+            $thread['ss']['history'] = array(
+                "idle" => array(
+                    "time_elapsed" => 0
+                ),
+                "working" => array(
+                    "time_elapsed" => 0
+                ),
+                "development" => array(
+                    "time_elapsed" => 0
+                ),
+                "completed" => array(
+                    "time_elapsed" => 0
+                )
+            );
+            $thread['ss']['last_update'] = $datetime->getTimestamp();
+        }
         
+        print_r($thread);
+    }
+
+    private function addThreadAttachments($attachment_list) {
+        $mime_array = array(
+            "application/msword",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.template",
+            "application/vnd.ms-word.document.macroEnabled.12",
+            "application/vnd.ms-word.template.macroEnabled.12",
+            "application/vnd.ms-excel",
+            "application/vnd.ms-excel",
+            "application/vnd.ms-excel",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.template",
+            "application/vnd.ms-excel.sheet.macroEnabled.12",
+            "application/vnd.ms-excel.template.macroEnabled.12",
+            "application/vnd.ms-excel.addin.macroEnabled.12",
+            "application/vnd.ms-excel.sheet.binary.macroEnabled.12",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "application/vnd.openxmlformats-officedocument.presentationml.template",
+            "application/vnd.openxmlformats-officedocument.presentationml.slideshow",
+            "application/vnd.ms-powerpoint.addin.macroEnabled.12",
+            "application/vnd.ms-powerpoint.presentation.macroEnabled.12",
+            "application/vnd.ms-powerpoint.template.macroEnabled.12",
+            "application/vnd.ms-powerpoint.slideshow.macroEnabled.12",
+            "application/pdf",
+            "image/jpeg",
+            "image/gif",
+            "image/png"
+        );
+
+        if (!is_array($attachment_list)) {
+            throw new Exception("A lista de anexos enviada não é válida.");
+        }
+
+        $attachment_array = array();
+
+        $idx_counter = 0;
+        foreach ($attachment_list as $index => $file) {
+            if ($index != "attachment-file-" . $idx_counter) {
+                throw new Exception("Não foi possível validar o envio dos anexos.");
+            }
+            
+            if (!in_array($file['type'], $mime_array) || !is_file($file['tmp_name']) || strlen(basename($file['tmp_name'])) > 70) {
+                throw new Exception("O arquivo " . $file['name'] . " está em formato não suportado pelo sistema.");
+            }
+
+            $file_extension = array_pop(explode(".", $file['name']));
+            $file_name = uniqid("attach_", true);
+
+            if (strlen($file_extension) != 3 && strlen($file_extension) != 4) {
+                throw new Exception("A extensão do arquivo " . $file['name'] . " é inválida.");
+            }
+
+            if (!move_uploaded_file($file['tmp_name'], "./files/attachments/" . $file_name . "." . $file_extension)) {
+                throw new Exception("Não foi possível fazer o upload dos anexos.");
+            }
+
+            $idx_counter++;
+            $attachment_array[] = $file_name . "." . $file_extension;
+        }
+
+        return $attachment_array;
     }
 
     public function getThreadReplys($thread_id) {

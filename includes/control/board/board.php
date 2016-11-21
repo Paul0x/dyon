@@ -255,7 +255,7 @@ class boardController {
         try {
             $thread = filter_input(INPUT_POST, "thread", FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
             $thread['checklist'] = json_decode(filter_input(INPUT_POST, "thread_checklist"));
-            print_r($thread);
+            $thread['attachments'] = $_FILES;
             $threadcontroller = new threadController($this->conn);
             $threadcontroller->addThread($thread);            
         } catch (Exception $ex) {
