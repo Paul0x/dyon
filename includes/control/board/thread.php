@@ -92,7 +92,7 @@ class threadController {
         }
         
         if($thread['info']) {
-            $info_array = unserialize($thread['info']);
+            $info_array = json_decode($thread['info'], true);
             if($info_array['checklist']) {
                 $thread['checklist'] = $info_array['checklist'];
             }
@@ -179,7 +179,7 @@ class threadController {
         
         if($thread['info'] && is_array($thread['info'])) {
             $fields[] = "info";
-            $values[] = serialize($thread['info']);
+            $values[] = json_encode($thread['info']);
         }
         
         $this->conn->prepareinsert("thread", $values, $fields);
@@ -222,7 +222,7 @@ class threadController {
             if($checklist['items'][$index]['title'] == "") {
                 throw new Exception("Não é possível adicionar um item com o título vazio.");
             }
-            $checklist['items'][]['status'] = 0;            
+            $checklist['items'][$index]['status'] = 0;            
         }
         
         return $checklist;
