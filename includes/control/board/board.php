@@ -245,19 +245,24 @@ class boardController {
             $thread = $threadcontroller->loadThread($thread_id);
             $thread['replys'] = $threadcontroller->getThreadReplys($thread['id']);
             $html = $this->twig->render("board/main_thread.twig", Array("config" => config::$html_preload, "thread" => $thread, "user" => $this->user->getBasicInfo()));
-            echo json_encode(array("success" => "true", "thread" => $thread, "html" => $html ));
+            echo json_encode(array("success" => "true", "thread" => $thread, "html" => $html));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
+
     private function createThread() {
         try {
             $thread = filter_input(INPUT_POST, "thread", FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-            $thread['checklist'] = json_decode(filter_input(INPUT_POST, "thread_checklist"));
-            $thread['attachments'] = $_FILES;
+            if (filter_input(INPUT_POST, 'thread_checklist')) {
+                $thread['checklist'] = filter_input(INPUT_POST, "thread_checklist");
+            }
+            if ($_FILES) {
+                $thread['attachments'] = $_FILES;
+            }
             $threadcontroller = new threadController($this->conn);
-            $threadcontroller->addThread($thread);            
+            $thread_id = $threadcontroller->addThread($thread, $this->user);
+            echo json_encode(array("success" => "true", "thread_id" => $thread_id));
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }

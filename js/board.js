@@ -54,7 +54,7 @@ boardInterface = function () {
         });
 
         $("#board-wrap .thread").die().live("click", function () {
-            self.loadThread(this);
+            self.loadThread(this, false);
         });
     };
 
@@ -86,9 +86,13 @@ boardInterface = function () {
         }
     };
 
-    this.loadThread = function (thread) {
+    this.loadThread = function (thread, numeric) {
         var self = this;
-        var id = parseInt($(thread).attr("id"));
+        if (!numeric) {
+            var id = parseInt($(thread).attr("id"));
+        } else {
+            var id = parseInt(thread);
+        }
         $.ajax({
             url: self.root + "/boards",
             data: {
@@ -190,7 +194,7 @@ boardInterface = function () {
         if (self.newthread.checklist) {
             form.append("thread_checklist", JSON.stringify(self.newthread.checklist));
         }
-        if(self.newthread.statussystem === true) {
+        if (self.newthread.statussystem === true) {
             form.append("thread[statussystem]", true);
         }
         xhr.open('POST', self.root + "/boards", true);
@@ -203,7 +207,7 @@ boardInterface = function () {
                 $("#confirm-pacote-submit").val("Confirmar Parcela").removeAttr("disabled");
                 var data = eval("(" + xhr.responseText + ")");
                 if (data.success == "true") {
-                    self.loadThread(data.thread_id);
+                    self.loadThread(data.thread_id, true);
                 }
             }
         };

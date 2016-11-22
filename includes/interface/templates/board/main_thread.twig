@@ -1,6 +1,20 @@
 <div threadid="{{thread.id}}" class="thread-wrap">
     <div class="main-post">
-        <div class="title">{{ thread.titulo }}</div>
+        <div class="header">
+            <div class='title'>{{ thread.titulo }}</div>
+            <div class='badges'>
+                {% if thread.data_vencimento %}
+                    <div class='expiring-date'><span class='label'>Vencimento em</span>{{ thread.data_vencimento }}</div>
+                {% endif %}
+                {% if thread.prioridade == 0 %}
+                    <div class='low-priority'>Prioridade Normal</div>
+                {% elseif thread.prioridade == 1 %}
+                    <div class='mid-priority'>Prioridade Média</div>
+                {% elseif thread.prioridade == 2 %}
+                    <div class='high-priority'>Prioridade Alta</div>
+                {% endif %}
+            </div>
+        </div>
         <div class="user-content">
             <div class="image">
                 <img src="{{ config.system_path}}/images/avatar/{{ thread.user.image }}" alt="Imagem do Usuário" />
@@ -10,6 +24,29 @@
         </div>
         <div class="thread-content">
             <div class="post">{{ thread.post|raw }}</div>
+            {% if thread.checklist or thread.ss %}
+                <div class='extra-info'>
+                    {% if thread.checklist %}
+                        <div class='checklist-wrap'>
+                            <div class="title"><i class="fa fa-check-square-o" hidden-area="true"></i>{{ thread.checklist.title }}</div>
+                                {% for item in thread.checklist.items %}
+                                <div class="item">
+                                    {% if item.status == 0 %}
+                                        <div class="not-checked fa fa-square-o"></div>
+                                        <div class="label-title">{{ item.title }}</div>
+                                    {% else %}
+                                        <div class="checked fa fa-check-square-o"></div>
+                                        <div class="label-title">{{ item.title }}</div>
+                                    {% endif %}
+
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% if thread.ss %}
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
     <div class="replys">
@@ -24,6 +61,7 @@
                 </div>
                 <div class="thread-content">
                     <div class="post">{{ reply.texto|raw }}</div>
+
                 </div>
             </div>
         {% endfor %}

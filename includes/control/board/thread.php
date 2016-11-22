@@ -90,12 +90,28 @@ class threadController {
         } catch (Exception $ex) {
             throw new Exception("Criador da thread não encontrado.");
         }
+        
+        if($thread['info']) {
+            $info_array = unserialize($thread['info']);
+            if($info_array['checklist']) {
+                $thread['checklist'] = $info_array['checklist'];
+            }
+        }
         return $thread;
     }
 
-    public function addThread($thread) {
+    public function addThread($thread,$user) {
         if (!is_array($thread)) {
             throw new Exception("Thread enviada é inválida.");
+        }
+        
+        if(!is_a($user, "user")) {
+            throw new Exception("Usuário Inválido.");
+        }
+        
+        $thread['board_id'] = $user->getSelectedBoard();
+        if(!is_numeric($thread['board_id'])) {
+            throw new Exception("A Board que você selecionou não está disponível.");
         }
 
         $pattern['title'] = "/^[A-Za-zÀ-ú0-9\\ ]*$/";
@@ -116,10 +132,11 @@ class threadController {
         }
 
         if ($thread['attachments']) {
-            $thread['attachments'] = $this->addThreadAttachments($thread['attachments']);
+            $thread['info']['attachments'] = $this->addThreadAttachments($thread['attachments']);
         }
         if ($thread['checklist']) {
-            $thread['checklist'] = $this->addThreadCheckList($thread['checklist']);
+            $thread['info']['checklist'] = $this->addThreadCheckList($thread['checklist']);
+            
         }
 
         $datetime = new Datetime();
@@ -135,8 +152,8 @@ class threadController {
         }
 
         if ($thread['statussystem']) {
-            $thread['ss']['current_status'] = 0;
-            $thread['ss']['history'] = array(
+            $thread['info']['ss']['current_status'] = 0;
+            $thread['info']['ss']['history'] = array(
                 "idle" => array(
                     "time_elapsed" => 0
                 ),
@@ -150,10 +167,66 @@ class threadController {
                     "time_elapsed" => 0
                 )
             );
-            $thread['ss']['last_update'] = $datetime->getTimestamp();
+            $thread['info']['ss']['last_update'] = $datetime->getTimestamp();
         }
         
-        print_r($thread);
+        $fields = array("id_board", "id_usuario", "titulo", "post", "prioridade", "tipo");
+        $values = array($thread['board_id'], $user->getId(), $thread['title'], $thread['post'], $thread['priority'], $thread['type']);
+        if($expiring_date) {
+            $fields[] = "data_vencimento";
+            $values[] = $expiring_date->format("Y-m-d h:i:s");
+        }
+        
+        if($thread['info'] && is_array($thread['info'])) {
+            $fields[] = "info";
+            $values[] = serialize($thread['info']);
+        }
+        
+        $this->conn->prepareinsert("thread", $values, $fields);
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível adicionar a thread.");
+        }
+        
+        $thread_id = $this->getUserLatestThread($user);
+        return $thread_id;
+    }
+    
+    private function getUserLatestThread($user) {
+        $id = $user->getId();
+        $this->conn->prepareselect("thread", "id", "id_usuario", $id, "", "", "", NULL, "", array("id","DESC"), 1);
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível carregar a thread do usuário.");
+        }
+        
+        return $this->conn->fetch[0];
+    }
+    
+    private function addThreadCheckList($checklist_json) {
+        $checklist_array = json_decode($checklist_json,true);
+        if(!is_array($checklist_array)) {
+            throw new Exception("A checklist enviada não está especificada corretamente.");
+        }
+        
+        $checklist = array();
+        $checklist['title'] = trim(filter_var($checklist_array['title'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+        if($checklist['title'] == "") {
+            throw new Exception("O título da checklist está vazio ou contém caracteres inválidos.");
+        }
+        
+        if(!is_array($checklist_array['items'])) {
+            throw new Exception("A checklist precisa conter ao menos 01 item.");
+        }
+        
+        foreach($checklist_array['items'] as $index => $item) {
+            $checklist['items'][$index]['title'] = trim(filter_var($item, FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+            if($checklist['items'][$index]['title'] == "") {
+                throw new Exception("Não é possível adicionar um item com o título vazio.");
+            }
+            $checklist['items'][]['status'] = 0;            
+        }
+        
+        return $checklist;
+        
     }
 
     private function addThreadAttachments($attachment_list) {
