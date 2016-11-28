@@ -281,6 +281,17 @@ class boardController {
         }
     }
 
+    private function updateStatus() {
+        try {
+            $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
+            $status = filter_input(INPUT_POST, "status", FILTER_VALIDATE_INT);
+            $threadcontroller = new threadController($this->conn);
+            $thread = $threadcontroller->updateThreadStatus($thread_id, $status, $this->user, true);
+            echo json_encode(array("success" => "true", "thread" => $thread));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
     public function init($url) {
         try {
             Twig_Autoloader::register();
@@ -333,6 +344,9 @@ class boardController {
                         break;
                     case "update_checklist":
                         $this->updateChecklist();
+                        break;
+                    case "update_status":
+                        $this->updateStatus();
                         break;
                 }
             }

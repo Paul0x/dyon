@@ -15,11 +15,11 @@
  *  =====================================================================
  */
 
-(function ($) {
+(function($) {
     $.clock = {version: "1.0.0", locale: {}};
     t = [];
-    $.fn.clock = function (d) {
-        return this.each(function () {
+    $.fn.clock = function(d) {
+        return this.each(function() {
             var obj = this;
             console.log("Iniciado Aplicativo de Relógio");
             var date = new Date();
@@ -34,7 +34,7 @@
             clock_timer.seconds -= (clock_timer.minutes * 60);
             clock_timer.seconds = clock_timer.seconds % 60;
 
-            $.fn.runtime = setInterval(function () {
+            $.fn.runtime = setInterval(function() {
                 clock_timer.seconds++;
                 if (clock_timer.seconds >= 60) {
                     clock_timer.seconds = 0;
@@ -51,33 +51,44 @@
                 $(obj).html(show);
             }, 1000);
 
-            f($(this), d);
         });
     };
 
-    $.fn.stop = function () {
+    $.fn.stop = function() {
         window.clearInterval($.fn.runtime);
 
     };
     return this;
 })(jQuery);
 
-statusController = function () {
+statusController = function() {
     this.root = $("#dir-root").val();
-    this.statusobj;
+    this.updateStatusCallback;
+    this.threadId;
+    this.history;
 
-    this.loadStatusSystem = function (status_info) {
+    this.loadStatusSystem = function(status_info, thread_id, update_callback) {
         var self = this;
-        self.statusobj = new Object();
+        self.updateStatusCallback = update_callback;
+        self.history = status_info.history;
+        self.threadId = thread_id;
         self.bindControls();
         self.setCurrentStatus(parseInt(status_info.current_status));
         self.setCurrentUser(status_info.current_user);
         self.setTimer(parseInt(status_info.last_update));
     };
 
-    this.bindControls = function () {
+    this.updateStatusSystem = function(thread) {
         var self = this;
-        $("#statussystem-wrap .control").die().live("click", function () {
+        self.threadId = thread.id;
+        self.setCurrentStatus(parseInt(thread.ss.current_status));
+        self.setCurrentUser(thread.ss.current_user);
+        self.setTimer(parseInt(thread.ss.last_update));
+    };
+
+    this.bindControls = function() {
+        var self = this;
+        $("#statussystem-wrap .control").die().live("click", function() {
             var action = $(this).attr("act");
             switch (action) {
                 case 'change':
@@ -87,40 +98,66 @@ statusController = function () {
                     self.loadHistory();
                     break;
             }
+        });
 
+
+        $("#statussystem-wrap .form .back").die().live("click", function() {
+            self.revertStatusInterface();
         });
     };
 
-    this.loadChangeStatusForm = function () {
-        var html = "<select id='thread-ss-change-status'>";
-        html+= "<option value=''>SELECIONE O STATUS</option>";
-        html+= "<option value='0'>EM ESPERA</option>";
-        html+= "<option value='1'>EM DESENVOLVIMENTO</option>";
-        html+= "<option value='2'>EM TRABALHO</option>";
-        html+= "<option value='3'>COMPLETADO</option>";
-        html+= "</select>";
-        $("#statussystem-wrap .current-status").css("display","none");        
-        $("#statussystem-wrap .form").html(html);
+    this.changeStatus = function() {
+        var self = this;
+        var status = parseInt($("#thread-ss-change-status").val());
+        if (isNaN(status) || status < 0 || status > 3) {
+            return;
+        }
+
+        self.updateStatusCallback(self.threadId, status);
     };
 
-    this.stopTimer = function () {
+    this.revertStatusInterface = function() {
+        $("#statussystem-wrap .current-status").css("display", "block");
+        $("#statussystem-wrap .controls .current-control").css("display", "block");
+        $("#statussystem-wrap .form").html("");
+
+    };
+
+    this.loadChangeStatusForm = function() {
+        var self = this;
+        var html = "<select id='thread-ss-change-status'>";
+        html += "<option value=''>SELECIONE O STATUS</option>";
+        html += "<option value='0'>EM ESPERA</option>";
+        html += "<option value='1'>EM DESENVOLVIMENTO</option>";
+        html += "<option value='2'>EM TRABALHO</option>";
+        html += "<option value='3'>COMPLETADO</option>";
+        html += "</select>";
+        html += "<div id='thread-ss-assign-status' class='control'><i class='fa fa-hand-o-right'></i> Atribuir</div>";
+        html += "<div class='control back'><i class='fa fa-times'></i> Voltar</div>";
+        $("#statussystem-wrap .current-status").css("display", "none");
+        $("#statussystem-wrap .controls .current-control").css("display", "none");
+        $("#statussystem-wrap .form").html(html);
+        $("#thread-ss-assign-status").die().live("click", function() {
+            self.changeStatus();
+        });
+    };
+
+    this.stopTimer = function() {
         $("#statussystem-wrap .current-status .timer").stop();
     };
 
-    this.setCurrentUser = function (user) {
+    this.setCurrentUser = function(user) {
         var html = "Atribuido por: <strong>" + user + "</strong>";
         $("#statussystem-wrap .current-status .user").html(html);
     };
 
-    this.setCurrentStatus = function (status) {
+    this.setCurrentStatus = function(status) {
         var self = this;
-
         if (isNaN(status) || status < 0 || status > 3) {
             console.log("O status precisa ser um numeral entre 0 e 3");
             return;
         }
 
-        self.statusobj.current_status = status;
         var html;
         switch (status) {
             case 0:
@@ -141,9 +178,73 @@ statusController = function () {
 
     };
 
-    this.setTimer = function (timestamp) {
+    this.setTimer = function(timestamp) {
+        var self = this;
+        self.stopTimer();
         $("#statussystem-wrap .current-status .timer").clock({"timestamp": timestamp});
+    };
+    
+    this.updateHistory = function(history) {
+        var self = this;
+        self.history = history;
+    };
 
+    this.loadHistory = function() {
+        var self = this;
+        var history_converted = new Array();
+        $.each(self.history, function(idx, status) {
+            var time = new Object;
+            time.label = self.translateTerm(idx);
+            time.hourobj = self.timestampToHour(status.time_elapsed);
+            time.elapsed = time.hourobj.viewhours + ":" + time.hourobj.viewminutes + ":" + time.hourobj.viewseconds;
+            history_converted.push(time);
+        });
+
+        var html = "<div class='history-log'>";
+        $.each(history_converted, function(idx, status) {
+            html += "<div class='status-" + status.label + " status'>";
+            html += "<div class='label'>" + status.label + "</div>";
+            html += "<div class='elapsed'>" + status.elapsed + "</div>";
+            html += "</div>";
+        });
+        html += "<div class='control back'><i class='fa fa-times'></i> Voltar</div>";
+        $("#statussystem-wrap .current-status").css("display", "none");
+        $("#statussystem-wrap .controls .current-control").css("display", "none");
+        $("#statussystem-wrap .form").html(html);
+        html += "</div>";
+
+    };
+
+    this.translateTerm = function(term) {
+        switch (term) {
+            case 'idle':
+                return "EM ESPERA";
+                break;
+            case 'development':
+                return "EM DESENVOLVIMENTO";
+                break;
+            case 'working':
+                return "EM TRABALHO";
+                break;
+            case 'completed':
+                return "COMPLETO";
+                break;
+        }
+    };
+
+    this.timestampToHour = function(timestamp) {
+        var time = new Object();
+        time.seconds = timestamp;
+        time.hours = Math.floor(time.seconds / 3600);
+        time.seconds -= (time.hours * 3600);
+        time.minutes = Math.floor((time.seconds / 60) % 60);
+        time.seconds -= (time.minutes * 60);
+        time.seconds = time.seconds % 60;
+
+        time.viewhours = (time.hours < 10 ? "0" + time.hours : time.hours);
+        time.viewminutes = (time.minutes < 10 ? "0" + time.minutes : time.minutes);
+        time.viewseconds = (time.seconds < 10 ? "0" + time.seconds : time.seconds);
+        return time;
     };
 
 };

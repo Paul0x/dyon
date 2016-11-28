@@ -256,6 +256,65 @@ class threadController {
 
         return $thread;
     }
+    
+    
+    public function updateThreadStatus($thread_id, $status, $user, $force_update = false) {
+        if (!is_numeric($thread_id)) {
+            throw new Exception("Você tentou atualizar o status de uma thread não identificada.");
+        }
+        
+        if($status < 0 || $status > 3) {
+            throw new Exception("O status que você está tentando atribuir é inválido.");
+        }
+        
+        $thread = $this->loadThread($thread_id);
+        
+        if(!$thread['ss']) {
+            throw new Exception("A Thread não possui o sistema de status ligado.");
+        }
+        
+        if(!$user->isAuth()) {
+            throw new Exception("Usuário inválido para alterar o status.");
+        }        
+        
+        $user_info = $user->getBasicInfo();
+        
+        
+        if($status == $thread['ss']['current_status']) {
+            return true;
+        }
+        
+        $datetime = new DateTime();
+        $old_log['status'] = $thread['ss']['current_status'];
+        $old_log['user'] = $thread['ss']['current_user'];
+        $old_log['time'] = $datetime->getTimestamp() - $thread['ss']['last_update'];
+        
+        switch($old_log['status']) {
+            case 0:
+                $thread['ss']['history']['idle']['time_elapsed'] += $old_log['time'];
+                break;
+            case 1:
+                $thread['ss']['history']['development']['time_elapsed'] += $old_log['time'];
+                break;
+            case 2:
+                $thread['ss']['history']['working']['time_elapsed'] += $old_log['time'];
+                break;
+            case 3:
+                $thread['ss']['history']['completed']['time_elapsed'] += $old_log['time'];
+                break;
+        }
+        
+        $thread['ss']['current_status'] = $status;
+        $thread['ss']['last_update'] = $datetime->getTimestamp();
+        $thread['ss']['current_user'] = $user_info['nome'];
+        
+        
+        if ($force_update) {
+            $this->updateThreadInfo($thread);
+        }
+
+        return $thread;
+    }
 
     private function updateThreadInfo($thread) {
         if (!is_numeric($thread['id'])) {
