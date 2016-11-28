@@ -245,9 +245,9 @@ class flowController {
         $interval = $datetime_fim->diff($datetime_inicio);
         $months = $interval->m + ($interval->y * 12);
         $select_array = Array();
-        for ($i = 0; $i <= $months + 10; $i++) {
+        for ($i = 0; $i <= $months + 12; $i++) {
             if ($i != 0) {
-                $datetime_inicio->modify("+1 Month");
+                $datetime_inicio->modify("+28 Days");
             }
             $select_array[] = Array(
                 "string" => $datetime_inicio->format("m/Y"),
@@ -255,6 +255,7 @@ class flowController {
             );
         }
         return $select_array;
+        
     }
 
     private function translateMonth($month) {

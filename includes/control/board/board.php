@@ -267,6 +267,19 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+    
+    
+    private function updateChecklist() {
+        try {
+            $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
+            $checklist_items = filter_input(INPUT_POST, "checklist", FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY);
+            $threadcontroller = new threadController($this->conn);
+            $thread = $threadcontroller->updateThreadChecklist($thread_id, $checklist_items, true);
+            echo json_encode(array("success" => "true"));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
 
     public function init($url) {
         try {
@@ -317,6 +330,9 @@ class boardController {
                         break;
                     case "add_thread":
                         $this->createThread();
+                        break;
+                    case "update_checklist":
+                        $this->updateChecklist();
                         break;
                 }
             }

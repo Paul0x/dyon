@@ -90,33 +90,36 @@ class threadController {
         } catch (Exception $ex) {
             throw new Exception("Criador da thread não encontrado.");
         }
-        
-        if($thread['info']) {
+
+        if ($thread['info']) {
             $info_array = json_decode($thread['info'], true);
-            if($info_array['checklist']) {
+            if ($info_array['checklist']) {
                 $thread['checklist'] = $info_array['checklist'];
+            }
+
+            if ($info_array['ss']) {
+                $thread['ss'] = $info_array['ss'];
             }
         }
         return $thread;
     }
 
-    public function addThread($thread,$user) {
+    public function addThread($thread, $user) {
         if (!is_array($thread)) {
             throw new Exception("Thread enviada é inválida.");
         }
-        
-        if(!is_a($user, "user")) {
+
+        if (!is_a($user, "user")) {
             throw new Exception("Usuário Inválido.");
         }
-        
         $thread['board_id'] = $user->getSelectedBoard();
-        if(!is_numeric($thread['board_id'])) {
+        if (!is_numeric($thread['board_id'])) {
             throw new Exception("A Board que você selecionou não está disponível.");
         }
 
-        $pattern['title'] = "/^[A-Za-zÀ-ú0-9\\ ]*$/";
+        $pattern['title'] = "/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ0-9\&\;\\ ]*$/";
         if (trim($thread['title']) == "" || !preg_match($pattern['title'], $thread['title'])) {
-            throw new Exception("Seu título contém caracteres inválidos ou está em branco.");
+            throw new Exception("Seu título contém caracteres inválidos ou está em branco. (" . $thread['title'] . ")");
         }
 
         if (!$thread['post']) {
@@ -136,7 +139,6 @@ class threadController {
         }
         if ($thread['checklist']) {
             $thread['info']['checklist'] = $this->addThreadCheckList($thread['checklist']);
-            
         }
 
         $datetime = new Datetime();
@@ -152,6 +154,8 @@ class threadController {
         }
 
         if ($thread['statussystem']) {
+            $user_info = $user->getBasicInfo();
+            $thread['info']['ss']['current_user'] = $user_info['nome'];
             $thread['info']['ss']['current_status'] = 0;
             $thread['info']['ss']['history'] = array(
                 "idle" => array(
@@ -169,64 +173,114 @@ class threadController {
             );
             $thread['info']['ss']['last_update'] = $datetime->getTimestamp();
         }
-        
+
         $fields = array("id_board", "id_usuario", "titulo", "post", "prioridade", "tipo");
         $values = array($thread['board_id'], $user->getId(), $thread['title'], $thread['post'], $thread['priority'], $thread['type']);
-        if($expiring_date) {
+        if ($expiring_date) {
             $fields[] = "data_vencimento";
             $values[] = $expiring_date->format("Y-m-d h:i:s");
         }
-        
-        if($thread['info'] && is_array($thread['info'])) {
+
+        if ($thread['info'] && is_array($thread['info'])) {
             $fields[] = "info";
             $values[] = json_encode($thread['info']);
         }
-        
+
         $this->conn->prepareinsert("thread", $values, $fields);
-        if(!$this->conn->executa()) {
+        if (!$this->conn->executa()) {
             throw new Exception("Não foi possível adicionar a thread.");
         }
-        
+
         $thread_id = $this->getUserLatestThread($user);
         return $thread_id;
     }
-    
+
     private function getUserLatestThread($user) {
         $id = $user->getId();
-        $this->conn->prepareselect("thread", "id", "id_usuario", $id, "", "", "", NULL, "", array("id","DESC"), 1);
-        if(!$this->conn->executa()) {
+        $this->conn->prepareselect("thread", "id", "id_usuario", $id, "", "", "", NULL, "", array("id", "DESC"), 1);
+        if (!$this->conn->executa()) {
             throw new Exception("Não foi possível carregar a thread do usuário.");
         }
-        
+
         return $this->conn->fetch[0];
     }
-    
+
     private function addThreadCheckList($checklist_json) {
-        $checklist_array = json_decode($checklist_json,true);
-        if(!is_array($checklist_array)) {
+        $checklist_array = json_decode($checklist_json, true);
+        if (!is_array($checklist_array)) {
             throw new Exception("A checklist enviada não está especificada corretamente.");
         }
-        
+
         $checklist = array();
         $checklist['title'] = trim(filter_var($checklist_array['title'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
-        if($checklist['title'] == "") {
+        if ($checklist['title'] == "") {
             throw new Exception("O título da checklist está vazio ou contém caracteres inválidos.");
         }
-        
-        if(!is_array($checklist_array['items'])) {
+
+        if (!is_array($checklist_array['items'])) {
             throw new Exception("A checklist precisa conter ao menos 01 item.");
         }
-        
-        foreach($checklist_array['items'] as $index => $item) {
+
+        foreach ($checklist_array['items'] as $index => $item) {
             $checklist['items'][$index]['title'] = trim(filter_var($item, FILTER_SANITIZE_FULL_SPECIAL_CHARS));
-            if($checklist['items'][$index]['title'] == "") {
+            if ($checklist['items'][$index]['title'] == "") {
                 throw new Exception("Não é possível adicionar um item com o título vazio.");
             }
-            $checklist['items'][$index]['status'] = 0;            
+            $checklist['items'][$index]['id'] = $index;
+            $checklist['items'][$index]['status'] = 0;
         }
-        
+
         return $checklist;
-        
+    }
+
+    public function updateThreadChecklist($thread_id, $checklist_items, $force_update = false) {
+        if (!is_numeric($thread_id)) {
+            throw new Exception("Você tentou atualizar a checklist de uma thread não identificada.");
+        }
+
+        $thread = $this->loadThread($thread_id);
+        if (count($thread['checklist']['items']) != count($checklist_items)) {
+            throw new Exception("O número de items na checklist não foi especificado corretamente.");
+        }
+
+        foreach ($thread['checklist']['items'] as $index => $item) {
+            if ($item['id'] == $checklist_items[$index]['id']) {
+                if ($checklist_items[$index]['status'] != $item['status'] && ($checklist_items[$index]['status'] === 0 || $checklist_items[$index]['status'] === 1)) {
+                    $thread['checklist']['items'][$index]['status'] = $checklist_items[$index]['status'];
+                }
+            }
+        }
+        if ($force_update) {
+            $this->updateThreadInfo($thread);
+        }
+
+        return $thread;
+    }
+
+    private function updateThreadInfo($thread) {
+        if (!is_numeric($thread['id'])) {
+            throw new Exception("A Thread não pode ser atualizada pois sua identificação não está especificada.");
+        }
+
+        $new_info = Array();
+        if ($thread['ss']) {
+            $new_info['ss'] = $thread['ss'];
+        }
+
+        if ($thread['checklist']) {
+            $new_info['checklist'] = $thread['checklist'];
+        }
+
+        if ($thread['attachments']) {
+            $new_info['attachments'] = $thread['attachments'];
+        }
+
+        $new_info_json = json_encode($new_info);
+
+        $this->conn->prepareupdate($new_info_json, "info", "thread", $thread['id'], "id", "STR");
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível atualizar as informações da thread.");
+        }
     }
 
     private function addThreadAttachments($attachment_list) {
@@ -274,7 +328,7 @@ class threadController {
             if ($index != "attachment-file-" . $idx_counter) {
                 throw new Exception("Não foi possível validar o envio dos anexos.");
             }
-            
+
             if (!in_array($file['type'], $mime_array) || !is_file($file['tmp_name']) || strlen(basename($file['tmp_name'])) > 70) {
                 throw new Exception("O arquivo " . $file['name'] . " está em formato não suportado pelo sistema.");
             }

@@ -3,15 +3,23 @@
         <div class="header">
             <div class='title'>{{ thread.titulo }}</div>
             <div class='badges'>
+                {% if not thread.controls %}
+                    <div class="control">
+                        <i class="fa fa-pencil"></i> Editar Thread
+                    </div>
+                    <div class="control">
+                        <i class="fa fa-trash"></i> Arquivar Thread
+                    </div>
+                {% endif %}
                 {% if thread.data_vencimento %}
-                    <div class='expiring-date'><span class='label'>Vencimento em</span>{{ thread.data_vencimento }}</div>
+                    <div class='expiring-date'>Vencimento em <span class='label'>{{ thread.data_vencimento }}</span></div>
                 {% endif %}
                 {% if thread.prioridade == 0 %}
-                    <div class='low-priority'>Prioridade Normal</div>
+                    <div class='low-priority priority'>Prioridade Normal</div>
                 {% elseif thread.prioridade == 1 %}
-                    <div class='mid-priority'>Prioridade Média</div>
+                    <div class='mid-priority priority'>Prioridade Média</div>
                 {% elseif thread.prioridade == 2 %}
-                    <div class='high-priority'>Prioridade Alta</div>
+                    <div class='high-priority priority'>Prioridade Alta</div>
                 {% endif %}
             </div>
         </div>
@@ -27,43 +35,72 @@
             {% if thread.checklist or thread.ss %}
                 <div class='extra-info'>
                     {% if thread.checklist %}
-                        <div class='checklist-wrap'>
+                        <div id='checklist-wrap'>
                             <div class="title"><i class="fa fa-check-square-o" hidden-area="true"></i>{{ thread.checklist.title }}</div>
+                            <div class="items">
                                 {% for item in thread.checklist.items %}
-                                <div class="item">
-                                    {% if item.status == 0 %}
-                                        <div class="not-checked fa fa-square-o"></div>
-                                        <div class="label-title">{{ item.title }}</div>
-                                    {% else %}
-                                        <div class="checked fa fa-check-square-o"></div>
-                                        <div class="label-title">{{ item.title }}</div>
-                                    {% endif %}
-
+                                    <div class="item" checkid='{{ item.id }}' status="{{ item.status }}" title="{{ item.title }}">
+                                        {% if item.status == 0 %}
+                                            <div class="not-checked fa fa-square-o"></div>
+                                            <div class="label-title">{{ item.title }}</div>
+                                        {% else %}
+                                            <div class="checked fa fa-check-square-o"></div>
+                                            <div class="label-title">{{ item.title }}</div>
+                                        {% endif %}                                        
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="checklist-status">
+                                <div class="status-bar">
+                                    <div class="status-progress"></div>
                                 </div>
-                            {% endfor %}
+                                <div class="status-counter"></div>
+                            </div>
                         </div>
+                        <script src="{{ config.system_path }}/js/lib/checklist.js" ></script>
                     {% endif %}
                     {% if thread.ss %}
+                        <div id="statussystem-wrap">
+                            <div class="title"><i class="fa fa-clock-o" hidden-area="true"></i> Progreso da Tarefa</div>
+                            <div class="current-status">
+                                <div class="status"></div>
+                                <div class="timer"></div>
+                                <div class="user"></div>
+                            </div>
+                            <div class="history"></div>
+                            <div class="form"></div>
+                            <div class="controls">
+                                <div class="control" act="change">
+                                    <i class="fa fa-hand-o-right"></i> Atribuir Status
+                                </div>
+                                <div class="control" act="history">
+                                    <i class="fa fa-clock-o"></i>  Histórico
+                                </div>
+                            </div>
+                        </div>
+                        <script src="{{ config.system_path }}/js/lib/status.js" ></script>
                     {% endif %}
                 </div>
             {% endif %}
+            <div class="activity-log">
+                <div class="title">Registro de Atividades</div>
+            </div>
+        </div>
+        <div class="replys">
+            {% for reply in thread.replys %}
+                <div class="reply">
+                    <div class="user-content">
+                        <div class="image">
+                            <img src="{{ config.system_path}}/images/avatar/{{ reply.image }}" alt="Imagem do Usuário" />
+                        </div>
+                        <div class="name">{{ reply.nome }}</div>
+                        <div class="date">Postado em: {{ reply.data_criacao }}</div>
+                    </div>
+                    <div class="thread-content">
+                        <div class="post">{{ reply.texto|raw }}</div>
+
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     </div>
-    <div class="replys">
-        {% for reply in thread.replys %}
-            <div class="reply">
-                <div class="user-content">
-                    <div class="image">
-                        <img src="{{ config.system_path}}/images/avatar/{{ reply.image }}" alt="Imagem do Usuário" />
-                    </div>
-                    <div class="name">{{ reply.nome }}</div>
-                    <div class="date">Postado em: {{ reply.data_criacao }}</div>
-                </div>
-                <div class="thread-content">
-                    <div class="post">{{ reply.texto|raw }}</div>
-
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-</div>

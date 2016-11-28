@@ -104,12 +104,58 @@ boardInterface = function () {
                 if (data.success === "true") {
                     $("#board-wrap .threads-wrap").html(data.html);
                     self.loadBackButton();
+                    if ($("#checklist-wrap").length) {
+                        var checkcontroller = new checkList();
+                        checkcontroller.loadCheckList(id, self.updateCheckList);
+                    }
+                    var statuscontroller = new statusController();
+                    statuscontroller.loadStatusSystem(data.thread.ss);
                 } else {
                 }
             }
         });
     };
 
+    this.updateCheckList = function (thread_id, checklist) {
+        var error_flag = false;
+        var checklist_items = new Array();
+        $.each(checklist, function (idx, item) {
+            var item_obj = new Object();
+            item_obj.id = parseInt($(item).attr("checkid"));
+            item_obj.status = parseInt($(item).attr("status"));
+
+            if (isNaN(item_obj.id)) {
+                console.log("Identificador do item precisa ser numérico.");
+                error_flag = true;
+            }
+
+            if (isNaN(item_obj.status) || (item_obj.status !== 1 && item_obj.status !== 0)) {
+                console.log("Status do item inválido.");
+                error_flag = true;
+            }
+
+            checklist_items.push(item_obj);
+        });
+
+        if (error_flag) {
+            return;
+        }
+
+        $.ajax({
+            url: self.root + "/boards",
+            data: {
+                mode: "update_checklist",
+                thread_id: thread_id,
+                checklist: checklist_items
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+
+            }
+        });
+
+
+    };
     this.loadAddThreadForm = function (thread_type) {
         var self = this;
         if (thread_type !== 1 && thread_type !== 0) {

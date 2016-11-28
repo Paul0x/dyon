@@ -1,25 +1,12 @@
-{% for pacote_key in pacotes.list|keys %}
-      <div class="list-row {% if pacote_key % 2 == 0 %}list-row-even{% else %}list-row-odd{% endif %}{% if loop.index == loop.length %} list-row-last{% endif %}">
-            <a href="{{config.system_path}}/cliente/{{ pacotes.list[pacote_key][pacotes.list[pacote_key]|length-1]}}/{{ pacotes.list[pacote_key][pacotes.list[pacote_key]|length-2]}}">
-                  {% for field in pacotes.field_list|keys %}
-                        <div class="column-{{ pacotes.field_list[field] }} list-column{% if loop.index == loop.length %} list-column-last{% endif %}">
-                              {% if pacotes.field_list[field] == "status" %}
-                                    {% if pacotes.list[pacote_key][ field ] == 0 %}
-                                          <div class="list-pagamento-cancelado">Cancelado</div>
-                                    {% elseif pacotes.list[pacote_key][ field ] == 1 %}
-                                          <div class="list-pagamento-pendente">Pendente</div>
-                                    {% elseif pacotes.list[pacote_key][ field ] == 2 %}
-                                          <div class="list-pagamento-aprovado">Aprovado</div>
-                                    {% elseif pacotes.list[pacote_key][ field ] == 3 %}
-                                          <div class="list-pagamento-aprovado">Quitado</div>
-                                    {% elseif pacotes.list[pacote_key][ field ] == 4 %}
-                                          <div class="list-pagamento-cadastrado">Cadastrado</div>
-                                    {% endif %}
-                              {% else %}
-                                    {{ pacotes.list[pacote_key][ field ] }}
-                              {% endif %}
-                        </div>
-                  {% endfor %}
-            </a>
-      </div>
+{% for pacote in pacotes.list %}
+    <div class="pacote-row">
+            <div class="header">
+                <div class="title">
+                    {{ pacote.nome_usuario }}
+                </div>
+                <div class="event">
+                    {{ pacote.nome_evento }} - {{ pacote.lote }}
+                </div>
+            </div>
+    </div>
 {% endfor %}      

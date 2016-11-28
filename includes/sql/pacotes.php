@@ -39,13 +39,13 @@ class pacoteModel {
         }
 
         $available_filters = Array("nome", "grupo", "rg", "cidade", "estado");
-        $pacotes['field_list'] = Array("nome", "grupo", "lote", "pagamento", "status", "valor");
-        $field_list = "d.nome as 'nome_usuario', b.nome as 'nome_grupo', e.nome, tipo_pagamento, a.status as 'status_pacote', SUM(c.valor) as 'valor_total', a.id, d.id";
+        $field_list = "g.nome as 'nome_evento', d.nome as 'nome_usuario', b.nome as 'nome_grupo', e.nome as 'lote', tipo_pagamento, a.status as 'status_pacote', SUM(c.valor) as 'valor_total', a.id, d.id";
         $query = "SELECT " . $field_list . " FROM pacote a " .
                 "INNER JOIN grupo b ON a.id_grupo = b.id " .
                 "INNER JOIN parcela_pacote c ON a.id = c.id_pacote " .
                 "INNER JOIN usuario d ON a.id_usuario = d.id " .
-                "INNER JOIN lote e ON a.id_lote = e.id ";
+                "INNER JOIN lote e ON a.id_lote = e.id "
+                . " INNER JOIN evento g ON e.id_evento = g.id ";
 
         switch ($filters['field']['label']) {
             case "grupo":
@@ -101,7 +101,7 @@ class pacoteModel {
             }
         }
         $query.= " LIMIT " . $filters['page'] . "," . DYON_PACOTEMODEL_PACOTESBYQUERY;
-        $pacotes['list'] = $this->conn->freeQuery($query, true, true, PDO::FETCH_NUM);
+        $pacotes['list'] = $this->conn->freeQuery($query, true, true, PDO::FETCH_BOTH);
         if (is_null($pacotes['list'][0][0])) {
             throw new Exception("Nenhum pacote encontrado com os filtros especificados.");
         }
