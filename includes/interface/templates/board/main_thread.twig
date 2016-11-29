@@ -4,17 +4,21 @@
             <div class='title'>{{ thread.titulo }}</div>
             <div class='badges'>
                 {% if not thread.controls %}
-                    <div class="control">
+                    <div class="control edit-thread">
                         <i class="fa fa-pencil"></i> Editar Thread
                     </div>
-                    <div class="control">
-                        <i class="fa fa-trash"></i> Arquivar Thread
+                    <div class="control archive-thread" status="{{ thread.status }}">
+                        {% if thread.status == 1 %}
+                            <i class="fa fa-trash"></i> Arquivar Thread
+                        {% else %}
+                            <i class="fa fa-check"></i> Ativar Thread
+                        {% endif %}
                     </div>
                 {% endif %}
                 {% if thread.data_vencimento %}
                     <div class='expiring-date'>Vencimento em <span class='label'>{{ thread.data_vencimento }}</span></div>
-                {% endif %}
-                {% if thread.prioridade == 0 %}
+                    {% endif %}
+                    {% if thread.prioridade == 0 %}
                     <div class='low-priority priority'>Prioridade Normal</div>
                 {% elseif thread.prioridade == 1 %}
                     <div class='mid-priority priority'>Prioridade Média</div>

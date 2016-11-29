@@ -422,5 +422,25 @@ class threadController {
         }
         return $replys;
     }
+    
+    
+    public function archiveThread($thread_id) {
+        if (!is_numeric($thread_id)) {
+            throw new Exception("Você tentou atualizar o status de uma thread não identificada.");
+        }        
+        
+        $thread = $this->loadThread($thread_id);
+        
+        if($thread['status'] == 1) {
+            $new_status = 0;
+        } else {
+            $new_status = 1;
+        }
+        
+        $this->conn->prepareupdate($new_status, "status", "thread", $thread['id'], "id", "INT");
+        if(!$this->conn->executa()) {
+            throw new Exception("Não foi possível alterar o status da thread.");
+        }
+    }
 
 }

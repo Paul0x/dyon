@@ -33,17 +33,23 @@ class boardController {
         $this->conn = new conn();
     }
 
-    private function loadAddThreadForm() {
-        $form_type = filter_input(INPUT_POST, "thread_type", FILTER_VALIDATE_INT);
-        Twig_Autoloader::register();
-        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
-        $this->twig = new Twig_Environment($this->twig_loader);
-        if ($form_type == 0) {
-            $html = $this->twig->render("board/add_thread_form.twig", Array("config" => config::$html_preload));
-        } else {
-            $html = $this->twig->render("board/add_task_form.twig", Array("config" => config::$html_preload));
+    private function loadThreadForm($form_type) {
+        try {
+            if ($form_type == 1) {
+                $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
+                $threadcontroller = new threadController($this->conn);
+                $thread = $threadcontroller->loadThread($thread_id);
+            }
+
+
+            Twig_Autoloader::register();
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig = new Twig_Environment($this->twig_loader);
+            $html = $this->twig->render("board/thread_form.twig", Array("config" => config::$html_preload, "form_type" => $form_type, "thread" => $thread));
+            echo json_encode(array("success" => "true", "html" => $html));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
-        echo json_encode(array("success" => "true", "html" => $html));
     }
 
     private function createBoard($name = false) {
@@ -267,8 +273,7 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
-    
-    
+
     private function updateChecklist() {
         try {
             $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
@@ -292,6 +297,18 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+
+    private function archiveThread() {
+        try {
+            $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
+            $threadcontroller = new threadController($this->conn);
+            $threadcontroller->archiveThread($thread_id);
+            echo json_encode(array("success" => "true"));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
+
     public function init($url) {
         try {
             Twig_Autoloader::register();
@@ -337,7 +354,10 @@ class boardController {
                         $this->renameBoard();
                         break;
                     case "add_thread_form":
-                        $this->loadAddThreadForm();
+                        $this->loadThreadForm(0);
+                        break;
+                    case "edit_thread_form":
+                        $this->loadThreadForm(1);
                         break;
                     case "add_thread":
                         $this->createThread();
@@ -347,6 +367,9 @@ class boardController {
                         break;
                     case "update_status":
                         $this->updateStatus();
+                        break;
+                    case "archive_thread":
+                        $this->archiveThread();
                         break;
                 }
             }

@@ -15,10 +15,10 @@
  *  =====================================================================
  */
 
-boardInterface = function() {
+boardInterface = function () {
     this.root = $("#dir-root").val();
 
-    this.initBoards = function() {
+    this.initBoards = function () {
         var self = this;
         self.loadBoardsBoxes();
         self.loadUserBoard();
@@ -26,55 +26,114 @@ boardInterface = function() {
         self.bindBoardFunctions();
     };
 
-    this.bindBoardFunctions = function() {
+    this.bindBoardFunctions = function () {
         var self = this;
-        $("#board-add-board").bind("click", function() {
+        $("#board-add-board").bind("click", function () {
             self.loadAddBoardForm();
         });
 
-        $("#board-control-form-close").die().live("click", function() {
+        $("#board-control-form-close").die().live("click", function () {
             self.loadUserBoard();
         });
 
-        $("#board-control-rename").die().live("click", function() {
+        $("#board-control-rename").die().live("click", function () {
             self.loadRenameBoardForm();
         });
 
-        $("#board-control-archive").die().live("click", function() {
+        $("#board-control-archive").die().live("click", function () {
             self.switchThreadStatusView();
         });
 
-        $("#board-control-switch-view").die().live("click", function() {
+        $("#board-control-switch-view").die().live("click", function () {
             self.switchThreadView();
         });
 
-        $("#add-thread").die().live("click", function() {
-            self.loadAddThreadForm(0);
+        $("#add-thread").die().live("click", function () {
+            self.loadAddThreadForm();
         });
 
-        $("#board-wrap .thread").die().live("click", function() {
+        $("#board-wrap .thread").die().live("click", function () {
             self.loadThread(this, false);
+        });
+
+        $(".thread-wrap .badges .archive-thread").die().live("click", function () {
+            self.loadArchiveThreadRequest(this);
+        });
+        $(".thread-wrap .badges .edit-thread").die().live("click", function () {
+            self.loadEditThreadForm();
         });
     };
 
-    this.createCheckList = function() {
+    this.loadArchiveThreadRequest = function (element) {
+        var self = this;
+        var threadstatus = parseInt($(element).attr("status"));
+        var old_html = $(".thread-wrap .badges").html();
+        var term;
+        var new_status;
+
+        if (threadstatus === 1) {
+            term = "rquivar";
+            new_status = 0;
+        } else {
+            term = "tivar";
+            new_status = 1;
+        }
+
+        var html = "<div class='info'>Você tem certeza que deseja a" + term + " essa thread?</div>";
+        html += "<div id='thread-archive-submit' class='control'><i class='fa fa-trash'></i> A" + term + "</div>";
+        html += "<div class='control back'><i class='fa fa-times'></i> Voltar</div>";
+        $(".thread-wrap .badges").html(html).addClass("controlform");
+
+        $("#thread-archive-submit").die().live("click", function () {
+            var thread_id = parseInt($(".thread-wrap").attr("threadid"));
+            if (isNaN(thread_id)) {
+                $(".thread-wrap .badges").html(old_html);
+            }
+            $.ajax({
+                url: self.root + "/boards",
+                data: {
+                    mode: "archive_thread",
+                    thread_id: thread_id
+                },
+                success: function (data) {
+                    data = eval("( " + data + " )");
+                    $(".thread-wrap .badges").html(old_html).removeClass("controlform");
+                    if (data.success === "true") {
+                        if (new_status === 0) {
+                            $(".thread-wrap .badges .archive-thread").html("<i class='fa fa-check'></i> Ativar Thread").attr("status", 0);
+                        } else {
+                            $(".thread-wrap .badges .archive-thread").html("<i class='fa fa-trash'></i> Arquivar Thread").attr("status", 1);
+
+                        }
+                    }
+                }
+            });
+        });
+        $(".thread-wrap .badges .back").die().live("click", function () {
+            $(".thread-wrap .badges").html(old_html).removeClass("controlform");
+        });
+
+
+    };
+
+    this.createCheckList = function () {
         var self = this;
         var checkcontroller = new checkList();
-        checkcontroller.init(function(obj) {
+        checkcontroller.init(function (obj) {
             self.newthread.checklist = obj;
             $("#add-create-checklist").html("<b>Checklist Adicionada</b><br/> " + self.newthread.checklist.title);
             closeAjaxBox();
         });
     };
 
-    this.setExpiringDate = function() {
+    this.setExpiringDate = function () {
         $("#add-expiring-date").html("<input name='expiring-date' type='text' placeholder='Data de Vencimento' />").die();
         $("#add-expiring-date input").datepicker({
             dateFormat: "dd/mm/yy"
         });
     };
 
-    this.toggleStatusSystem = function() {
+    this.toggleStatusSystem = function () {
         var self = this;
         if (self.newthread.statussystem) {
             $("#add-status-system").html("Progresso e Status <strong>(Desativado)</strong>");
@@ -85,7 +144,7 @@ boardInterface = function() {
         }
     };
 
-    this.loadThread = function(thread, numeric) {
+    this.loadThread = function (thread, numeric) {
         var self = this;
         if (!numeric) {
             var id = parseInt($(thread).attr("id"));
@@ -98,7 +157,7 @@ boardInterface = function() {
                 mode: "load_thread",
                 id: id
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap .threads-wrap").html(data.html);
@@ -115,7 +174,7 @@ boardInterface = function() {
         });
     };
 
-    this.updateThreadStatus = function(thread_id, status) {
+    this.updateThreadStatus = function (thread_id, status) {
         var self = this;
         $.ajax({
             url: self.root + "/boards",
@@ -124,7 +183,7 @@ boardInterface = function() {
                 thread_id: thread_id,
                 status: status
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     var statuscontroller = new statusController();
@@ -136,10 +195,10 @@ boardInterface = function() {
         });
     };
 
-    this.updateCheckList = function(thread_id, checklist) {
+    this.updateCheckList = function (thread_id, checklist) {
         var error_flag = false;
         var checklist_items = new Array();
-        $.each(checklist, function(idx, item) {
+        $.each(checklist, function (idx, item) {
             var item_obj = new Object();
             item_obj.id = parseInt($(item).attr("checkid"));
             item_obj.status = parseInt($(item).attr("status"));
@@ -168,27 +227,44 @@ boardInterface = function() {
                 thread_id: thread_id,
                 checklist: checklist_items
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
 
             }
         });
-
-
     };
-    this.loadAddThreadForm = function(thread_type) {
+    this.loadAddThreadForm = function () {
         var self = this;
-        if (thread_type !== 1 && thread_type !== 0) {
-            return;
-        }
-
         $.ajax({
             url: self.root + "/boards",
             data: {
-                mode: "add_thread_form",
-                thread_type: thread_type
+                mode: "add_thread_form"
             },
-            success: function(data) {
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#board-wrap .threads-wrap").html(data.html);
+                    self.initAddThreadForm();
+                } else {
+                    self.loadBoardControlFormErrorMessage(data.error);
+                }
+            }
+        });
+    };
+    
+    this.loadEditThreadForm = function () {
+        var self = this;
+        var thread_id = parseInt($(".thread-wrap").attr("threadid"));
+        if(isNaN(thread_id)) {
+            return;
+        }
+        $.ajax({
+            url: self.root + "/boards",
+            data: {
+                mode: "edit_thread_form",
+                thread_id: thread_id
+            },
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap .threads-wrap").html(data.html);
@@ -200,32 +276,32 @@ boardInterface = function() {
         });
     };
 
-    this.initAddThreadForm = function() {
+    this.initAddThreadForm = function () {
         var self = this;
-        $(".add-thread-form .add-more-files").die().live("click", function() {
+        $(".add-thread-form .add-more-files").die().live("click", function () {
             self.addMoreLinksThreadForm();
         });
         self.newthread = new Object();
         self.loadBackButton();
 
-        $("#add-create-checklist").die().live("click", function() {
+        $("#add-create-checklist").die().live("click", function () {
             self.createCheckList();
         });
 
-        $("#add-expiring-date").die().live("click", function() {
+        $("#add-expiring-date").die().live("click", function () {
             self.setExpiringDate();
         });
 
-        $("#add-status-system").die().live("click", function() {
+        $("#add-status-system").die().live("click", function () {
             self.toggleStatusSystem();
         });
 
-        $("#add-thread-submit").die().live("click", function() {
+        $("#add-thread-submit").die().live("click", function () {
             self.addThread();
         });
     };
 
-    this.addThread = function() {
+    this.addThread = function () {
         var self = this;
         if (self.newthread === undefined || self.newthread === null) {
             return;
@@ -243,7 +319,7 @@ boardInterface = function() {
 
         var form = new FormData();
         var xhr = new XMLHttpRequest();
-        $("input[name='attachment[]']").each(function(idx, file) {
+        $("input[name='attachment[]']").each(function (idx, file) {
             if (file.files[0] !== undefined) {
                 form.append("attachment-file-" + idx, file.files[0]);
             }
@@ -265,7 +341,7 @@ boardInterface = function() {
         }
         xhr.open('POST', self.root + "/boards", true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             /*if (xhr.readyState == 2) {
              $("#add-thread-submit").val("Carregando...").attr("disabled", "disabled");
              }*/
@@ -283,13 +359,13 @@ boardInterface = function() {
 
     };
 
-    this.loadBackButton = function() {
+    this.loadBackButton = function () {
         var self = this;
         if (!$("#thread-add-backbutton").length) {
             $("#add-thread").css("display", "none");
             $(".board-header .control-right").css("display", "none");
             $("#add-thread").after("<div class='control' id='thread-add-backbutton'>Voltar</div>");
-            $("#thread-add-backbutton").die().live("click", function() {
+            $("#thread-add-backbutton").die().live("click", function () {
                 self.loadUserBoard();
                 $(".board-header .control-right").css("display", "block");
                 $("#add-thread").css("display", "block");
@@ -301,7 +377,7 @@ boardInterface = function() {
         }
     };
 
-    this.addMoreLinksThreadForm = function() {
+    this.addMoreLinksThreadForm = function () {
         var self = this;
         $("#attachment-files-list").append("<input type='file' name='attachment[]' />");
         var num_files = $("#attachment-files-list input").length;
@@ -310,14 +386,14 @@ boardInterface = function() {
         }
     };
 
-    this.updateThreadObjects = function() {
+    this.updateThreadObjects = function () {
         var self = this;
         self.viewstyle = 'list';
         self.threads_list = $(".threads-wrap .thread");
         self.threads_column = new Object();
         self.threads_column.tasks = new Array();
         self.threads_column.discussions = new Array();
-        $.each(self.threads_list, function(idx, thread) {
+        $.each(self.threads_list, function (idx, thread) {
             if (parseInt($(thread).attr("tipo")) === 0) {
                 self.threads_column.discussions.push(thread);
             } else {
@@ -326,7 +402,7 @@ boardInterface = function() {
         });
     };
 
-    this.switchThreadView = function() {
+    this.switchThreadView = function () {
         var self = this;
         if (self.viewstyle === undefined || self.viewstyle === 'list') {
             self.viewstyle = 'column';
@@ -334,7 +410,7 @@ boardInterface = function() {
             var html = "<div class='column-50 discussion-threads-wrap'>";
             html += "<div class='title'>Discussões</div>";
             if (self.threads_column.discussions.length > 0) {
-                $.each(self.threads_column.discussions, function(idx, thread) {
+                $.each(self.threads_column.discussions, function (idx, thread) {
                     html += thread.outerHTML;
                 });
             } else {
@@ -344,7 +420,7 @@ boardInterface = function() {
             html += "<div class='column-50 task-threads-wrap'>";
             html += "<div class='title'>Tarefas</div>";
             if (self.threads_column.tasks.length > 0) {
-                $.each(self.threads_column.tasks, function(idx, thread) {
+                $.each(self.threads_column.tasks, function (idx, thread) {
                     html += thread.outerHTML;
                 });
             } else {
@@ -357,7 +433,7 @@ boardInterface = function() {
             $("#board-control-switch-view").html('<i class="fa fa-columns" aria-hidden="true"></i>').attr("title", "Visualizar por Tipo");
             var html = "";
             if (self.threads_list.length > 0) {
-                $.each(self.threads_list, function(idx, thread) {
+                $.each(self.threads_list, function (idx, thread) {
                     html += thread.outerHTML;
                 });
             } else {
@@ -372,7 +448,7 @@ boardInterface = function() {
 
     };
 
-    this.switchThreadStatusView = function() {
+    this.switchThreadStatusView = function () {
         var self = this;
         var board_id = $("#board-id-ref").val();
         if (self.statusview === undefined || self.statusview === 1) {
@@ -387,7 +463,7 @@ boardInterface = function() {
 
     };
 
-    this.loadRenameBoardForm = function() {
+    this.loadRenameBoardForm = function () {
         var self = this;
         var board_name = $("#board-wrap .board-header .title").html();
         var board_id = $("#board-id-ref").val();
@@ -402,7 +478,7 @@ boardInterface = function() {
         html += "<input type='button' id='board-rename-form-submit' class='btn-01' value='Renomear'/>";
         html += "</div>";
         $("#board-wrap").html(html);
-        $("#board-rename-form-submit").die().live("click", function() {
+        $("#board-rename-form-submit").die().live("click", function () {
             var nome = $("input[name='board-name']").val();
             if (nome === "") {
                 self.loadBoardControlFormErrorMessage("O campo nome é obrigatório.");
@@ -415,7 +491,7 @@ boardInterface = function() {
                     nome: nome,
                     board_id: board_id
                 },
-                success: function(data) {
+                success: function (data) {
                     data = eval("( " + data + " )");
                     if (data.success === "true") {
                         self.removeBoardControlFormErrorMessage();
@@ -429,7 +505,7 @@ boardInterface = function() {
         });
     };
 
-    this.loadAddBoardForm = function() {
+    this.loadAddBoardForm = function () {
         var self = this;
         if ($("#board-add-form").length === 0) {
             var html = "<div class='board-control-form' id='board-add-form'>";
@@ -443,7 +519,7 @@ boardInterface = function() {
             html += "<input type='button' id='board-add-form-submit' class='btn-01' value='Adicionar'/>";
             html += "</div>";
             $("#board-wrap").html(html);
-            $("#board-add-form-submit").die().live("click", function() {
+            $("#board-add-form-submit").die().live("click", function () {
                 var nome = $("input[name='board-name']").val();
                 if (nome === "") {
                     self.loadBoardControlFormErrorMessage("O campo nome é obrigatório.");
@@ -455,7 +531,7 @@ boardInterface = function() {
                         mode: "create_new_board",
                         nome: nome
                     },
-                    success: function(data) {
+                    success: function (data) {
                         data = eval("( " + data + " )");
                         if (data.success === "true") {
                             self.removeBoardControlFormErrorMessage();
@@ -470,30 +546,30 @@ boardInterface = function() {
         }
     };
 
-    this.loadBoardControlFormErrorMessage = function(message) {
+    this.loadBoardControlFormErrorMessage = function (message) {
         if ($(".error-message").length !== 0)
             $(".error-message").remove();
         $("#board-wrap").append("<div class='error-message'>" + message + "</div>");
     };
 
-    this.removeBoardControlFormErrorMessage = function(message) {
+    this.removeBoardControlFormErrorMessage = function (message) {
         if ($(".error-message").length !== 0)
             $(".error-message").remove();
         $("#board-wrap").append("<div class='error-message'>" + message + "</div>");
     };
 
-    this.loadBoardsBoxes = function() {
+    this.loadBoardsBoxes = function () {
         var self = this;
         $.ajax({
             url: self.root + "/boards",
             data: {
                 mode: "load_boards_boxes"
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-select").html('<option value="select">Selecione uma Board</option>');
-                    $.each(data.boards, function(idx, board) {
+                    $.each(data.boards, function (idx, board) {
                         $("#board-select").append("<option value='" + board.id + "'>" + board.nome + "</option>");
                     });
                 }
@@ -501,14 +577,14 @@ boardInterface = function() {
         });
     };
 
-    this.loadUserBoard = function() {
+    this.loadUserBoard = function () {
         var self = this;
         $.ajax({
             url: self.root + "/boards",
             data: {
                 mode: "load_user_board"
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap").html(data.html);
@@ -520,7 +596,7 @@ boardInterface = function() {
         });
     };
 
-    this.loadBoardThreads = function(board_id, status) {
+    this.loadBoardThreads = function (board_id, status) {
         var self = this;
         $.ajax({
             url: self.root + "/boards",
@@ -529,7 +605,7 @@ boardInterface = function() {
                 board_id: board_id,
                 status: status
             },
-            success: function(data) {
+            success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap .threads-wrap").html(data.html);
@@ -547,9 +623,9 @@ boardInterface = function() {
         });
     };
 
-    this.bindBoardSelection = function() {
+    this.bindBoardSelection = function () {
         var self = this;
-        $("#board-select").bind("change", function() {
+        $("#board-select").bind("change", function () {
             var id = $(this).val();
             if (isNaN(id)) {
                 return;
@@ -560,7 +636,7 @@ boardInterface = function() {
                     mode: "update_user_board",
                     id: id
                 },
-                success: function(data) {
+                success: function (data) {
                     data = eval("( " + data + " )");
                     if (data.success === "true") {
                         self.loadUserBoard();
