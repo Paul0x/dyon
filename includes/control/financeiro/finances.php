@@ -397,12 +397,14 @@ class financesController {
             if ($day) {
                 $datetime = new DateTime();
                 $pacotes['day']['r'] = $flowmodel->getReceitaDia($datetime, $id_event);
+                $datetime = new DateTime();
                 $pacotes['day']['d'] = $flowmodel->getDespesaDia($datetime, $id_event);
                 $pacotes['day']['t'] = number_format($pacotes['day']['r']['p'] - $pacotes['day']['d']['t'], 2, ",", ".");
             }
             if ($week) {
                 $datetime = new DateTime();
                 $pacotes['week']['r'] = $flowmodel->getReceitaSemana($datetime, $id_event);
+                $datetime = new DateTime();
                 $pacotes['week']['d'] = $flowmodel->getDespesaSemana($datetime, $id_event);
                 $pacotes['week']['t'] = number_format($pacotes['week']['r']['p'] - $pacotes['week']['d']['t'], 2, ",", ".");
             }
@@ -419,6 +421,7 @@ class financesController {
                         }
                     }
                 }
+                $datetime = new DateTime();
                 $pacotes['total']['d'] = $financemodel->getDespesa($id_event, $datetime);
                 $despesa = $pacotes['total']['d']['total_vencido'];
                 $pacotes['total']['t'] = number_format($receita - $despesa, 2, ",", ".");

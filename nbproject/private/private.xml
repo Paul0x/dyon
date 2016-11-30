@@ -5,10 +5,13 @@
         <group>
             <file>file:/C:/wamp/www/dyon/js/board.js</file>
             <file>file:/C:/wamp/www/dyon/includes/control/board/thread.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/evento/events.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/sql/flow.php</file>
             <file>file:/C:/wamp/www/dyon/includes/control/board/board.php</file>
             <file>file:/C:/wamp/www/dyon/css/core.css</file>
             <file>file:/C:/wamp/www/dyon/includes/interface/templates/board/main_thread.twig</file>
             <file>file:/C:/wamp/www/dyon/includes/interface/templates/board/thread_form.twig</file>
+            <file>file:/C:/wamp/www/dyon/includes/control/financeiro/finances.php</file>
         </group>
     </open-files>
 </project-private>
