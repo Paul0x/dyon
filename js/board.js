@@ -268,7 +268,6 @@ boardInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap .threads-wrap").html(data.html);
-                    self.initAddThreadForm();
                 } else {
                     self.loadBoardControlFormErrorMessage(data.error);
                 }
@@ -354,9 +353,6 @@ boardInterface = function () {
             }
         };
         xhr.send(form);
-
-
-
     };
 
     this.loadBackButton = function () {
@@ -440,12 +436,7 @@ boardInterface = function () {
                 html += "<div class='no-thread'>Nenhuma Thread Encontrada</div>";
             }
             $(".threads-wrap").html(html);
-
         }
-
-
-
-
     };
 
     this.switchThreadStatusView = function () {
