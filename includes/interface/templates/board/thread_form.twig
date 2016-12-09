@@ -1,58 +1,60 @@
-<div class="add-thread-form form-edit-infos">
+<div class="thread-form form-edit-infos">
     {% if form_type == 0 %}
         <div class="header">Adicionar Thread</div>
     {% else %}
         <div class="header">Editar Thread</div>
-        <input type="hidden" value="{{ thread.id }}" />
+        <input type="hidden" name="id" value="{{ thread.id }}" />
     {% endif %}
-    <div class="column-1">
-        <div class="item">            
-            <label>Título</label>
-            <input type="text" name="title" {% if thread %}value="{{ thread.titulo }}" {% endif %}/>
-        </div>
-        <div class="item">
-            <label>Conteúdo</label>
-            <textarea rows="15" name="post">{% if thread %} {{ thread.post_nl }} {% endif %}</textarea>
-        </div>
-        <div class="item">
-            {% if form_type == 0 %}
-                <input type="button" value="Criar Thread" class="btn-01" id="add-thread-submit"/> 
-            {% else %}
-                <input type="button" value="Editar Thread" class="btn-01" id="edit-thread-submit"/> 
-            {% endif %}
+    <div class="column-wrap">
+        <div class="column-1">
+            <div class="item">            
+                <label>Título</label>
+                <input type="text" name="title" {% if thread %}value="{{ thread.titulo }}" {% endif %}/>
+            </div>
+            <div class="item">
+                <label>Conteúdo</label>
+                <textarea rows="15" name="post">{% if thread %}{{ thread.post_nl }}{% endif %}</textarea>
+            </div>
+            <div class="item">
+                {% if form_type == 0 %}
+                    <input type="button" value="Criar Thread" class="btn-01" id="add-thread-submit"/> 
+                {% else %}
+                    <input type="button" value="Editar Thread" class="btn-01" id="edit-thread-submit"/> 
+                {% endif %}
 
+            </div>
+        </div>
+        <div class="column-2">
+            <div class="item">
+                <label>Tipo da Thread</label>
+                <select name="type">
+                    <option value="0" {% if thread.tipo == 0 %} selected {% endif %}>Discussão</option>
+                    <option value="1" {% if thread.titulo == 1 %} selected {% endif %}>Tarefa</option>
+                </select>
+            </div>
+            <div class="item">
+                <label>Prioridade</label>
+                <select name="priority">
+                    <option value="0" {% if thread.prioridade == 0 %} selected {% endif %}>Prioridade Normal</option>
+                    <option value="1" {% if thread.prioridade == 1 %} selected {% endif %}>Prioridade Média</option>
+                    <option value="2" {% if thread.prioridade == 2 %} selected {% endif %}>Prioridade Alta</option>
+                </select>
+            </div>
+            <div class="item">
+                <label>Anexos</label>
+                <div id="attachment-files-list">
+                    <input type="file" name="attachment[]" />
+                </div>
+                <div class="add-more-files"><i class="fa fa-plus" aria-hidden="true"></i> ADICIONAR MAIS ARQUIVOS</div>
+            </div>
+            <div class="item">
+                <label>Extra</label>
+                <div class="extra-fields" id="add-create-checklist">Criar Checklist</div>
+                <div class="extra-fields" id="add-expiring-date">Atribuir Data de Vencimento</div>
+                <div class="extra-fields" id="add-status-system">Progresso e Status</div>
+            </div>
         </div>
     </div>
-    <div class="column-2">
-        <div class="item">
-            <label>Tipo da Thread</label>
-            <select name="type">
-                <option value="0" {% if thread.tipo == 0 %} selected {% endif %}>Discussão</option>
-                <option value="1" {% if thread.titulo == 1 %} selected {% endif %}>Tarefa</option>
-            </select>
-        </div>
-        <div class="item">
-            <label>Prioridade</label>
-            <select name="priority">
-                <option value="0" {% if thread.prioridade == 0 %} selected {% endif %}>Prioridade Normal</option>
-                <option value="1" {% if thread.prioridade == 1 %} selected {% endif %}>Prioridade Média</option>
-                <option value="2" {% if thread.prioridade == 2 %} selected {% endif %}>Prioridade Alta</option>
-            </select>
-        </div>
-        <div class="item">
-            <label>Anexos</label>
-            <div id="attachment-files-list">
-                <input type="file" name="attachment[]" />
-            </div>
-            <div class="add-more-files"><i class="fa fa-plus" aria-hidden="true"></i> ADICIONAR MAIS ARQUIVOS</div>
-        </div>
-        <div class="item">
-            <label>Extra</label>
-            <div class="extra-fields" id="add-create-checklist">Criar Checklist</div>
-            <div class="extra-fields" id="add-expiring-date">Atribuir Data de Vencimento</div>
-            <div class="extra-fields" id="add-status-system">Progresso e Status</div>
-        </div>
+    <div class="error-wrap">
     </div>
 </div>
-<script src="{{ config.system_path }}/js/lib/checklist.js" >
-    

@@ -52,13 +52,6 @@ checkList = function () {
             self.addMoreItems();
         });
 
-        $("#checklist-add-form div .checklist-item").die().live("hover", function () {
-            var id = this.id.split("-")[2];
-            $("#checklist-add-form div .checklist-item .remove-button[removeid='" + id + "'").css("display", "block");
-        }).live("mouseleave", function () {
-            var id = this.id.split("-")[2];
-            $("#checklist-add-form div .checklist-item .remove-button[removeid='" + id + "'").css("display", "none");
-        });
 
         $("#checklist-add-form div .checklist-item .remove-button").die().live("click", function () {
             self.removeCheckListItem(this);
@@ -115,8 +108,12 @@ checkList = function () {
             self.errorMessage("O item da checklist não pode estar vazio.");
             return;
         }
+        
+        var checkitem = new Object();
+        checkitem.title = $(checklist_item).val();
+        checkitem.status = 0;
 
-        self.checklistobj.items.push($(checklist_item).val());
+        self.checklistobj.items.push(checkitem);
         $(checklist_item).remove();
         self.recreateItens();
 
@@ -126,7 +123,7 @@ checkList = function () {
         var self = this;
         var html = "";
         $.each(self.checklistobj.items, function (idx, item) {
-            html += "<div class='checklist-item' id='checklist-item-" + idx + "'><i class='fa fa-square-o'></i> | " + escapeHtml(item) + "<span removeid='" + idx + "' class='remove-button'>Remover</span></div>";
+            html += "<div class='checklist-item' id='checklist-item-" + idx + "'><i class='fa fa-square-o'></i> | " + escapeHtml(item.title) + "<span removeid='" + idx + "' class='remove-button'>Remover</span></div>";
         });
         html += "<input type='text' name='checklist-item' placeholder='Item' />";
         $("#checklist-add-items").html(html);
@@ -202,7 +199,13 @@ checkList = function () {
         }
         
         self.checkChecklistProgress(parent_id, updateCallback);
-        
+    };
+    
+    this.fillChecklist = function(checklist) {
+        var self = this;
+        self.checklistobj = checklist;
+        self.recreateItens();
+        $("#checklist-add-form input[name=checklist-title]").val(checklist.title);
         
     };
 

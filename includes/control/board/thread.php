@@ -104,9 +104,26 @@ class threadController {
         return $thread;
     }
 
-    public function addThread($thread, $user) {
+    public function editThread($thread, $id, $user) {
+        if (!is_numeric($id)) {
+            throw new Exception("Identificador da thread inválido.");
+        }
+
+        $thread['id'] = $id;
+        $thread_id = $this->addThread($thread, $user, 'edit');
+        return $thread_id;
+    }
+
+    public function addThread($thread, $user, $mode = 'add') {
         if (!is_array($thread)) {
             throw new Exception("Thread enviada é inválida.");
+        }
+
+        if ($mode == 'edit') {
+            $old_thread = $this->loadThread($thread['id']);
+            $old_thread['info'] = json_decode($old_thread['info'], true);
+        } else {
+            $old_thread = array();
         }
 
         if (!is_a($user, "user")) {
@@ -119,7 +136,7 @@ class threadController {
 
         $pattern['title'] = "/^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ0-9\&\;\\ ]*$/";
         if (trim($thread['title']) == "" || !preg_match($pattern['title'], $thread['title'])) {
-            throw new Exception("Seu título contém caracteres inválidos ou está em branco. (" . $thread['title'] . ")");
+            throw new Exception("Seu título contém caracteres inválidos ou está em branco.");
         }
 
         if (!$thread['post']) {
@@ -137,13 +154,14 @@ class threadController {
         if ($thread['attachments']) {
             $thread['info']['attachments'] = $this->addThreadAttachments($thread['attachments']);
         }
+
         if ($thread['checklist']) {
             $thread['info']['checklist'] = $this->addThreadCheckList($thread['checklist']);
         }
 
         $datetime = new Datetime();
 
-        if ($thread['expiring_date']) {
+        if ($thread['expiring_date'] && $thread['expiring_date'] != 'remove') {
             $expiring_date = DateTime::createFromFormat("d/m/Y", $thread['expiring_date']);
             if (!$expiring_date) {
                 throw new Exception("A data de vencimento informada está em formato inválido.");
@@ -151,9 +169,11 @@ class threadController {
             if ($datetime->getTimestamp() > $expiring_date->getTimeStamp()) {
                 throw new Exception("A data de vencimento é inferior a data atual.");
             }
+        } elseif ($thread['expiring_date'] == "remove") {
+            $expiring_date = "remove";
         }
 
-        if ($thread['statussystem']) {
+        if ($thread['statussystem'] && !$old_thread['info']['ss']) {
             $user_info = $user->getBasicInfo();
             $thread['info']['ss']['current_user'] = $user_info['nome'];
             $thread['info']['ss']['current_status'] = 0;
@@ -172,13 +192,22 @@ class threadController {
                 )
             );
             $thread['info']['ss']['last_update'] = $datetime->getTimestamp();
+        } elseif (!$thread['statussystem'] && $old_thread['info']['ss']) {
+            unset($thread['info']['ss']);
+        } elseif ($thread['statussystem'] && $old_thread['info']['ss']) {
+            $thread['info']['ss'] = $old_thread['info']['ss'];
         }
 
         $fields = array("id_board", "id_usuario", "titulo", "post", "prioridade", "tipo");
         $values = array($thread['board_id'], $user->getId(), $thread['title'], $thread['post'], $thread['priority'], $thread['type']);
         if ($expiring_date) {
-            $fields[] = "data_vencimento";
-            $values[] = $expiring_date->format("Y-m-d h:i:s");
+            if ($expiring_date != "remove") {
+                $fields[] = "data_vencimento";
+                $values[] = $expiring_date->format("Y-m-d h:i:s");
+            } elseif($thread['id'] && is_numeric($thread['id'])) {
+                $sql = "UPDATE thread SET data_vencimento = NULL WHERE id = " . $thread['id'];
+                $this->conn->freeQuery($sql, false, false, false);
+            }
         }
 
         if ($thread['info'] && is_array($thread['info'])) {
@@ -186,12 +215,23 @@ class threadController {
             $values[] = json_encode($thread['info']);
         }
 
-        $this->conn->prepareinsert("thread", $values, $fields);
-        if (!$this->conn->executa()) {
-            throw new Exception("Não foi possível adicionar a thread.");
+        if ($mode == 'add') {
+            $this->conn->prepareinsert("thread", $values, $fields);
+            if (!$this->conn->executa()) {
+                throw new Exception("Não foi possível adicionar a thread.");
+            }
+        } else {
+            $this->conn->prepareupdate($values, $fields, "thread", $thread['id'], "id");
+            if (!$this->conn->executa()) {
+                throw new Exception("Não foi possível editar a thread.");
+            }
         }
 
-        $thread_id = $this->getUserLatestThread($user);
+        if ($mode == 'add') {
+            $thread_id = $this->getUserLatestThread($user);
+        } else {
+            $thread_id = $thread['id'];
+        }
         return $thread_id;
     }
 
@@ -222,12 +262,16 @@ class threadController {
         }
 
         foreach ($checklist_array['items'] as $index => $item) {
-            $checklist['items'][$index]['title'] = trim(filter_var($item, FILTER_SANITIZE_FULL_SPECIAL_CHARS));
+            $checklist['items'][$index]['title'] = trim(filter_var($item['title'], FILTER_SANITIZE_FULL_SPECIAL_CHARS));
             if ($checklist['items'][$index]['title'] == "") {
                 throw new Exception("Não é possível adicionar um item com o título vazio.");
             }
             $checklist['items'][$index]['id'] = $index;
-            $checklist['items'][$index]['status'] = 0;
+            if ($item['status'] !== 0 && $item['status'] !== 1) {
+                $checklist['items'][$index]['status'] = 0;
+            } else {
+                $checklist['items'][$index]['status'] = $item['status'];
+            }
         }
 
         return $checklist;
@@ -256,40 +300,39 @@ class threadController {
 
         return $thread;
     }
-    
-    
+
     public function updateThreadStatus($thread_id, $status, $user, $force_update = false) {
         if (!is_numeric($thread_id)) {
             throw new Exception("Você tentou atualizar o status de uma thread não identificada.");
         }
-        
-        if($status < 0 || $status > 3) {
+
+        if ($status < 0 || $status > 3) {
             throw new Exception("O status que você está tentando atribuir é inválido.");
         }
-        
+
         $thread = $this->loadThread($thread_id);
-        
-        if(!$thread['ss']) {
+
+        if (!$thread['ss']) {
             throw new Exception("A Thread não possui o sistema de status ligado.");
         }
-        
-        if(!$user->isAuth()) {
+
+        if (!$user->isAuth()) {
             throw new Exception("Usuário inválido para alterar o status.");
-        }        
-        
+        }
+
         $user_info = $user->getBasicInfo();
-        
-        
-        if($status == $thread['ss']['current_status']) {
+
+
+        if ($status == $thread['ss']['current_status']) {
             return true;
         }
-        
+
         $datetime = new DateTime();
         $old_log['status'] = $thread['ss']['current_status'];
         $old_log['user'] = $thread['ss']['current_user'];
         $old_log['time'] = $datetime->getTimestamp() - $thread['ss']['last_update'];
-        
-        switch($old_log['status']) {
+
+        switch ($old_log['status']) {
             case 0:
                 $thread['ss']['history']['idle']['time_elapsed'] += $old_log['time'];
                 break;
@@ -303,12 +346,12 @@ class threadController {
                 $thread['ss']['history']['completed']['time_elapsed'] += $old_log['time'];
                 break;
         }
-        
+
         $thread['ss']['current_status'] = $status;
         $thread['ss']['last_update'] = $datetime->getTimestamp();
         $thread['ss']['current_user'] = $user_info['nome'];
-        
-        
+
+
         if ($force_update) {
             $this->updateThreadInfo($thread);
         }
@@ -422,23 +465,22 @@ class threadController {
         }
         return $replys;
     }
-    
-    
+
     public function archiveThread($thread_id) {
         if (!is_numeric($thread_id)) {
             throw new Exception("Você tentou atualizar o status de uma thread não identificada.");
-        }        
-        
+        }
+
         $thread = $this->loadThread($thread_id);
-        
-        if($thread['status'] == 1) {
+
+        if ($thread['status'] == 1) {
             $new_status = 0;
         } else {
             $new_status = 1;
         }
-        
+
         $this->conn->prepareupdate($new_status, "status", "thread", $thread['id'], "id", "INT");
-        if(!$this->conn->executa()) {
+        if (!$this->conn->executa()) {
             throw new Exception("Não foi possível alterar o status da thread.");
         }
     }

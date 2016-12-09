@@ -99,7 +99,8 @@ function loadAjaxBox(html) {
     $("html, body").scrollTop(0);
 
     $("#ajax-box").html(html);
-    $("#ajax-box, #ajax-box-background").stop(true, true).fadeIn();
+    $("#ajax-box, #ajax-box-background").fadeIn();
+       
     $("#ajax-box-background").die().live("click", function() { closeAjaxBox(); });
 }
 

@@ -17,7 +17,7 @@
 
 boardInterface = function () {
     this.root = $("#dir-root").val();
-
+    this.checkcontroller;
     this.initBoards = function () {
         var self = this;
         self.loadBoardsBoxes();
@@ -116,31 +116,44 @@ boardInterface = function () {
 
     };
 
-    this.createCheckList = function () {
-        var self = this;
-        var checkcontroller = new checkList();
-        checkcontroller.init(function (obj) {
-            self.newthread.checklist = obj;
-            $("#add-create-checklist").html("<b>Checklist Adicionada</b><br/> " + self.newthread.checklist.title);
-            closeAjaxBox();
+    this.loadPreviousAttachments = function (attachments) {
+        $("#attachment-files-list").prepend("<div class='previous-attachments'></div>");
+        $.each(attachments, function (idx, attachment) {
+            $("#attachment-files-list .previous-attachments").append("<div class='attachment'><i class='fa fa-file-o'></i> | " + attachment + "</div>");
         });
     };
 
-    this.setExpiringDate = function () {
+    this.checklistForm = function () {
+        var self = this;
+        self.checkcontroller = new checkList();
+        self.checkcontroller.init(function (obj) {
+            self.threadobj.checklist = obj;
+            $("#add-create-checklist").html("<b>Checklist Adicionada</b><br/> " + self.threadobj.checklist.title);
+            closeAjaxBox();
+        });
+        if (self.threadobj.checklist) {
+            self.checkcontroller.fillChecklist(self.threadobj.checklist);
+        }
+    };
+
+    this.setExpiringDate = function (current_date) {
         $("#add-expiring-date").html("<input name='expiring-date' type='text' placeholder='Data de Vencimento' />").die();
         $("#add-expiring-date input").datepicker({
             dateFormat: "dd/mm/yy"
         });
+        if (current_date) {
+            $("#add-expiring-date input").datepicker("setDate", current_date);
+        }
     };
 
     this.toggleStatusSystem = function () {
         var self = this;
-        if (self.newthread.statussystem) {
+        if (self.threadobj.statussystem) {
             $("#add-status-system").html("Progresso e Status <strong>(Desativado)</strong>");
-            self.newthread.statussystem = false;
+            self.threadobj.statussystem = false;
         } else {
             $("#add-status-system").html("Progresso e Status <strong>(Ativado)</strong>");
-            self.newthread.statussystem = true;
+            self.threadobj.statussystem = true;
         }
     };
 
@@ -163,8 +176,8 @@ boardInterface = function () {
                     $("#board-wrap .threads-wrap").html(data.html);
                     self.loadBackButton();
                     if ($("#checklist-wrap").length) {
-                        var checkcontroller = new checkList();
-                        checkcontroller.loadCheckList(id, self.updateCheckList);
+                        self.checkcontroller_thread = new checkList();
+                        self.checkcontroller_thread.loadCheckList(id, self.updateCheckList);
                     }
                     var statuscontroller = new statusController();
                     statuscontroller.loadStatusSystem(data.thread.ss, id, self.updateThreadStatus);
@@ -233,6 +246,7 @@ boardInterface = function () {
             }
         });
     };
+
     this.loadAddThreadForm = function () {
         var self = this;
         $.ajax({
@@ -244,18 +258,18 @@ boardInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     $("#board-wrap .threads-wrap").html(data.html);
-                    self.initAddThreadForm();
+                    self.initThreadForm(0);
                 } else {
                     self.loadBoardControlFormErrorMessage(data.error);
                 }
             }
         });
     };
-    
+
     this.loadEditThreadForm = function () {
         var self = this;
         var thread_id = parseInt($(".thread-wrap").attr("threadid"));
-        if(isNaN(thread_id)) {
+        if (isNaN(thread_id)) {
             return;
         }
         $.ajax({
@@ -267,7 +281,22 @@ boardInterface = function () {
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
+                    self.threadobj = new Object();
                     $("#board-wrap .threads-wrap").html(data.html);
+                    self.initThreadForm(1);
+                    if (data.thread.ss) {
+                        self.toggleStatusSystem();
+                    }
+                    if (data.thread.expiring_date) {
+                        self.setExpiringDate(data.thread.expiring_date);
+                    }
+                    if (data.thread.checklist) {
+                        self.threadobj.checklist = data.thread.checklist;
+                        $("#add-create-checklist").html("<b>Checklist Adicionada</b><br/> " + self.threadobj.checklist.title);
+                    }
+                    if (data.thread.attachments) {
+                        self.loadPreviousAttachments(data.thread.attachments);
+                    }
                 } else {
                     self.loadBoardControlFormErrorMessage(data.error);
                 }
@@ -275,16 +304,16 @@ boardInterface = function () {
         });
     };
 
-    this.initAddThreadForm = function () {
+    this.initThreadForm = function (type) {
         var self = this;
-        $(".add-thread-form .add-more-files").die().live("click", function () {
+        $(".thread-form .add-more-files").die().live("click", function () {
             self.addMoreLinksThreadForm();
         });
-        self.newthread = new Object();
+        self.threadobj = new Object();
         self.loadBackButton();
 
         $("#add-create-checklist").die().live("click", function () {
-            self.createCheckList();
+            self.checklistForm();
         });
 
         $("#add-expiring-date").die().live("click", function () {
@@ -295,25 +324,35 @@ boardInterface = function () {
             self.toggleStatusSystem();
         });
 
-        $("#add-thread-submit").die().live("click", function () {
-            self.addThread();
-        });
+        if (type === 0) {
+            $("#add-thread-submit").die().live("click", function () {
+                self.submitThreadForm(0);
+            });
+        } else {
+            $("#edit-thread-submit").die().live("click", function () {
+                self.submitThreadForm(1);
+            });
+
+        }
     };
 
-    this.addThread = function () {
+    this.submitThreadForm = function (action) {
         var self = this;
-        if (self.newthread === undefined || self.newthread === null) {
+        if (self.threadobj === undefined || self.threadobj === null) {
             return;
         }
 
-        self.newthread.title = $("input[name=title]").val();
-        self.newthread.post = $("textarea[name=post]").val();
-        self.newthread.priority = $("select[name=priority]").val();
-        self.newthread.type = $("select[name=type]").val();
+        self.threadobj.title = $("input[name=title]").val();
+        self.threadobj.post = $("textarea[name=post]").val();
+        self.threadobj.priority = $("select[name=priority]").val();
+        self.threadobj.type = $("select[name=type]").val();
 
 
         if ($("#add-expiring-date input").length) {
-            self.newthread.expiring_date = $("#add-expiring-date input[name='expiring-date']").val();
+            self.threadobj.expiring_date = $("#add-expiring-date input[name='expiring-date']").val();
+            if (self.threadobj.expiring_date === "" && action === 1) {
+                self.threadobj.expiring_date = 'remove';
+            }
         }
 
         var form = new FormData();
@@ -323,19 +362,29 @@ boardInterface = function () {
                 form.append("attachment-file-" + idx, file.files[0]);
             }
         });
-        form.append("mode", "add_thread");
+
+        if (action === 0) {
+            form.append("mode", "add_thread");
+        } else {
+            form.append("mode", "edit_thread");
+            self.threadobj.id = parseInt($("input[name=id]").val());
+            if (isNaN(self.threadobj.id)) {
+                return;
+            }
+            form.append("id", self.threadobj.id);
+        }
         form.append("majax", "true");
-        form.append("thread[title]", self.newthread.title);
-        form.append("thread[post]", self.newthread.post);
-        form.append("thread[priority]", self.newthread.priority);
-        form.append("thread[type]", self.newthread.type);
-        if (self.newthread.expiring_date) {
-            form.append("thread[expiring_date]", self.newthread.expiring_date);
+        form.append("thread[title]", self.threadobj.title);
+        form.append("thread[post]", self.threadobj.post);
+        form.append("thread[priority]", self.threadobj.priority);
+        form.append("thread[type]", self.threadobj.type);
+        if (self.threadobj.expiring_date) {
+            form.append("thread[expiring_date]", self.threadobj.expiring_date);
         }
-        if (self.newthread.checklist) {
-            form.append("thread_checklist", JSON.stringify(self.newthread.checklist));
+        if (self.threadobj.checklist) {
+            form.append("thread_checklist", JSON.stringify(self.threadobj.checklist));
         }
-        if (self.newthread.statussystem === true) {
+        if (self.threadobj.statussystem === true) {
             form.append("thread[statussystem]", true);
         }
         xhr.open('POST', self.root + "/boards", true);
@@ -349,10 +398,17 @@ boardInterface = function () {
                 var data = eval("(" + xhr.responseText + ")");
                 if (data.success == "true") {
                     self.loadThread(data.thread_id, true);
+                } else {
+                    self.loadThreadFormError(data.error);
                 }
             }
         };
         xhr.send(form);
+    };
+
+    this.loadThreadFormError = function (message) {
+        $(".thread-form .error-wrap").html("<div class='error'>" + message + "</div>");
+
     };
 
     this.loadBackButton = function () {
@@ -362,12 +418,17 @@ boardInterface = function () {
             $(".board-header .control-right").css("display", "none");
             $("#add-thread").after("<div class='control' id='thread-add-backbutton'>Voltar</div>");
             $("#thread-add-backbutton").die().live("click", function () {
-                self.loadUserBoard();
+                var thread_id = parseInt($("input[name=id]").val());
+                if (!isNaN(thread_id) && $(".thread-form").length) {
+                    self.loadThread(thread_id, true);
+                } else {
+                    self.loadUserBoard();
+                }
                 $(".board-header .control-right").css("display", "block");
                 $("#add-thread").css("display", "block");
                 $(this).remove();
-                if (self.newthread) {
-                    self.newthread = null;
+                if (self.threadobj) {
+                    self.threadobj = null;
                 }
             });
         }

@@ -39,14 +39,21 @@ class boardController {
                 $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
                 $threadcontroller = new threadController($this->conn);
                 $thread = $threadcontroller->loadThread($thread_id);
+                $thread_info =  json_decode($thread['info'],true);
+                if($thread['data_vencimento']) {
+                    $thread_info['expiring_date'] = $thread['data_vencimento'];
+                }
             }
-
 
             Twig_Autoloader::register();
             $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
             $this->twig = new Twig_Environment($this->twig_loader);
             $html = $this->twig->render("board/thread_form.twig", Array("config" => config::$html_preload, "form_type" => $form_type, "thread" => $thread));
-            echo json_encode(array("success" => "true", "html" => $html));
+            if ($form_type == 0) {
+                echo json_encode(array("success" => "true", "html" => $html));
+            } else {
+                echo json_encode(array("success" => "true", "html" => $html, "thread" => $thread_info));
+            }
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
@@ -273,6 +280,26 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+    
+    
+
+    private function editThread() {
+        try {
+            $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+            $thread = filter_input(INPUT_POST, "thread", FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+            if (filter_input(INPUT_POST, 'thread_checklist')) {
+                $thread['checklist'] = filter_input(INPUT_POST, "thread_checklist");
+            }
+            if ($_FILES) {
+                $thread['attachments'] = $_FILES;
+            }
+            $threadcontroller = new threadController($this->conn);
+            $thread_id = $threadcontroller->editThread($thread, $id, $this->user);
+            echo json_encode(array("success" => "true", "thread_id" => $thread_id));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
 
     private function updateChecklist() {
         try {
@@ -361,6 +388,9 @@ class boardController {
                         break;
                     case "add_thread":
                         $this->createThread();
+                        break;
+                    case "edit_thread":
+                        $this->editThread();
                         break;
                     case "update_checklist":
                         $this->updateChecklist();
