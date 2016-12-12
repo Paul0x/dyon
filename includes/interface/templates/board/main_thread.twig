@@ -89,10 +89,10 @@
                             <div class="files">
                                 {% for file in thread.attachments %}
                                     <a target="new" title="{{file.label}}" href="{{ config.system_path }}/files/attachments/{{ file.url }}">
-                                    <div class="file">
-                                        <div class="img"><i class="fa fa-file"></i></div>
-                                        <div class="label">{{ file.label }}</div>
-                                    </div>
+                                        <div class="file">
+                                            <div class="img"><i class="fa fa-file"></i></div>
+                                            <div class="label">{{ file.label }}</div>
+                                        </div>
                                     </a>
                                 {% endfor %}
                             </div>
@@ -104,21 +104,25 @@
                 <div class="title">Registro de Atividades</div>
             </div>
         </div>
-        <div class="replys">
-            {% for reply in thread.replys %}
-                <div class="reply">
-                    <div class="user-content">
-                        <div class="image">
-                            <img src="{{ config.system_path}}/images/avatar/{{ reply.image }}" alt="Imagem do Usuário" />
-                        </div>
-                        <div class="name">{{ reply.nome }}</div>
-                        <div class="date">Postado em: {{ reply.data_criacao }}</div>
+    </div>
+    <div class="replys">
+        {% for reply in thread.replys %}
+            <div class="reply">
+                <div class="user-content">
+                    <div class="image">
+                        <img src="{{ config.system_path}}/images/avatar/{{ reply.image }}" alt="Imagem do Usuário" />
                     </div>
-                    <div class="thread-content">
-                        <div class="post">{{ reply.texto|raw }}</div>
-
-                    </div>
+                    <div class="name">{{ reply.nome }}</div>
+                    <div class="date">Postado em: {{ reply.data_criacao }}</div>
                 </div>
-            {% endfor %}
+                <div class="thread-content">
+                    <div class="post">{{ reply.texto|raw }}</div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="reply-textarea">
+            <textarea id="thread-reply-textarea" placeholder="Insira um comentário."></textarea>
+            <input type="button" id="thread-reply-submit" value="Comentar" />
         </div>
     </div>
+</div>
