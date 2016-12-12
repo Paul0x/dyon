@@ -117,10 +117,45 @@ boardInterface = function () {
     };
 
     this.loadPreviousAttachments = function (attachments) {
+        var self = this;
         $("#attachment-files-list").prepend("<div class='previous-attachments'></div>");
         $.each(attachments, function (idx, attachment) {
-            $("#attachment-files-list .previous-attachments").append("<div class='attachment'><i class='fa fa-file-o'></i> | " + attachment + "</div>");
+            $("#attachment-files-list .previous-attachments").append("<div class='attachment' attachid='" + idx + "'><i class='fa fa-file-o'></i> | " + attachment.label + " <i attachid='" + idx + "' class='fa fa-times'></i></div>");
         });
+        $("#attachment-files-list .previous-attachments .attachment i").die().live("click", function () {
+            var id = $(this).attr("attachid").split("-");
+            id = parseInt(id[2]);
+            if (isNaN(id)) {
+                return;
+            }
+            self.removeAttachment(id);
+        });
+    };
+
+    this.removeAttachment = function (id) {
+        var self = this;
+        var thread_id = parseInt($("input[name=id]").val());
+        if (isNaN(thread_id) || isNaN(id)) {
+            return;
+        }
+        $.ajax({
+            url: self.root + "/boards",
+            data: {
+                mode: "remove_attachment",
+                attach_id: id,
+                thread_id: thread_id
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#attachment-files-list .previous-attachments .attachment[attachid='attachment-file-" + id + "']").remove();
+                } else {
+                    self.loadThreadFormError(data.error);
+                }
+            }
+        });
+
+
     };
 
     this.checklistForm = function () {
@@ -134,6 +169,7 @@ boardInterface = function () {
         if (self.threadobj.checklist) {
             self.checkcontroller.fillChecklist(self.threadobj.checklist);
         }
+
     };
 
     this.setExpiringDate = function (current_date) {

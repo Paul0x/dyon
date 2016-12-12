@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/wamp/www/dyon/js/lib/checklist.js</file>
             <file>file:/C:/wamp/www/dyon/js/board.js</file>
+            <file>file:/C:/wamp/www/dyon/includes/sql/sqlcon.php</file>
             <file>file:/C:/wamp/www/dyon/includes/control/board/thread.php</file>
             <file>file:/C:/wamp/www/dyon/includes/control/board/board.php</file>
             <file>file:/C:/wamp/www/dyon/css/core.css</file>

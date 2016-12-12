@@ -335,6 +335,18 @@ class boardController {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
         }
     }
+    
+    private function removeAttachment() {
+        try {
+            $thread_id = filter_input(INPUT_POST, "thread_id", FILTER_VALIDATE_INT);
+            $attachment_id = filter_input(INPUT_POST, "attach_id", FILTER_VALIDATE_INT);
+            $threadcontroller = new threadController($this->conn);
+            $threadcontroller->removeAttachment($thread_id, $attachment_id);
+            echo json_encode(array("success" => "true"));
+        } catch (Exception $ex) {
+            echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
+        }
+    }
 
     public function init($url) {
         try {
@@ -400,6 +412,9 @@ class boardController {
                         break;
                     case "archive_thread":
                         $this->archiveThread();
+                        break;
+                    case "remove_attachment":
+                        $this->removeAttachment();
                         break;
                 }
             }

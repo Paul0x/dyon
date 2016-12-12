@@ -83,6 +83,21 @@
                         </div>
                         <script src="{{ config.system_path }}/js/lib/status.js" ></script>
                     {% endif %}
+                    {% if thread.attachments %}
+                        <div id="attachments-wrap">
+                            <div class="title"><i class="fa fa-paperclip"></i> Anexos</div>
+                            <div class="files">
+                                {% for file in thread.attachments %}
+                                    <a target="new" title="{{file.label}}" href="{{ config.system_path }}/files/attachments/{{ file.url }}">
+                                    <div class="file">
+                                        <div class="img"><i class="fa fa-file"></i></div>
+                                        <div class="label">{{ file.label }}</div>
+                                    </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             {% endif %}
             <div class="activity-log">

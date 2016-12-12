@@ -100,6 +100,9 @@ class threadController {
             if ($info_array['ss']) {
                 $thread['ss'] = $info_array['ss'];
             }
+            if ($info_array['attachments']) {
+                $thread['attachments'] = $info_array['attachments'];
+            }
         }
         return $thread;
     }
@@ -152,7 +155,7 @@ class threadController {
         }
 
         if ($thread['attachments']) {
-            $thread['info']['attachments'] = $this->addThreadAttachments($thread['attachments']);
+            $thread['info']['attachments'] = $this->addThreadAttachments($thread['attachments'], $old_thread['attachments']);
         }
 
         if ($thread['checklist']) {
@@ -376,7 +379,7 @@ class threadController {
         if ($thread['attachments']) {
             $new_info['attachments'] = $thread['attachments'];
         }
-
+        
         $new_info_json = json_encode($new_info);
 
         $this->conn->prepareupdate($new_info_json, "info", "thread", $thread['id'], "id", "STR");
@@ -385,7 +388,7 @@ class threadController {
         }
     }
 
-    private function addThreadAttachments($attachment_list) {
+    private function addThreadAttachments($attachment_list, $old_attachments = false) {
         $mime_array = array(
             "application/msword",
             "application/msword",
@@ -424,7 +427,6 @@ class threadController {
         }
 
         $attachment_array = array();
-
         $idx_counter = 0;
         foreach ($attachment_list as $index => $file) {
             if ($index != "attachment-file-" . $idx_counter) {
@@ -447,10 +449,63 @@ class threadController {
             }
 
             $idx_counter++;
-            $attachment_array[] = $file_name . "." . $file_extension;
+            $attachment_array[$index]['url'] = $file_name . "." . $file_extension;
+            $attachment_array[$index]['label'] = $file['name'];
         }
-
+        if($old_attachments) {
+            if(!is_array($old_attachments)) {
+                throw new Exception("Não é possível carregar os anexos antigos.");
+            }
+            
+            $idx_counter = 0;
+            $prev_array = $attachment_array;
+            $attachment_array = array();
+            foreach($old_attachments as $index => $attachment) {
+                $attachment_array["attachment-file-".$idx_counter] = $attachment;
+                $idx_counter++;
+            }
+            foreach($prev_array as $index => $attachment) {
+                $attachment_array["attachment-file-".$idx_counter] = $attachment;
+                $idx_counter++;
+            }
+        }
         return $attachment_array;
+    }
+    
+    public function removeAttachment($thread_id, $attachment_id) {
+        $success = false;
+        if(!is_numeric($thread_id)) {
+            throw new Exception("A identificação da thread é inválida.");
+        } 
+        
+        if(!is_numeric($attachment_id)) {
+            throw new Exception("A identificação do anexo é inválida.");
+        }
+        
+        $thread = $this->loadThread($thread_id);
+        $thread['info'] = json_decode($thread['info'], true);
+        if(!is_array($thread['info']['attachments'])) {
+            throw new Exception("A thread não tem anexos.");
+        }
+        
+        foreach($thread['info']['attachments'] as $index => $attachment) {
+            if($index == "attachment-file-".$attachment_id) {
+                @unlink(config::$html_preload['system_path']."files/attachments/".$attachment['url']);
+                unset($thread['attachments'][$index]);
+                $success = true;
+                break;               
+            }            
+        }
+        if(count($thread['info']['attachments']) == 0)
+        {
+            unset($thread['info']['attachments']);
+        }
+        
+        if(!$success) {
+            throw new Exception("Não foi possível deletar nenhum anexo.");
+        }
+        
+        $this->updateThreadInfo($thread);
     }
 
     public function getThreadReplys($thread_id) {
