@@ -1,11 +1,19 @@
 {% for pacote in pacotes.list %}
     <div class="pacote-row">
-            <div class="header">
-                <div class="title">
-                    {{ pacote.nome_usuario }}
-                </div>
-                <div class="event">
-                    {{ pacote.nome_evento }} - {{ pacote.lote }}
+        <div class="header">
+            <div class="title">
+                {{ pacote.nome_usuario }}
+            </div>
+            <div class="event">
+                {{ pacote.nome_evento }}
+            </div>
+            <div class="lote">
+                {{ pacote.lote }}
+            </div>
+        </div>
+            <div class="payment">
+                <div class="value">
+                {{ pacote.valor_total_string }}
                 </div>
             </div>
     </div>
