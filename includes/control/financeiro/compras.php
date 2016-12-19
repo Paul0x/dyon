@@ -416,7 +416,7 @@ class comprasController {
             }
 
             if ($tipo_comprovante == 1) {
-                if (!is_file($comprovante['tmp_name']) || ($comprovante['type'] != "image/jpeg" && $comprovante['type'] != "image/jpg" && $comprovante['type'] != "image/png")) {
+                if (!is_file($comprovante['tmp_name']) || ($comprovante['type'] != "image/jpeg" && $comprovante['type'] != "image/jpg" && $comprovante['type'] != "image/png" && $comprovante['type'] != "application/pdf")) {
                     throw new Exception("Comprovante inválido.");
                 }
                 if (!preg_match("`^[-0-9A-Z_\.]+$`i", basename($comprovante['tmp_name'])) || strlen(basename($comprovante['tmp_name'])) > 100) {
@@ -430,6 +430,10 @@ class comprasController {
                     case "image/png":
                         $end = "png";
                         break;
+                    case "application/pdf":
+                        $end = "pdf";
+                    default:
+                        $end = "jpg";
                 }
                 $comprovante_name = uniqid($parcela['id'] . "_") . "." . $end;
                 if (!move_uploaded_file($comprovante['tmp_name'], "./comprovante/compra/" . $comprovante_name)) {
