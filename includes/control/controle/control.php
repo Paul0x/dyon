@@ -336,7 +336,7 @@ class controlController {
             $filters = Array();
             try {
                 $eventcontroller = new eventController();
-                $events_select = $eventcontroller->listEvents(array(), true);
+                $events_select = $eventcontroller->listEvents(true, $user);
             } catch (Exception $error) {
                 $events_select = false;
             }
