@@ -1,20 +1,22 @@
 {% for pacote in pacotes.list %}
     <div class="pacote-row">
-        <div class="header">
-            <div class="title">
-                {{ pacote.nome_usuario }}
-            </div>
-            <div class="event">
-                {{ pacote.nome_evento }}
-            </div>
-            <div class="lote">
-                {{ pacote.lote }}
-            </div>
-        </div>
-            <div class="payment">
-                <div class="value">
-                {{ pacote.valor_total_string }}
+        <a href="{{ config.system_path }}/cliente/{{ pacote.id_usuario }}/{{ pacote.id_pacote }}">
+            <div class="header">
+                <div class="title">
+                    {{ pacote.nome_usuario }}
+                </div>
+                <div class="event">
+                    {{ pacote.nome_evento }}
+                </div>
+                <div class="lote">
+                    {{ pacote.lote }}
                 </div>
             </div>
+        </a>
+        <div class="payment">
+            <div class="value">
+                {{ pacote.valor_total_string }}
+            </div>
+        </div>
     </div>
 {% endfor %}      

@@ -39,7 +39,7 @@ class pacoteModel {
         }
 
         $available_filters = Array("nome", "grupo", "rg", "cidade", "estado");
-        $field_list = "g.nome as 'nome_evento', d.nome as 'nome_usuario', b.nome as 'nome_grupo', e.nome as 'lote', tipo_pagamento, a.status as 'status_pacote', SUM(c.valor) as 'valor_total', a.id, d.id";
+        $field_list = "g.nome as 'nome_evento', d.nome as 'nome_usuario', b.nome as 'nome_grupo', e.nome as 'lote', tipo_pagamento, a.status as 'status_pacote', SUM(c.valor) as 'valor_total', a.id as 'id_pacote', d.id as 'id_usuario'";
         $query = "SELECT " . $field_list . " FROM pacote a " .
                 "INNER JOIN grupo b ON a.id_grupo = b.id " .
                 "INNER JOIN parcela_pacote c ON a.id = c.id_pacote " .
