@@ -105,24 +105,13 @@
             </div>
         </div>
     </div>
-    <div class="replys">
-        {% for reply in thread.replys %}
-            <div class="reply">
-                <div class="user-content">
-                    <div class="image">
-                        <img src="{{ config.system_path}}/images/avatar/{{ reply.image }}" alt="Imagem do Usuário" />
-                    </div>
-                    <div class="name">{{ reply.nome }}</div>
-                    <div class="date">Postado em: {{ reply.data_criacao }}</div>
-                </div>
-                <div class="thread-content">
-                    <div class="post">{{ reply.texto|raw }}</div>
-                </div>
-            </div>
-        {% endfor %}
-        <div class="reply-textarea">
-            <textarea id="thread-reply-textarea" placeholder="Insira um comentário."></textarea>
-            <input type="button" id="thread-reply-submit" value="Comentar" />
+    <div class="replys">        
+        <div class="comments-box" id="comments-box-6-{{thread.id}}">
         </div>
     </div>
+    <script>
+        var comments_interface = new commentsInterface();
+        comments_interface.bindCommentsButtons();
+        comments_interface.loadComments("#comments-box-6-" + {{ thread.id }}, 6, {{ thread.id }});
+    </script>
 </div>
