@@ -213,7 +213,7 @@ controlInterface = function() {
                         }
                         if (data.pacotes_count > 0) {
                             $("#list-page-count").val(page + data.pacotes_count);
-                            $(".item-list").append(data.pacotes_html);
+                            $("#pacote-list-wrap").append(data.pacotes_html);
                             $("#list-view-more").stop(true, true).fadeIn();
                         }
                     }

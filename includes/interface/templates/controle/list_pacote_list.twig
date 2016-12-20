@@ -1,9 +1,12 @@
 {% for pacote in pacotes.list %}
-    <div class="pacote-row">
+    <div class="pacote-row {% if loop.index == 1 %} first-row {% endif %}">
         <a href="{{ config.system_path }}/cliente/{{ pacote.id_usuario }}/{{ pacote.id_pacote }}">
             <div class="header">
                 <div class="title">
-                    {{ pacote.nome_usuario }}
+                    {{ pacote.nome_usuario }}                    
+                    <div class="group" title="Grupo">
+                        {{ pacote.nome_grupo }} [ {{ pacote.codigo_grupo }} ]
+                    </div>
                 </div>
                 <div class="event">
                     {{ pacote.nome_evento }}
@@ -11,11 +14,26 @@
                 <div class="lote">
                     {{ pacote.lote }}
                 </div>
+                <div class="status status-{{ pacote.status_pacote }}">
+                    {% if pacote.status_pacote == 0 %} Cancelado
+                    {% elseif pacote.status_pacote == 1 %} Pendente
+                    {% elseif pacote.status_pacote == 2 %} Aprovado
+                    {% elseif pacote.status_pacote == 3 %} Quitado
+                    {% elseif pacote.status_pacote == 4 %} Cadastrado {% endif %}
+                </div>
             </div>
         </a>
         <div class="payment">
             <div class="value">
-                {{ pacote.valor_total_string }}
+                {{ pacote.valor_total_string }} 
+                <div class="installment">
+                    em {{ pacote.num_parcelas }}x
+                    {% if pacote.num_parcelas_quitadas %}
+                        <div class="payout">
+                            {{ pacote.valor_total_pago_string }} pagos em {{ pacote.num_parcelas_quitadas }} parcela{% if pacote.num_parcelas_quitadas != 1 %}s{% endif %}.
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
