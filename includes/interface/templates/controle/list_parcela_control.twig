@@ -38,14 +38,7 @@
                     <input type="hidden" id="list-page-count" value="{{ pacotes.count.query }}" />
                     <input type="hidden" id="status-parcela" value="{{ pacotes.status }}" />
                 </div>
-                <section class="item-list">
-                    <div class="list-row list-row-header">
-                        {% for field in pacotes.field_list %}
-                            <div orderby="{{ field }}" class="list-column-header list-column column-{{ field }}{% if loop.index == loop.length %} list-column-last{% endif %}">
-                                {{ field|capitalize }}
-                            </div>
-                        {% endfor %}
-                    </div>
+                <section id="parcela-list-wrap">
                     {% include "controle/list_parcela_list.twig" %}
                 </section>
                 {% if pacotes.count.query == 20 %}

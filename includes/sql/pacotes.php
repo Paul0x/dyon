@@ -143,7 +143,7 @@ class pacoteModel {
         $query.= " ORDER BY a.data_pagamento DESC, b.id ASC";
         $query.= " LIMIT " . $filters['page'] . "," . DYON_PACOTEMODEL_PACOTESBYQUERY;
         try {
-            $pacotes['list'] = $this->conn->freeQuery($query, true, true, PDO::FETCH_NUM);
+            $pacotes['list'] = $this->conn->freeQuery($query, true, true, PDO::FETCH_ASSOC);
         } catch (Exception $error) {
             throw new Exception("Impossível buscar pacotes. :/" . $error->getMessage());
         }
