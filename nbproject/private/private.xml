@@ -5,11 +5,11 @@
         <group>
             <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_pacote_list.twig</file>
             <file>file:/var/www/html/dyon/includes/control/evento/pacotes.php</file>
-            <file>file:/var/www/html/dyon/includes/control/financeiro/compras.php</file>
             <file>file:/var/www/html/dyon/css/core.css</file>
-            <file>file:/var/www/html/dyon/includes/control/evento/events.php</file>
+            <file>file:/var/www/html/dyon/js/control.js</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/base_layout.twig</file>
             <file>file:/var/www/html/dyon/includes/sql/pacotes.php</file>
-            <file>file:/var/www/html/dyon/includes/control/controle/control.php</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_pacote_control.twig</file>
         </group>
     </open-files>
 </project-private>

@@ -437,7 +437,8 @@ class threadController {
                 throw new Exception("O arquivo " . $file['name'] . " está em formato não suportado pelo sistema.");
             }
 
-            $file_extension = array_pop(explode(".", $file['name']));
+            $file_extension_arr = explode(".", $file['name']);
+            $file_extension = array_pop($file_extension_arr);
             $file_name = uniqid("attach_", true);
 
             if (strlen($file_extension) != 3 && strlen($file_extension) != 4) {
