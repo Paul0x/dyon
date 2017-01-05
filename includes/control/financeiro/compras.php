@@ -432,6 +432,7 @@ class comprasController {
                         break;
                     case "application/pdf":
                         $end = "pdf";
+                        break;
                     default:
                         $end = "jpg";
                 }

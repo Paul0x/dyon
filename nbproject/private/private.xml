@@ -3,15 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_pacote_list.twig</file>
             <file>file:/var/www/html/dyon/includes/control/evento/pacotes.php</file>
+            <file>file:/var/www/html/dyon/includes/control/financeiro/compras.php</file>
             <file>file:/var/www/html/dyon/css/core.css</file>
-            <file>file:/var/www/html/dyon/js/control.js</file>
-            <file>file:/var/www/html/dyon/includes/system/config.php</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/base_layout.twig</file>
-            <file>file:/var/www/html/dyon/includes/control/board/thread.php</file>
             <file>file:/var/www/html/dyon/includes/sql/pacotes.php</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_pacote_control.twig</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_parcela_list.twig</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_parcela_control.twig</file>
         </group>
     </open-files>
 </project-private>
