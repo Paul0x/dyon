@@ -1,3 +1,12 @@
-<div class="header">Eventos</div>
-<a href="{{ config.system_path }}/eventos/"><div class="item">Listar Eventos</div></a>
-<a href="{{ config.system_path }}/eventos/add"><div class="item">Adicionar Evento</div></a>
+<div class="header">Meus Eventos</div>
+{% if events_list|length > 0 %}
+    {% for event in events_list %}
+        <a href="{{ config.system_path }}/eventos/{{ event.id }}"><div class="item">{{ event.nome }}</div></a>
+    {% endfor %}
+{% endif %}
+{% if event_not_found_flag %}
+    <div class="event-not-found error-message01">
+        Nenhum evento encontrado com os filtros selecionados.
+    </div>
+{% endif %}
+<a href="{{ config.system_path }}/eventos/create"><div class="button">Adicionar Evento</div></a>

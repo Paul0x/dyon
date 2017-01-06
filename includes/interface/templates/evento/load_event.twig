@@ -17,103 +17,115 @@
             <input type="hidden" id="event-id" value="{{ event.id }}"/>
             <input type="hidden" id="event-max-venda" value="{{ event.max_venda }}"/>
             <input type="hidden" id="event-vendidos" value="{{ event.n_vendas }}"/>
-            <div id="event-info-wrap">
+            <div id="event-info-wrap" class="list-info-wrap">
                 <header>
-                    <div class="title">{{ event.nome }}</div>
-                    <div class="event-menu">
-                        <div class="item">Editar Evento</div>
-                        <div class="item">Check In</div>
-                    </div>
+                    <div class="title"><strong>Informações do Evento</strong> | {{ event.nome }}</div>
                 </header>
                 <div class="event-info-infos">
-                    <div class='event-info-overview'>
-                        <div class="event-info-datas">
-                            <ul>
-                                <li><strong class="event-info-label">Data de Início</strong> {{ event.data_inicio_formatted }}</li>
-                                    {% if event.data_fim_formatted %}
-                                    <li><strong class="event-info-label">Data de Fim</strong> {{ event.data_fim_formatted }}</li>
-                                    {% endif %}
-                                    {% if event.local %}
-                                    <li><strong class="event-info-label">Local</strong> {{ event.local }}</li>
-                                    {% endif %}
-                                    {% if event.descricao %}
-                                    <li><strong class="event-info-label">Descrição</strong>
-                                        <div class='event-info-descricao'>
-                                            {{ event.descricao_br | raw }}
-                                        </div>
-                                    </li>
-                                {% endif %}
-                            </ul>
+                    <div class="event-info-resumo">
+                        <div class="header">Informações</div>
+                        <div class="tab-container clearfix">
+                            <div class="tab" id="event-info-resumo-tab-overview">Meu Evento</div>
+                            <div class="tab" id="event-info-resumo-tab-payment">Pagamento</div>
+                            <div class="tab clearfix" id="event-info-resumo-tab-sells">Vendas</div>
                         </div>
-                        <div class="event-info-resumo">
-                            <div class="header">Resumo</div>
-                            <div class="tab-container clearfix">
-                                <div class="tab" id="event-info-resumo-tab-overview">GERAL</div>
-                                <div class="tab" id="event-info-resumo-tab-audience">POR PÚBLICO</div>
-                                <div class="tab clearfix" id="event-info-resumo-tab-date">POR DATA</div>
-                            </div>
-                            <div id="event-tab-overview">
-                                <div class="select-graphs">
-                                    <select id="event-overview-select-graphs">
-                                        <option value="0">Geral</option>
-                                        <option value="1">Por Lotes</option>
-                                    </selecT>
-                                </div>
-                                <div class="counter-vendas">
-                                    <strong>{{ event.n_vendas }}</strong>
-                                    {% if event.max_venda %}
-                                        / {{ event.max_venda }}
-                                    {% endif %}
-                                    {% if event.n_vendas == 1 %}
-                                        registrado {% else %}
-                                        registrados {% endif %}
+                        <div id="event-tab-overview">
+                            <div class="column-50">
+                                <div class="info">
+                                    <div class="label">
+                                        Data de Início
                                     </div>
-                                    <div id="overview-chart"></div>
+                                    <div class="info">
+                                        {{ event.data_inicio_formatted }}                                        
+                                    </div>
                                 </div>
-                                <div id="event-tab-audience">
-                                </div>
-                                <div id="event-tab-date">
-                                </div>
-                                <div class="clear"></div>
+                                {% if event.data_fim %}
+                                    <div class="info">
+                                        <div class="label">
+                                            Data de Término
+                                        </div>
+                                        <div class="info">
+                                            {{ event.data_fim_formatted }}                                        
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if event.local %}
+                                    <div class="info">
+                                        <div class="label">
+                                            Localização
+                                        </div>
+                                        <div class="info">
+                                            {{ event.local }}                                        
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
-                        </div>
-                        <div class="event-info-lotes">
-                            <div class="header">Lotes</div>
-
-                            <div class="items">
-                                {% set level = 0 %}
-                                {% include "evento/load_event_lotes.twig" with {'lotes': event.lista_lotes_hierarchy, 'level': level} %}
+                            <div class="column-50">
+                                <div class="info">
+                                    <div class="label">
+                                        Sistema de Hospedagem
+                                    </div>
+                                    <div class="info">
+                                        {% if event.flag_hospedagem %}Ativado{% else %}Desativado{%endif%}                                        
+                                    </div>
+                                </div>
+                                <div class="info">
+                                    <div class="label">
+                                        Sistema de Compras
+                                    </div>
+                                    <div class="info">
+                                        {% if event.flag_compras %}Ativado{% else %}Desativado{%endif%}                                        
+                                    </div>
+                                </div>
+                                <div class="info">
+                                    <div class="label">
+                                        Sistema de Grupos
+                                    </div>
+                                    <div class="info">
+                                        {% if event.flag_grupos %}Ativado{% else %}Desativado{%endif%}                                        
+                                    </div>
+                                </div>
                             </div>
-                            {% if event.empty_lotes_flag %}
-                                <div class="error-message02 empty-lotes-flag">{{ event.empty_lotes_flag }}</div>
+                            <div class="clear"></div>
+                            {% if event.descricao %}
+                                <div class="info">
+                                    <div class="label">
+                                        Descrição
+                                    </div>
+                                    <div class="info">
+                                        {{ event.descricao_br }}                                        
+                                    </div>
+                                </div>
                             {% endif %}
-                            <div class="controls">
-                                <div class="button" id="event-info-add-lote">Adicionar Lote</div>
-                                <div class="button" id="event-info-manage-lote">Gerenciamento Inteligente</div>
-                            </div>
                         </div>
-
                     </div>
-                    <div class="clear"></div>
-
-
-
-
+                    <div class="event-info-lotes">
+                        <div class="header">Lotes</div>
+                        <div class="items">
+                            {% set level = 0 %}
+                            {% include "evento/load_event_lotes.twig" with {'lotes': event.lista_lotes_hierarchy, 'level': level} %}
+                        </div>
+                        {% if event.empty_lotes_flag %}
+                            <div class="error-message02 empty-lotes-flag">{{ event.empty_lotes_flag }}</div>
+                        {% endif %}
+                        <div class="controls">
+                            <div class="button" id="event-info-add-lote">Adicionar Lote</div>
+                            <div class="button" id="event-info-manage-lote">Gerenciamento Inteligente</div>
+                        </div>
+                    </div>
                 </div>
-            {% endif %}
-            {% if event_error_flag %}
-                <div class="event-not-found error-message01">
-                    {{ error }}
-                </div>                  
-            {% endif %}
-        </div>
-        <script>
-            event_interface = new eventInterface();
-            event_interface.getEventId();
-            event_interface.loadBindsLoad();
-            event_graphs = new eventGraphs();
-            event_graphs.bindGraphFunctions();
-            google.charts.load('current', {packages: ['corechart']});
-            google.charts.setOnLoadCallback(event_graphs.overviewGraph);
-        </script>
-        {% endblock %}
+                <div class="clear"></div>
+            </div>
+        {% endif %}
+        {% if event_error_flag %}
+            <div class="event-not-found error-message01">
+                {{ error }}
+            </div>                  
+        {% endif %}
+    </div>
+    <script>
+        event_interface = new eventInterface();
+        event_interface.getEventId();
+        event_interface.loadBindsLoad();
+    </script>
+{% endblock %}

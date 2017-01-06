@@ -3,12 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/var/www/html/dyon/includes/control/evento/pacotes.php</file>
-            <file>file:/var/www/html/dyon/includes/control/financeiro/compras.php</file>
+            <file>file:/var/www/html/dyon/includes/control/evento/lotes.php</file>
             <file>file:/var/www/html/dyon/css/core.css</file>
-            <file>file:/var/www/html/dyon/includes/sql/pacotes.php</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_parcela_list.twig</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/controle/list_parcela_control.twig</file>
+            <file>file:/var/www/html/dyon/includes/control/evento/events.php</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/evento/load_event.twig</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/evento/menu_event.twig</file>
         </group>
     </open-files>
 </project-private>
