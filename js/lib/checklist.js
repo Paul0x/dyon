@@ -48,16 +48,16 @@ checkList = function () {
 
     this.bindButtons = function () {
         var self = this;
-        $("#checklist-add-more-items").die().live("click", function () {
+        $(document).off("click", "#checklist-add-more-items").on("click", "#checklist-add-more-items", function () {
             self.addMoreItems();
         });
 
 
-        $("#checklist-add-form div .checklist-item .remove-button").die().live("click", function () {
+        $(document).off("click", "#checklist-add-form div .checklist-item .remove-button").on("click", "#checklist-add-form div .checklist-item .remove-button", function () {
             self.removeCheckListItem(this);
         });
 
-        $("#checklist-submit-button").die().live("click", function () {
+        $(document).off("click", "#checklist-submit-button").on("click", "#checklist-submit-button", function () {
             self.submitCheckListObject();
         });
     };

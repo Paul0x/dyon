@@ -88,7 +88,7 @@ statusController = function() {
 
     this.bindControls = function() {
         var self = this;
-        $("#statussystem-wrap .control").die().live("click", function() {
+        $(document).off("click", "#statussystem-wrap .control").on("click", "#statussystem-wrap .control", function() {
             var action = $(this).attr("act");
             switch (action) {
                 case 'change':
@@ -101,7 +101,7 @@ statusController = function() {
         });
 
 
-        $("#statussystem-wrap .form .back").die().live("click", function() {
+        $(document).off("click", "#statussystem-wrap .form .back").on("click", "#statussystem-wrap .form .back", function() {
             self.revertStatusInterface();
         });
     };
@@ -137,7 +137,7 @@ statusController = function() {
         $("#statussystem-wrap .current-status").css("display", "none");
         $("#statussystem-wrap .controls .current-control").css("display", "none");
         $("#statussystem-wrap .form").html(html);
-        $("#thread-ss-assign-status").die().live("click", function() {
+        $(document).off("click", "#thread-ss-assign-status").on("click", "#thread-ss-assign-status", function() {
             self.changeStatus();
         });
     };

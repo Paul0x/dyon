@@ -75,7 +75,7 @@ function setAutocompleteForms(field_id, items, field_recieper)
             }, 500);
         });
 
-        $(".autocomplete-item").live("click", function () {
+        $(document).on("click", ".autocomplete-item", function () {
             $("#" + field_recieper).val(this.getAttribute("value"));
             $("#" + field_id).val(this.innerHTML);
         });
@@ -92,7 +92,7 @@ function setAutocompleteForms(field_id, items, field_recieper)
 function loadAjaxBox(html) {
     if ($("#ajax-box").length === 0) {
         $("body").prepend("<div id='ajax-box'></div><div id='ajax-box-background'></div>");
-        $(".ajax-close-box").live("click", function () {
+        $(document).on("click", ".ajax-close-box", function () {
             closeAjaxBox();
         });
     }
@@ -101,13 +101,13 @@ function loadAjaxBox(html) {
     $("#ajax-box").html(html);
     $("#ajax-box, #ajax-box-background").fadeIn();
        
-    $("#ajax-box-background").die().live("click", function() { closeAjaxBox(); });
+    $(document).off("click", "#ajax-box-background").on("click", "#ajax-box-background", function() { closeAjaxBox(); });
 }
 
 function loadBigAjaxBox(html) {
     if ($("#ajax-box").length === 0) {
         $("body").prepend("<div id='ajax-box' class='big-ajax-box'></div><div id='ajax-box-background'></div>");
-        $(".ajax-close-box").live("click", function () {
+        $(document).on("click", ".ajax-close-box", function () {
             closeAjaxBox();
         });
     }
@@ -119,7 +119,7 @@ function loadBigAjaxBox(html) {
 function closeAjaxBox() {
     $("#ajax-box").fadeOut(500, function () {
         $("#ajax-box, #ajax-box-background").remove();
-        $(".ajax-close-box").die("click");
+        $(".ajax-close-box").off("click");
     });
 
 }
@@ -159,7 +159,7 @@ function controlsInterface() {
             self.menuToggle();
         });
         
-        $("#main-navigation-menu-wrap .instance-changer").live("click", function() {
+        $(document).on("click", "#main-navigation-menu-wrap .instance-changer", function() {
             self.changeInstance(this);            
         });
     };

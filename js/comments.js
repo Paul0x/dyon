@@ -27,7 +27,7 @@ commentsInterface = function () {
 
     this.bindSubmitComment = function () {
         var self = this;
-        $(".comment-button-submit").die().live("click", function () {
+        $(document).off("click", ".comment-button-submit").on("click", ".comment-button-submit", function () {
             var button = this;
             var node = $(this).attr("node");
             var node_id = $(this).attr("node-id");
@@ -62,7 +62,7 @@ commentsInterface = function () {
                         {
                             $("#comments-box-" + node + "-" + node_id + " .comments-error").remove();
                         }
-                        
+                        $("#comments-text-" + node + "-" + node_id).val("");
                     } else {
                         self.messageError(data.error, node_id);
                         $(button).val("Comentar").removeAttr("disabled");
@@ -74,7 +74,7 @@ commentsInterface = function () {
 
     this.bindDeleteComment = function () {
         var self = this;
-        $(".comment-delete").die().live("click", function () {
+        $(document).off("click", ".comment-delete").on("click", ".comment-delete", function () {
             var comment = $(this).attr("comment");
             var node_id = $(this).attr("node-id");
             if (isNaN(parseInt(comment))) {
@@ -101,7 +101,7 @@ commentsInterface = function () {
 
     this.bindEditComment = function () {
         var self = this;
-        $(".comment-edit").die().live("click", function () {
+        $(document).off("click", ".comment-edit").on("click", ".comment-edit", function () {
             var comment = $(this).attr("comment");
             var node_id = $(this).attr("node-id");
             var button = this;

@@ -32,34 +32,34 @@ boardInterface = function () {
             self.loadAddBoardForm();
         });
 
-        $("#board-control-form-close").die().live("click", function () {
+        $(document).off("click", "#board-control-form-close").on("click", "#board-control-form-close", function () {
             self.loadUserBoard();
         });
 
-        $("#board-control-rename").die().live("click", function () {
+        $(document).off("click", "#board-control-rename").on("click", "#board-control-rename", function () {
             self.loadRenameBoardForm();
         });
 
-        $("#board-control-archive").die().live("click", function () {
+        $(document).off("click", "#board-control-archive").on("click", "#board-control-archive", function () {
             self.switchThreadStatusView();
         });
 
-        $("#board-control-switch-view").die().live("click", function () {
+        $(document).off("click", "#board-control-switch-view").on("click", "#board-control-switch-view", function () {
             self.switchThreadView();
         });
 
-        $("#add-thread").die().live("click", function () {
+        $(document).off("click", "#add-thread").on("click", "#add-thread", function () {
             self.loadAddThreadForm();
         });
 
-        $("#board-wrap .thread").die().live("click", function () {
+        $(document).off("#board-wrap .thread").on("click", "#board-wrap .thread", function () {
             self.loadThread(this, false);
         });
 
-        $(".thread-wrap .badges .archive-thread").die().live("click", function () {
+        $(document).off(".thread-wrap .badges .archive-thread").on("click", ".thread-wrap .badges .archive-thread", function () {
             self.loadArchiveThreadRequest(this);
         });
-        $(".thread-wrap .badges .edit-thread").die().live("click", function () {
+        $(document).off(".thread-wrap .badges .edit-thread").on("click", ".thread-wrap .badges .edit-thread", function () {
             self.loadEditThreadForm();
         });
     };
@@ -84,7 +84,7 @@ boardInterface = function () {
         html += "<div class='control back'><i class='fa fa-times'></i> Voltar</div>";
         $(".thread-wrap .badges").html(html).addClass("controlform");
 
-        $("#thread-archive-submit").die().live("click", function () {
+        $(document).off("click", "#thread-archive-submit").on("click", "#thread-archive-submit", function () {
             var thread_id = parseInt($(".thread-wrap").attr("threadid"));
             if (isNaN(thread_id)) {
                 $(".thread-wrap .badges").html(old_html);
@@ -109,7 +109,7 @@ boardInterface = function () {
                 }
             });
         });
-        $(".thread-wrap .badges .back").die().live("click", function () {
+        $(document).off("click", ".thread-wrap .badges .back").on("click", ".thread-wrap .badges .back", function () {
             $(".thread-wrap .badges").html(old_html).removeClass("controlform");
         });
 
@@ -122,7 +122,7 @@ boardInterface = function () {
         $.each(attachments, function (idx, attachment) {
             $("#attachment-files-list .previous-attachments").append("<div class='attachment' attachid='" + idx + "'><i class='fa fa-file-o'></i> | " + attachment.label + " <i attachid='" + idx + "' class='fa fa-times'></i></div>");
         });
-        $("#attachment-files-list .previous-attachments .attachment i").die().live("click", function () {
+        $(document).off("click", "#attachment-files-list .previous-attachments .attachment i").on("click", "#attachment-files-list .previous-attachments .attachment i", function () {
             var id = $(this).attr("attachid").split("-");
             id = parseInt(id[2]);
             if (isNaN(id)) {
@@ -173,7 +173,8 @@ boardInterface = function () {
     };
 
     this.setExpiringDate = function (current_date) {
-        $("#add-expiring-date").html("<input name='expiring-date' type='text' placeholder='Data de Vencimento' />").die();
+        $("#add-expiring-date").html("<input name='expiring-date' type='text' placeholder='Data de Vencimento' />");
+        $(document).off("click", "#add-expiring-date");
         $("#add-expiring-date input").datepicker({
             dateFormat: "dd/mm/yy"
         });
@@ -342,30 +343,30 @@ boardInterface = function () {
 
     this.initThreadForm = function (type) {
         var self = this;
-        $(".thread-form .add-more-files").die().live("click", function () {
+        $(document).off("click", ".thread-form .add-more-files").on("click", ".thread-form .add-more-files", function () {
             self.addMoreLinksThreadForm();
         });
         self.threadobj = new Object();
         self.loadBackButton();
 
-        $("#add-create-checklist").die().live("click", function () {
+        $(document).off("click", "#add-create-checklist").on("click", "#add-create-checklist", function () {
             self.checklistForm();
         });
 
-        $("#add-expiring-date").die().live("click", function () {
+        $(document).off("click", "#add-expiring-date").on("click", "#add-expiring-date", function () {
             self.setExpiringDate();
         });
 
-        $("#add-status-system").die().live("click", function () {
+        $(document).off("click", "#add-status-system").on("click", "#add-status-system", function () {
             self.toggleStatusSystem();
         });
 
         if (type === 0) {
-            $("#add-thread-submit").die().live("click", function () {
+            $(document).off("click", "#add-thread-submit").on("click", "#add-thread-submit", function () {
                 self.submitThreadForm(0);
             });
         } else {
-            $("#edit-thread-submit").die().live("click", function () {
+            $(document).off("click", "#add-thread-submit").on("click", "#add-thread-submit", function () {
                 self.submitThreadForm(1);
             });
 
@@ -453,7 +454,7 @@ boardInterface = function () {
             $("#add-thread").css("display", "none");
             $(".board-header .control-right").css("display", "none");
             $("#add-thread").after("<div class='control' id='thread-add-backbutton'>Voltar</div>");
-            $("#thread-add-backbutton").die().live("click", function () {
+            $(document).off("click", "#thread-add-backbutton").on("click", "#thread-add-backbutton", function () {
                 var thread_id = parseInt($("input[name=id]").val());
                 if (!isNaN(thread_id) && $(".thread-form").length) {
                     self.loadThread(thread_id, true);
@@ -475,7 +476,7 @@ boardInterface = function () {
         $("#attachment-files-list").append("<input type='file' name='attachment[]' />");
         var num_files = $("#attachment-files-list input").length;
         if (num_files >= 10) {
-            $(".add-thread-form .add-more-files").die().html("LIMITE DE ARQUIVOS POR THREAD ALCANÇADO");
+            $(".add-thread-form .add-more-files").off().html("LIMITE DE ARQUIVOS POR THREAD ALCANÇADO");
         }
     };
 
@@ -566,7 +567,7 @@ boardInterface = function () {
         html += "<input type='button' id='board-rename-form-submit' class='btn-01' value='Renomear'/>";
         html += "</div>";
         $("#board-wrap").html(html);
-        $("#board-rename-form-submit").die().live("click", function () {
+        $(document).off("click", "#board-rename-form-submit").on("click", "#board-rename-form-submit", function () {
             var nome = $("input[name='board-name']").val();
             if (nome === "") {
                 self.loadBoardControlFormErrorMessage("O campo nome é obrigatório.");
@@ -607,7 +608,7 @@ boardInterface = function () {
             html += "<input type='button' id='board-add-form-submit' class='btn-01' value='Adicionar'/>";
             html += "</div>";
             $("#board-wrap").html(html);
-            $("#board-add-form-submit").die().live("click", function () {
+            $(document).off("click", "#board-add-form-submit").on("click", "#board-add-form-submit", function () {
                 var nome = $("input[name='board-name']").val();
                 if (nome === "") {
                     self.loadBoardControlFormErrorMessage("O campo nome é obrigatório.");
