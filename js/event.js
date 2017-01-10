@@ -69,7 +69,7 @@ eventInterface = function () {
                     $("#event-tab-overview .info[field=data-inicio]").html("<input type='text' name='data-inicio-data' value='" + data.event.data_inicio_data + "' /> às <input class='small' type='text' name='data-inicio-hora' value='" + data.event.data_inicio_hora + "' />");
                     $("#event-tab-overview .info[field=data-fim]").html("<input type='text' name='data-fim-data' value='" + data.event.data_fim_data + "' /> às <input class='small' type='text' name='data-fim-hora' value='" + data.event.data_fim_hora + "' />");
                     $("#event-tab-overview .info[field=local]").html("<input type='text' name='local' value='" + data.event.local + "' />");
-                    $("#event-tab-overview .info-desc[field=descricao]").html("<textarea name='descricao' rows='6'>" + data.event.descricao + "' </textarea>");
+                    $("#event-tab-overview .info-desc[field=descricao]").html("<textarea name='descricao' rows='6'>" + data.event.descricao + "</textarea>");
 
                     var flags = ["hospedagem", "compras", "grupos"];
                     $.each(flags, function (idx, value) {
@@ -100,8 +100,30 @@ eventInterface = function () {
             return;
         }
         
-        
-        
+        var event_overview_info = new Object();
+        event_overview_info.data_inicio_data = $("#event-tab-overview input[name=data-inicio-data]").val();
+        event_overview_info.data_inicio_hora = $("#event-tab-overview input[name=data-inicio-hora]").val();
+        event_overview_info.data_fim_data = $("#event-tab-overview input[name=data-fim-data]").val();
+        event_overview_info.data_fim_hora = $("#event-tab-overview input[name=data-fim-hora]").val();
+        event_overview_info.local = $("#event-tab-overview input[name=local]").val();
+        event_overview_info.descricao = $("#event-tab-overview textarea[name=descricao]").val();
+        event_overview_info.flag_hospedagem = $("#event-tab-overview select[name=flag-hospedagem]").val();
+        event_overview_info.flag_compras = $("#event-tab-overview select[name=flag-compras]").val();
+        event_overview_info.flag_grupos = $("#event-tab-overview select[name=flag-grupos]").val();
+        $.ajax({
+            url: self.root + "/eventos/ajax",
+            data: {
+                mode: "update_event_overview",
+                event_id: self.event_id,
+                overview_info: event_overview_info
+            },
+            success: function (data) {
+                data = eval("( " + data + ")");
+                if (data.success === "true") {
+                    
+                }
+            }
+        });
     };
     
     this.editLoteStatus = function (lote) {
