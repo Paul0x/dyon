@@ -67,33 +67,12 @@ eventInterface = function () {
                 if (data.success === "true") {
                     self.edit_overview_interface = true;
                     $("#edit-event-overview").css("display","none");
-                    $("#event-tab-overview .info[field=data-inicio]").html("<input type='text' name='data-inicio-data' value='" + data.event.data_inicio_data + "' /> às <input class='small' type='text' name='data-inicio-hora' value='" + data.event.data_inicio_hora + "' />");
-                    $("#event-tab-overview .info[field=data-fim]").html("<input type='text' name='data-fim-data' value='" + data.event.data_fim_data + "' /> às <input class='small' type='text' name='data-fim-hora' value='" + data.event.data_fim_hora + "' />");
-                    $("#event-tab-overview .info[field=local]").html("<input type='text' name='local' value='" + data.event.local + "' />");
-                    $("#event-tab-overview .info-desc[field=descricao]").html("<textarea name='descricao' rows='6'>" + data.event.descricao + "</textarea>");
-                    var html;
-                    var flags = ["hospedagem", "compras", "grupos"];
-                    $.each(flags, function (idx, value) {
-                        html = "<select name='flag-" + value + "'>";
-                        html += "<option value='0'>Desativado</option>";
-                        html += "<option value='1' ";
-                        if(parseInt(data.event["flag_"+value]) === 1) {
-                            html+= "selected ";
-                        }
-                        html += ">Ativado</option>";
-                        html += "</select>";
-                        $("#event-tab-overview .info[field=sys-"+value+"]").html(html);
-                    });
-                    
+                    $("#event-tab-overview").html(data.html);                    
                     $("#event-tab-overview .info[field=data-inicio] input[name=data-inicio-data]").datepicker({ dateFormat: "dd/mm/yy"});
                     $("#event-tab-overview .info[field=data-fim] input[name=data-fim-data]").datepicker({ dateFormat: "dd/mm/yy"});
                     $("#event-tab-overview .info[field=data-inicio] input[name=data-inicio-hora]").mask("00:00");
                     $("#event-tab-overview .info[field=data-fim] input[name=data-fim-hora]").mask("00:00");
-                    var html_title = "<div class='item'><div class='label'>Nome</div><div class='info' field='nome'><input type='text' name='nome' value='"+data.event.nome+"'/><qdiv></div>";
-                    var html_maxvendas = "<div class='item'><div class='label'>Número Máximo de Vendas</div><div class='info' field='max-venda'><input type='text' name='max-venda' value='"+data.event.max_venda+"'/></div></div>";
-                    $("#column-overview1").prepend(html_title);
-                    $("#column-overview2").prepend(html_maxvendas);
-                    $("#event-tab-overview .edit-event-overview-button").html("<input type='button' class='btn-01' id='edit-event-overview-submit' value='Confirmar Edição' />");
+                   
                     
                 }
             }
