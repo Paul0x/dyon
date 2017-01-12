@@ -19,7 +19,7 @@
             <input type="hidden" id="event-vendidos" value="{{ event.n_vendas }}"/>
             <div id="event-info-wrap" class="list-info-wrap">
                 <header>
-                    <div class="title"><strong>Informações do Evento</strong> | {{ event.nome }}</div>
+                    <div class="title"><strong>Informações do Evento</strong> | <span class="event-title">{{ event.nome }}</div></div>
                 </header>
                 <div class="event-info-infos">
                     <div class="event-info-resumo">
@@ -30,76 +30,7 @@
                             <div class="tab clearfix" id="event-info-resumo-tab-sells">Vendas</div>
                         </div>
                         <div id="event-tab-overview">
-                            <div id="edit-event-overview"><i class="fa fa-pencil"></i> Editar</div>
-                            <div class="clear"></div>
-                            <div class="column-50" id="column-overview1">
-                                <div class="item">
-                                    <div class="label">
-                                        Data de Início
-                                    </div>
-                                    <div class="info" field="data-inicio">
-                                        {{ event.data_inicio_formatted }}                                        
-                                    </div>
-                                </div>
-                                {% if event.data_fim %}
-                                    <div class="item">
-                                        <div class="label">
-                                            Data de Término
-                                        </div>
-                                        <div class="info" field="data-fim">
-                                            {{ event.data_fim_formatted }}                                        
-                                        </div>
-                                    </div>
-                                {% endif %}
-                                {% if event.local %}
-                                    <div class="item">
-                                        <div class="label">
-                                            Localização
-                                        </div>
-                                        <div class="info" field="local">
-                                            {{ event.local }}                                        
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-                            <div class="column-50" id="column-overview2">
-                                <div class="item">
-                                    <div class="label">
-                                        Sistema de Hospedagem
-                                    </div>
-                                    <div class="info" field="sys-hospedagem">
-                                        {% if event.flag_hospedagem %}Ativado{% else %}Desativado{%endif%}                                        
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="label">
-                                        Sistema de Compras
-                                    </div>
-                                    <div class="info" field="sys-compras">
-                                        {% if event.flag_compras %}Ativado{% else %}Desativado{%endif%}                                        
-                                    </div>
-                                </div>
-                                <div class="item">
-                                    <div class="label">
-                                        Sistema de Grupos
-                                    </div>
-                                    <div class="info" field="sys-grupos">
-                                        {% if event.flag_grupos %}Ativado{% else %}Desativado{%endif%}                                        
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="clear"></div>
-                            {% if event.descricao %}
-                                <div class="item">
-                                    <div class="label">
-                                        Descrição
-                                    </div>
-                                    <div class="info-desc" field="descricao">
-                                        {{ event.descricao_br|raw }}                                        
-                                    </div>
-                                </div>
-                            {% endif %}
-                            <div class='edit-event-overview-button'></div>
+                            {% include "evento/event_overview.twig" %}
                         </div>
                     </div>
                     <div class="event-info-lotes">

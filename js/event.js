@@ -40,8 +40,12 @@ eventInterface = function () {
             });
         });
 
-        $("#edit-event-overview").bind("click", function () {
+        $(document).off("click", "#edit-event-overview").on("click", "#edit-event-overview", function () {
             self.loadEditEventOverviewInterface();
+        });
+        
+        $(document).off("click", "#edit-event-overview-submit").on("click", "#edit-event-overview-submit", function() {
+            self.submitEditEventOverview();            
         });
 
         $(".lote-status").bind("click", function () {
@@ -53,7 +57,6 @@ eventInterface = function () {
     this.loadEditEventOverviewInterface = function () {
         var self = this;
         if (self.edit_overview_interface) {
-            self.submitEditEventOverview();
             return;
         }
         $.ajax({
@@ -66,25 +69,23 @@ eventInterface = function () {
                 data = eval("( " + data + ")");
                 if (data.success === "true") {
                     self.edit_overview_interface = true;
-                    $("#edit-event-overview").css("display","none");
-                    $("#event-tab-overview").html(data.html);                    
-                    $("#event-tab-overview .info[field=data-inicio] input[name=data-inicio-data]").datepicker({ dateFormat: "dd/mm/yy"});
-                    $("#event-tab-overview .info[field=data-fim] input[name=data-fim-data]").datepicker({ dateFormat: "dd/mm/yy"});
+                    $("#edit-event-overview").css("display", "none");
+                    $("#event-tab-overview").html(data.html);
+                    $("#event-tab-overview .info[field=data-inicio] input[name=data-inicio-data]").datepicker({dateFormat: "dd/mm/yy"});
+                    $("#event-tab-overview .info[field=data-fim] input[name=data-fim-data]").datepicker({dateFormat: "dd/mm/yy"});
                     $("#event-tab-overview .info[field=data-inicio] input[name=data-inicio-hora]").mask("00:00");
                     $("#event-tab-overview .info[field=data-fim] input[name=data-fim-hora]").mask("00:00");
-                   
-                    
                 }
             }
         });
     };
-    
-    this.submitEditEventOverview = function() {
+
+    this.submitEditEventOverview = function () {
         var self = this;
-        if(!self.edit_overview_interface) {
+        if (!self.edit_overview_interface) {
             return;
         }
-        
+
         var event_overview_info = new Object();
         event_overview_info.data_inicio_data = $("#event-tab-overview input[name=data-inicio-data]").val();
         event_overview_info.data_inicio_hora = $("#event-tab-overview input[name=data-inicio-hora]").val();
@@ -95,6 +96,8 @@ eventInterface = function () {
         event_overview_info.flag_hospedagem = $("#event-tab-overview select[name=flag-hospedagem]").val();
         event_overview_info.flag_compras = $("#event-tab-overview select[name=flag-compras]").val();
         event_overview_info.flag_grupos = $("#event-tab-overview select[name=flag-grupos]").val();
+        event_overview_info.nome = $("#event-tab-overview input[name=nome]").val();
+        event_overview_info.max_venda = $("#event-tab-overview input[name=max-venda]").val();
         $.ajax({
             url: self.root + "/eventos/ajax",
             data: {
@@ -105,12 +108,15 @@ eventInterface = function () {
             success: function (data) {
                 data = eval("( " + data + ")");
                 if (data.success === "true") {
-                    
+                    self.edit_overview_interface = false;
+                    $("#event-tab-overview").html(data.html);
+                    $("#event-info-wrap .event-title").html(data.event.nome);
+
                 }
             }
         });
     };
-    
+
     this.editLoteStatus = function (lote) {
         var event_id = this.event_id;
         var id = lote.id.split("-")[2];

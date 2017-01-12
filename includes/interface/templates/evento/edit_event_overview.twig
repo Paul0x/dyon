@@ -1,0 +1,87 @@
+<div class="column-50" id="column-overview1">
+    <div class="item">
+        <div class="label">
+            Nome
+        </div>
+        <div class="info" field="nome">
+            <input type="text" name="nome" value="{{ event.nome }}"/>
+        </div>
+    </div>
+    <div class="item">
+        <div class="label">
+            Data de Início
+        </div>
+        <div class="info" field="data-inicio">
+            <input type="text" name="data-inicio-data" value="{{ event.data_inicio_data }}"/> às <input type="text" class="small" name="data-inicio-hora" value="{{ event.data_inicio_hora }}" />              
+        </div>
+    </div>
+        <div class="item">
+            <div class="label">
+                Data de Término
+            </div>
+            <div class="info" field="data-fim">
+            <input type="text" name="data-fim-data" value="{{ event.data_fim_data }}"/> às <input type="text" class="small" name="data-fim-hora" value="{{ event.data_fim_hora }}" />
+        </div>
+    </div>
+    <div class="item">
+        <div class="label">
+            Localização
+        </div>
+        <div class="info" field="local">                
+            <input type="text" name="local" value="{{ event.local }}"/>                                   
+        </div>
+    </div>
+</div>
+<div class="column-50" id="column-overview2">
+    <div class="item">
+        <div class="label">
+            Máximo de Vendas
+        </div>
+        <div class="info" field="max-venda">
+            <input type="text" name="max-venda" value="{{ event.max_venda }}"/>
+        </div>
+    </div>
+    <div class="item">
+        <div class="label">
+            Sistema de Hospedagem
+        </div>
+        <div class="info" field="sys-hospedagem">
+            <select name="flag-hospedagem">
+                <option value="0">Desativado</option>
+                <option value="1" {% if event.flag_hospedagem %}selected{% endif %}>Ativado</option>
+            </select>
+        </div>
+    </div>
+    <div class="item">
+        <div class="label">
+            Sistema de Compras
+        </div>
+        <div class="info" field="sys-compras">
+            <select name="flag-compras">
+                <option value="0">Desativado</option>
+                <option value="1" {% if event.flag_compras %}selected{% endif %}>Ativado</option>
+            </select>                                     
+        </div>
+    </div>
+    <div class="item">
+        <div class="label">
+            Sistema de Grupos
+        </div>
+        <div class="info" field="sys-grupos">
+            <select name="flag-grupos">
+                <option value="0">Desativado</option>
+                <option value="1" {% if event.flag_grupos %}selected{% endif %}>Ativado</option>
+            </select>                                      
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+<div class="item">
+    <div class="label">
+        Descrição
+    </div>
+    <div class="info-desc" field="descricao">
+        <textarea name="descricao">{{ event.descricao }}</textarea>                                        
+    </div>
+</div>
+<div class='edit-event-overview-button'><input type="button" id="edit-event-overview-submit" value="Confirmar Edição" class="btn-01" /></div>
