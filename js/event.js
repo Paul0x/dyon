@@ -51,8 +51,18 @@ eventInterface = function () {
         $(".lote-status").bind("click", function () {
             self.editLoteStatus(this);
         });
+        
+        $(".event-info-resumo .tab-container .tab").bind("click", function() {
+            var tab = this.id.split("-")[4];
+            self.switchEventTabs(tab);
+        });
     };
 
+    this.switchEventTabs = function(tab) {
+        var self = this;
+        $(".event-info-resumo .event-tab").css("display", "none");
+        $("#event-tab-"+tab).css("display","block");
+    };
 
     this.loadEditEventOverviewInterface = function () {
         var self = this;

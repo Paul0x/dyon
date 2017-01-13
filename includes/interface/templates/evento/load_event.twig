@@ -29,8 +29,11 @@
                             <div class="tab" id="event-info-resumo-tab-payment">Pagamento</div>
                             <div class="tab clearfix" id="event-info-resumo-tab-sells">Vendas</div>
                         </div>
-                        <div id="event-tab-overview">
+                        <div id="event-tab-overview" class="event-tab">
                             {% include "evento/event_overview.twig" %}
+                        </div>
+                        <div id="event-tab-payment" class="event-tab">
+                            {% include "evento/event_payment.twig" %}
                         </div>
                     </div>
                     <div class="event-info-lotes">

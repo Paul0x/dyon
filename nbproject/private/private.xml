@@ -5,7 +5,11 @@
         <group>
             <file>file:/var/www/html/dyon/js/event.js</file>
             <file>file:/var/www/html/dyon/includes/interface/templates/evento/edit_event_overview.twig</file>
+            <file>file:/var/www/html/dyon/includes/control/evento/events.php</file>
             <file>file:/var/www/html/dyon/includes/interface/templates/evento/load_event.twig</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/evento/event_overview.twig</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/evento/event_payment.twig</file>
+            <file>file:/var/www/html/dyon/includes/control/pagamento/pagamento.php</file>
         </group>
     </open-files>
 </project-private>
