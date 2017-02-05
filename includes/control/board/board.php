@@ -46,7 +46,7 @@ class boardController {
             }
 
             Twig_Autoloader::register();
-            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/manager');
             $this->twig = new Twig_Environment($this->twig_loader);
             $html = $this->twig->render("board/thread_form.twig", Array("config" => config::$html_preload, "form_type" => $form_type, "thread" => $thread));
             if ($form_type == 0) {
@@ -169,7 +169,7 @@ class boardController {
                 $board['no_thread'] = true;
             }
             Twig_Autoloader::register();
-            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/manager');
             $this->twig = new Twig_Environment($this->twig_loader);
             $html = $this->twig->render("board/board_load.twig", Array("config" => config::$html_preload, "board" => $board, "user" => $user->getBasicInfo()));
 
@@ -219,7 +219,7 @@ class boardController {
             $status = filter_input(INPUT_POST, "status", FILTER_VALIDATE_INT);
             $board['threads'] = $this->loadBoardThreads($board_id, $status);
             Twig_Autoloader::register();
-            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/manager');
             $this->twig = new Twig_Environment($this->twig_loader);
             $html = $this->twig->render("board/threads_load.twig", Array("config" => config::$html_preload, "board" => $board));
             echo json_encode(array("success" => "true", "html" => $html));
@@ -249,7 +249,7 @@ class boardController {
     private function loadThread() {
         try {
             Twig_Autoloader::register();
-            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/manager');
             $this->twig = new Twig_Environment($this->twig_loader);
             $thread_id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
             $usercontroller = new userController();
@@ -351,7 +351,7 @@ class boardController {
     public function init($url) {
         try {
             Twig_Autoloader::register();
-            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+            $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/manager');
             $this->twig = new Twig_Environment($this->twig_loader);
             $this->usercontroller = new userController();
             $this->user = $this->usercontroller->getUser();

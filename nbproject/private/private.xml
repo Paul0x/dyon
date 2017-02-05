@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/var/www/html/dyon/js/event.js</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/evento/edit_event_overview.twig</file>
-            <file>file:/var/www/html/dyon/includes/control/evento/events.php</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/evento/load_event.twig</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/evento/event_overview.twig</file>
-            <file>file:/var/www/html/dyon/includes/interface/templates/evento/event_payment.twig</file>
-            <file>file:/var/www/html/dyon/includes/control/pagamento/pagamento.php</file>
+            <file>file:/var/www/html/dyon/includes/control/publico/public.php</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/manager/main_menu.twig</file>
+            <file>file:/var/www/html/dyon/includes/system/config.php</file>
+            <file>file:/var/www/html/dyon/includes/system/setup.php</file>
         </group>
     </open-files>
 </project-private>

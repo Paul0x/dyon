@@ -43,7 +43,7 @@ class financesController {
     public function init($url) {
         Twig_Autoloader::register();
 
-        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates');
+        $this->twig_loader = new Twig_Loader_Filesystem('includes/interface/templates/manager');
         $this->twig = new Twig_Environment($this->twig_loader);
 
         $this->usercontroller = new userController();
