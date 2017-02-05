@@ -17,6 +17,7 @@
                 </a>
                 {% if user %}
                     {% block user_header %}
+                        {% include "user_header.twig" %}
                     {% endblock %}
                 {% else %}
                     <div class="menu-header">

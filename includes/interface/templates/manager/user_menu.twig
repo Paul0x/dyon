@@ -1,13 +1,7 @@
 <div id='main-navigation-menu-wrap'>
-    <div class='header'>Menu</div>
-    <a href="{{ config.system_path }}/usuario"><div class='item'>Minha Conta</div></a>
-    <a href="{{ config.system_path }}/planos">       <div class='item'>Planos</div></a>
-    <a href="{{ config.system_path }}/usuario/config"><div class='item'>Configurações</div></a>
-    <a href="{{ config.system_path }}/sobre"><div class='item'>Sobre</div></a>
-    <div class='header'>Instâncias</div>
-    {% if instances %}
-        {% for instance in instances %}
-            <a href='#'><div class='item instance-changer' instance='{{ instance.id }}'>{{ instance.nome }}</div></a>
-        {% endfor %}
-    {% endif %}
+    <a href="{{ config.system_path }}/u/{{ user.id }}"><div class='item'>Meu Perfil</div></a>
+    <a href="{{ config.system_path }}/eventos">       <div class='item'>Meus Eventos</div></a>
+    <a href="{{ config.system_path }}/carteira">       <div class='item'>Minha Carteira</div></a>
+    <a href="{{ config.system_path }}/usuario/config"><div class='item'>Preferências</div></a>
+    <a href="{{ config.system_path }}/manager/logout"><div class='item'>Sair</div></a>    
 </div>

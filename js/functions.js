@@ -200,7 +200,7 @@ function controlsInterface() {
                     data = eval("( " + data + " )");
                     if (data.success === "true") {
                         $("#button-menu").addClass("selected");
-                        $("#button-menu").after(data.html);
+                        $("#user-header").append(data.html);
                     }
                 }
             });
