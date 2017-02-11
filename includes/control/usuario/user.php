@@ -105,7 +105,7 @@ class user {
         if ($this->id == "") {
             throw new Exception("Usuário inexistente.", 201);
         }
-        $campos_sql = array("nome", "sexo", "cidade", "estado", "senha", "email", "tipo", "rg", "data_criacao", "image");
+        $campos_sql = array("nome", "sexo", "senha", "email", "rg", "data_criacao", "image");
         $this->conn->prepareselect("usuario", $campos_sql, "id", $this->id);
         if (!$this->conn->executa()) {
             if ($this->conn->rowcount == 0) {

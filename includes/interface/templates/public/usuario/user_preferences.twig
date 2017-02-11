@@ -12,6 +12,7 @@
           <div class="section-title">Preferências do Usuário</div>
           <div class="preference-tabs">
               <div class="item selected" tab="personal">Informações Pessoais</div>
+              <div class="item" tab="address">Endereços</div>
               <div class="item" tab="privacy">Configurações de Privacidade</div>
               <div class="item" tab="payment">Configurações de Pagamento</div>
           </div>
@@ -33,7 +34,7 @@
                       </div>
                       <div class="item">
                           <label for="personal-form-nascimento">Data de Nascimento*</label>
-                          <input type="text" id="personal-form-nascimento" name="nascimento" value="{{ user.data_nascimento }}" />
+                          <input type="text" id="personal-form-nascimento" class="small" name="nascimento" value="{{ user.data_nascimento }}" />
                       </div>
                       <div class="item">
                           <label for="personal-form-sexo">Sexo</label>
@@ -43,17 +44,78 @@
                               <option value="f" {% if user.sexo == 'f' %}selected{%endif%}>Feminino</option>
                           </select>
                       </div>
+                          <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
                   </form>
               </div>
-              <div class="tab hidden" tab="privacity">
-                  <div class="title">Configurações de Privacidade</div>                      
+              <div class="tab hidden" tab="address">
+                  <div class="title">Endereços</div>     
+                                
+              </div>
+              <div class="tab hidden" tab="privacy">
+                  <div class="title">Configurações de Privacidade</div>   
+                  <form id="privacy-info-form">
+                      <div class="item">
+                          <label for="personal-form-nome">Nome*</label>
+                          <input type="text" id="personal-form-nome" name="nome" value="{{ user.nome }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-email">Email*</label>
+                          <input type="text" id="personal-form-email" name="nome" value="{{ user.email }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-rg">Documento de Identidade*</label>
+                          <input type="text" id="personal-form-rg" name="rg" value="{{ user.nome }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-nascimento">Data de Nascimento*</label>
+                          <input type="text" id="personal-form-nascimento" class="small" name="nascimento" value="{{ user.data_nascimento }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-sexo">Sexo</label>
+                          <select id="personal-form-sexo" name="sexo" >
+                              <option value="">Não Informado</option>
+                              <option value="m" {% if user.sexo == 'm' %}selected{%endif%}>Masculino</option>
+                              <option value="f" {% if user.sexo == 'f' %}selected{%endif%}>Feminino</option>
+                          </select>
+                      </div>
+                          <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
+                  </form>                   
               </div>
               <div class="tab hidden" tab="payment">
-                  <div class="title">Configurações de Pagamento</div>                      
+                  <div class="title">Configurações de Pagamento</div>   
+                  <form id="payment-info-form">
+                      <div class="item">
+                          <label for="personal-form-nome">Nome*</label>
+                          <input type="text" id="personal-form-nome" name="nome" value="{{ user.nome }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-email">Email*</label>
+                          <input type="text" id="personal-form-email" name="nome" value="{{ user.email }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-rg">Documento de Identidade*</label>
+                          <input type="text" id="personal-form-rg" name="rg" value="{{ user.nome }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-nascimento">Data de Nascimento*</label>
+                          <input type="text" id="personal-form-nascimento" class="small" name="nascimento" value="{{ user.data_nascimento }}" />
+                      </div>
+                      <div class="item">
+                          <label for="personal-form-sexo">Sexo</label>
+                          <select id="personal-form-sexo" name="sexo" >
+                              <option value="">Não Informado</option>
+                              <option value="m" {% if user.sexo == 'm' %}selected{%endif%}>Masculino</option>
+                              <option value="f" {% if user.sexo == 'f' %}selected{%endif%}>Feminino</option>
+                          </select>
+                      </div>
+                          <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
+                  </form>                   
               </div>
           </div>
       </div>
       <script>
-           
+           $("#personal-form-nascimento").mask("00/00/0000");
+           var preferencesinterface = new preferencesInterface();
+           preferencesinterface.init();
       </script>
 {% endblock %}

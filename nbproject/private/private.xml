@@ -3,7 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/dyon/includes/control/publico/public.php</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/public/user_header.twig</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/public/base_layout.twig</file>
+            <file>file:/var/www/html/dyon/includes/control/usuario/user.php</file>
+            <file>file:/var/www/html/dyon/includes/control/usuario/users_public.php</file>
+            <file>file:/var/www/html/dyon/includes/control/usuario/users.php</file>
+            <file>file:/var/www/html/dyon/js/public/public.js</file>
+            <file>file:/var/www/html/dyon/css/public.css</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/public/usuario/user_preferences.twig</file>
+            <file>file:/var/www/html/dyon/css/core.css</file>
+            <file>file:/var/www/html/dyon/includes/system/config.php</file>
+            <file>file:/var/www/html/dyon/includes/sql/sqlcon.php</file>
+            <file>file:/var/www/html/dyon/includes/control/main_manager.php</file>
+            <file>file:/var/www/html/dyon/includes/system/setup.php</file>
         </group>
     </open-files>
 </project-private>
