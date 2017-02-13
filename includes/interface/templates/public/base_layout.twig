@@ -20,10 +20,22 @@
                         {% include "user_header.twig" %}
                     {% endblock %}
                 {% else %}
+
+                    <div class="login-signup">
+                        <a href="{{ config.system_path }}/login"><div class="login">Entrar</div></a>
+                        <div class="signup"><a href="{{ config.system_path }}/signup">Criar uma Conta</a></div>
+                    </div>
                     <div class="menu-header">
+                        <div class="search-wrap">
+                            <input type="text" class="search-input" placeholder="Encontre Eventos" />
+                            <i class="fa fa-search search-submit" id="search-submit"></i>
+                        </div>
                         <div class="item">
                             CATEGORIAS
                         </div>
+                        <a href="{{ config.system_path }}/manager"><div class="item last">
+                                MANAGER
+                            </div></a>
                     </div>
                 {% endif %}
                 <div class="clear"></div>
