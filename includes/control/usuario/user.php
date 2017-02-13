@@ -48,14 +48,12 @@ class user {
     private $id; // id do usuário
     private $senha_hash; // hash do password do usuário
     private $email; // email do usuário
-    private $tipo; // hierarquia do usuário
     private $rg; // identificação do usuário
     private $sexo; // sexo do usuário
-    private $cidade; // cidade do usuário
-    private $estado; // estado do usuário
     private $nome; // nome do usuário
     private $instance; // instância atual do usuário
     private $instances; // todas as instâncias do usuário
+    private $data_nascimento;
     protected $conn; // AUXILIAR: conexão com o banco de dados
     private $is_auth = false; // flag de autenticação do usuário
     private $date_create; // data de criação da conta do usuário
@@ -105,7 +103,7 @@ class user {
         if ($this->id == "") {
             throw new Exception("Usuário inexistente.", 201);
         }
-        $campos_sql = array("nome", "sexo", "senha", "email", "rg", "data_criacao", "image");
+        $campos_sql = array("nome", "sexo", "senha", "email", "rg", "data_criacao", "image", "data_nascimento");
         $this->conn->prepareselect("usuario", $campos_sql, "id", $this->id);
         if (!$this->conn->executa()) {
             if ($this->conn->rowcount == 0) {
@@ -116,13 +114,11 @@ class user {
         $infos = $this->conn->fetch;
         $this->nome = $infos["nome"];
         $this->sexo = $infos["sexo"];
-        $this->cidade = $infos["cidade"];
-        $this->estado = $infos["estado"];
         $this->senha_hash = $infos["senha"];
         $this->email = $infos["email"];
         $this->rg = $infos["rg"];
         $this->data_criacao = $infos['data_criacao'];
-        $this->tipo = $infos["tipo"];
+        $this->data_nascimento = $infos['data_nascimento'];
         if ($infos["image"]) {
             $this->image = $infos["image"];
         } else {
@@ -130,25 +126,24 @@ class user {
         }
         $this->is_auth = true;
 
-        if ($this->tipo >= DYON_USER_ADMIN) {
-            $instanceController = new instanceController();
-            $this->instances = $instanceController->loadUserInstance($this);
-            if ($this->instances['count'] > 1) {
-                foreach ($this->instances['instances'] as $index => $instance) {
-                    if ($instance['user_info']['instancia_padrao'] != 0) {
-                        $this->instance = $instance;
-                        $this->admin_info = $this->instance['user_info'];
-                        break;
-                    }
-                }
-                if (!$this->instance) {
-                    $this->instance = $this->instances['instances'][0];
+
+        $instanceController = new instanceController();
+        $this->instances = $instanceController->loadUserInstance($this);
+        if ($this->instances['count'] > 1) {
+            foreach ($this->instances['instances'] as $index => $instance) {
+                if ($instance['user_info']['instancia_padrao'] != 0) {
+                    $this->instance = $instance;
                     $this->admin_info = $this->instance['user_info'];
+                    break;
                 }
-            } elseif ($this->instances['count'] == 1) {
-                $this->instance = $this->instances['instance'];
+            }
+            if (!$this->instance) {
+                $this->instance = $this->instances['instances'][0];
                 $this->admin_info = $this->instance['user_info'];
             }
+        } elseif ($this->instances['count'] == 1) {
+            $this->instance = $this->instances['instance'];
+            $this->admin_info = $this->instance['user_info'];
         }
     }
 
@@ -169,13 +164,18 @@ class user {
         $infos["estado"] = $this->estado;
         $infos["email"] = $this->email;
         $infos["rg"] = $this->rg;
-        $infos["tipo"] = $this->tipo;
+        $infos['data_nascimento'] = $this->formatBirthDay($this->data_nascimento);
         $infos["evento_padrao"] = $this->admin_info["evento_padrao"];
         $infos["nome_instancia"] = $this->instance["nome"];
         $infos["id_instancia"] = $this->instance["id"];
         $infos["image"] = $this->image;
 
         return $infos;
+    }
+    
+    public function formatBirthDay($birthday) {
+        $array = Array("dia" => 01, "mes" => 06, "ano" => 1994, "full" => "01/06/1994");
+        return $array;
     }
 
     private function updateSerializedUser() {
@@ -503,19 +503,6 @@ class user {
 
         $this->admin_info['fluxo_padrao'] = $flow_id;
         $this->updateSerializedUser();
-    }
-
-    /**
-     * Retorna o nível hierárquico do usuário.
-     * @return INT
-     * @throws Exception
-     */
-    public function getPermission() {
-        if (!is_numeric($this->tipo) || !$this->is_auth) {
-            throw new Exception("O usuário não é válidado.");
-        }
-
-        return $this->tipo;
     }
 
     public function getSelectedEvent() {

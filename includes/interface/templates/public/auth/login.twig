@@ -1,0 +1,33 @@
+{% extends "base_layout.twig" %}
+
+{% block content %}
+    <div class="content-wrap no-bg">
+        <div id="signup-login-wrap">
+            <div class="info">
+                Cadastre-se no Dyon e tenha acesso aos melhores eventos da sua região. Crie e gerencie seus eventos, de ponta a ponta.
+            </div>
+            <div class="signup-button">
+                <i class="fa fa-sign-in"></i> Cadastrar
+            </div>
+        </div>
+        <div id="login-form-wrap">
+            <div class="title">ENTRAR</div>
+            <div class="info"></div>
+            <form method="post" action="">
+                <div class="input">
+                    <div class="label">Email</div>
+                    <input type="email" placeholder="meu@email.com" name="login[email]" id="login-input-email" />
+                </div>
+                <div class="input">
+                    <div class="label">Senha</div>
+                    <input type="password" placeholder="******" name="login[senha]" id="login-input-senha" />
+                </div>
+                <div class="button"><input type="submit" value="Entrar" name="login[submit]" id="login-input-submit" /></div>
+                <div class="button fb-login"><i class="fa fa-facebook-official"></i> Facebook</div>
+            </form>
+        </div>
+        {% if login_error_flag %}
+            <div class="login-error error-message01">Não foi possível realizar seu login, confira email e senha.</div>
+        {% endif %}
+    </div>
+{% endblock %}
