@@ -16,6 +16,7 @@
             <file>file:/var/www/html/dyon/includes/sql/sqlcon.php</file>
             <file>file:/var/www/html/dyon/includes/control/main_manager.php</file>
             <file>file:/var/www/html/dyon/includes/system/setup.php</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/public/scripts.twig</file>
         </group>
     </open-files>
 </project-private>
