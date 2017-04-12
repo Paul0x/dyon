@@ -12,7 +12,6 @@
         <div class="section-title">Preferências do Usuário</div>
         <div class="preference-tabs">
             <div class="item selected" tab="personal">Informações Pessoais</div>
-            <div class="item" tab="address">Endereços</div>
             <div class="item" tab="privacy">Configurações de Privacidade</div>
             <div class="item" tab="payment">Configurações de Pagamento</div>
         </div>
@@ -20,6 +19,14 @@
             <div class="tab" tab="personal">
                 <div class="title">Informações Pessoais</div>
                 <form id="personal-info-form">
+                    <div class="item">
+                        <label for="personal-form-picture">Imagem de Perfil</label>
+                        {% if user.image %}
+                            <div class="image"><div class="buttons-wrap"><i class='edit fa fa-pencil' title='Editar'></i><i class='remove fa fa-times' title='Remover'></i></div><img class="image-file" src="{{ config.system_path }}/images/avatar/{{ user.image }}" alt="Imagem" /></div>
+                            {% else %}
+                            <div class="image"><div class="buttons-wrap"><i class='edit fa fa-pencil' title='Editar'></i><img class="image-file" src="{{ config.system_path }}/images/avatar/noimage.jpg" alt="Imagem" /></div>                        
+                                {% endif %}
+                    </div>
                     <div class="item">
                         <label for="personal-form-nome">Nome*</label>
                         <input type="text" id="personal-form-nome" name="nome" value="{{ user.nome }}" />
@@ -40,18 +47,18 @@
                             {% endfor %}
                         </select>
                         <select type="text" id="personal-form-nascimento-month" class="birth-input" name="nascimento-month">                            
-                                <option value="01" {% if user.data_nascimento.mes == 01 %} selected {% endif %}>Janeiro</option>
-                                <option value="02" {% if user.data_nascimento.mes == 02 %} selected {% endif %}>Fevereiro</option>
-                                <option value="03" {% if user.data_nascimento.mes == 03 %} selected {% endif %}>Março</option>
-                                <option value="04" {% if user.data_nascimento.mes == 04 %} selected {% endif %}>Abril</option>
-                                <option value="05" {% if user.data_nascimento.mes == 05 %} selected {% endif %}>Maio</option>
-                                <option value="06" {% if user.data_nascimento.mes == 06 %} selected {% endif %}>Junho</option>
-                                <option value="07" {% if user.data_nascimento.mes == 07 %} selected {% endif %}>Julho</option>
-                                <option value="08" {% if user.data_nascimento.mes == 08 %} selected {% endif %}>Agosto</option>
-                                <option value="09" {% if user.data_nascimento.mes == 09 %} selected {% endif %}>Setembro</option>
-                                <option value="10 {% if user.data_nascimento.mes == 10 %} selected {% endif %}">Outubro</option>
-                                <option value="11 {% if user.data_nascimento.mes == 11 %} selected {% endif %}">Novembro</option>
-                                <option value="12" {% if user.data_nascimento.mes == 12 %} selected {% endif %}>Dezembro</option>
+                            <option value="01" {% if user.data_nascimento.mes == 01 %} selected {% endif %}>Janeiro</option>
+                            <option value="02" {% if user.data_nascimento.mes == 02 %} selected {% endif %}>Fevereiro</option>
+                            <option value="03" {% if user.data_nascimento.mes == 03 %} selected {% endif %}>Março</option>
+                            <option value="04" {% if user.data_nascimento.mes == 04 %} selected {% endif %}>Abril</option>
+                            <option value="05" {% if user.data_nascimento.mes == 05 %} selected {% endif %}>Maio</option>
+                            <option value="06" {% if user.data_nascimento.mes == 06 %} selected {% endif %}>Junho</option>
+                            <option value="07" {% if user.data_nascimento.mes == 07 %} selected {% endif %}>Julho</option>
+                            <option value="08" {% if user.data_nascimento.mes == 08 %} selected {% endif %}>Agosto</option>
+                            <option value="09" {% if user.data_nascimento.mes == 09 %} selected {% endif %}>Setembro</option>
+                            <option value="10 {% if user.data_nascimento.mes == 10 %} selected {% endif %}">Outubro</option>
+                            <option value="11 {% if user.data_nascimento.mes == 11 %} selected {% endif %}">Novembro</option>
+                            <option value="12" {% if user.data_nascimento.mes == 12 %} selected {% endif %}>Dezembro</option>
                         </select>
                         <select type="text" id="personal-form-nascimento-year" class="birth-input" name="nascimento-year">
                             {% for i in 1950..2010 %}
@@ -69,10 +76,6 @@
                     </div>
                     <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
                 </form>
-            </div>
-            <div class="tab hidden" tab="address">
-                <div class="title">Endereços</div>     
-
             </div>
             <div class="tab hidden" tab="privacy">
                 <div class="title">Configurações de Privacidade</div>   

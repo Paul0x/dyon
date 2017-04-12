@@ -1,4 +1,4 @@
-/******************************************
+﻿/******************************************
  *     _____                    
  *    |  __ \                  
  *    | |  | |_   _  ___  _ __  
@@ -26,12 +26,17 @@ Formato: [ PRIORIDADE ] - MÓDULO - FUNCIONALIDADE - DATA DE INSERÇÃO/IMPLEMEN
 ==========================================================================
 
 [+] - PREFERÊNCIAS - Criar formulário de privacidade e pagamento - 04/04/2017
-[+] - PREFERÊNCIAS - Remover aba de endereços - 04/04/2017
 [+] - PREFERÊNCIAS - Adicionar dados de endereço dentro de informações pessoais - 04/04/2017
 [++] - CADASTRO - Criar formulário de cadastro do usuário - 04/04/2017
 [+] - PREFERÊNCIAS - Adicionar campo de foto dentro de informações pessoais - 04/04/2017
 [+] - PREFERÊNCIAS - Criar estrutura de survey para detecção de preferências de eventos - 04/04/2017
 [-] - MANAGER - Habilitar funcionalidades do manager que foram desabilitadas por conta da mudança de URL - 04/04/2017
+
+
+==========================================================================
+Implementados:
+
+[+] - PREFERÊNCIAS - Remover aba de endereços - 10/04/2017
 
 
 
