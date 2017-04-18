@@ -36,14 +36,16 @@
                     </div>
                     <div class="item">
                         <label for="personal-form-email">Email*</label>
-                        <input type="text" id="personal-form-email" name="nome" value="{{ user.email }}" />
+                        <input type="text" id="personal-form-email" name="email" value="{{ user.email }}" />
                     </div>
                     <div class="item">
                         <label for="personal-form-rg">Documento de Identidade*</label>
+                        <div class="subinfo">O documento de identificação pode ser requisitado na entrada de alguns eventos.</div>
                         <input type="text" id="personal-form-rg" name="rg" value="{{ user.nome }}" />
                     </div>
                     <div class="item">
                         <label for="personal-form-nascimento">Data de Nascimento*</label>
+                        <div class="subinfo">Alguns eventos podem possuir requerimentos mínimos de idade.</div>
                         <select type="text" id="personal-form-nascimento-day" class="birth-input" name="nascimento-day">
                             {% for i in 1..31 %}
                                 <option value="{{ i }}" {% if user.data_nascimento.dia == i %} selected {% endif %}>{{ i }}</option>
@@ -71,11 +73,48 @@
                     </div>
                     <div class="item">
                         <label for="personal-form-sexo">Sexo</label>
+                        <div class="subinfo">Para alguns eventos pode haver diferença no valor de ingresso para determinado sexo.</div>'
                         <select id="personal-form-sexo" name="sexo" >
                             <option value="">Não Informado</option>
                             <option value="m" {% if user.sexo == 'm' %}selected{%endif%}>Masculino</option>
                             <option value="f" {% if user.sexo == 'f' %}selected{%endif%}>Feminino</option>
                         </select>
+                    </div>
+                    <div class="item">
+                        <label for="personal-form-rua">Endereço</label>
+                        <div class="subinfo">Seu endereço pode ser utilizado para envio de ingressos e cobranças..</div>
+                        <input type="text" id="personal-form-endereco" placeholder="Rua e Bairro" name="endereco" value="{{ user.endereco }}" />
+                        <input type="text" id="personal-form-cidade" placeholder="Cidade"  name="cidade" value="{{ user.cidade }}" />
+                        <input type="text" id="personal-form-cep" placeholder="CEP"  name="cep" value="{{ user.cep }}" />
+                        <select name="estado" id="personal-form-estado" name="estado">
+                        <option value="AC" {% if user.estado == "AC" %} selected {% endif %} >Acre</option>
+                        <option value="AL" {% if user.estado == "AL" %} selected {% endif %} >Alagoas</option>
+                        <option value="AP" {% if user.estado == "AP" %} selected {% endif %} >Amapá</option>
+                        <option value="AM" {% if user.estado == "AM" %} selected {% endif %} >Amazonas</option>
+                        <option value="BA" {% if user.estado == "BA" %} selected {% endif %} >Bahia</option>
+                        <option value="CE" {% if user.estado == "CE" %} selected {% endif %} >Ceará</option>
+                        <option value="DF" {% if user.estado == "DF" %} selected {% endif %} >Distrito Federal</option>
+                        <option value="ES" {% if user.estado == "ES" %} selected {% endif %} >Espirito Santo</option>
+                        <option value="GO" {% if user.estado == "GO" %} selected {% endif %} >Goiás</option>
+                        <option value="MA" {% if user.estado == "MA" %} selected {% endif %} >Maranhão</option>
+                        <option value="MS" {% if user.estado == "MS" %} selected {% endif %} >Mato Grosso do Sul</option>
+                        <option value="MT" {% if user.estado == "MT" %} selected {% endif %} >Mato Grosso</option>
+                        <option value="MG" {% if user.estado == "MG" %} selected {% endif %} >Minas Gerais</option>
+                        <option value="PA" {% if user.estado == "PA" %} selected {% endif %} >Pará</option>
+                        <option value="PB" {% if user.estado == "PB" %} selected {% endif %} >Paraíba</option>
+                        <option value="PR" {% if user.estado == "PR" %} selected {% endif %} >Paraná</option>
+                        <option value="PE" {% if user.estado == "PE" %} selected {% endif %} >Pernambuco</option>
+                        <option value="PI" {% if user.estado == "PI" %} selected {% endif %} >Piauí</option>
+                        <option value="RJ" {% if user.estado == "RJ" %} selected {% endif %} >Rio de Janeiro</option>
+                        <option value="RN" {% if user.estado == "RN" %} selected {% endif %} >Rio Grande do Norte</option>
+                        <option value="RS" {% if user.estado == "RS" %} selected {% endif %} >Rio Grande do Sul</option>
+                        <option value="RO" {% if user.estado == "RO" %} selected {% endif %} >Rondônia</option>
+                        <option value="RR" {% if user.estado == "RR" %} selected {% endif %} >Roraima</option>
+                        <option value="SC" {% if user.estado == "SC" %} selected {% endif %} >Santa Catarina</option>
+                        <option value="SP" {% if user.estado == "SP" %} selected {% endif %} >São Paulo</option>
+                        <option value="SE" {% if user.estado == "SE" %} selected {% endif %} >Sergipe</option>
+                        <option value="TO" {% if user.estado == "TO" %} selected {% endif %} >Tocantins</option>
+                    </select>
                     </div>
                     <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
                 </form>
@@ -84,59 +123,38 @@
                 <div class="title">Configurações de Privacidade</div>   
                 <form id="privacy-info-form">
                     <div class="item">
-                        <label for="personal-form-nome">Nome*</label>
-                        <input type="text" id="personal-form-nome" name="nome" value="{{ user.nome }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-email">Email*</label>
-                        <input type="text" id="personal-form-email" name="nome" value="{{ user.email }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-rg">Documento de Identidade*</label>
-                        <input type="text" id="personal-form-rg" name="rg" value="{{ user.nome }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-nascimento">Data de Nascimento*</label>
-                        <input type="text" id="personal-form-nascimento" class="small" name="nascimento" value="{{ user.data_nascimento }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-sexo">Sexo</label>
-                        <select id="personal-form-sexo" name="sexo" >
-                            <option value="">Não Informado</option>
-                            <option value="m" {% if user.sexo == 'm' %}selected{%endif%}>Masculino</option>
-                            <option value="f" {% if user.sexo == 'f' %}selected{%endif%}>Feminino</option>
+                        <label for="privacy-form-profile">Visualização de Perfil</label>
+                        <div class='subitem'>Defina se o seu perfil do Dyon está disponível para o público.</div>
+                        <select name='privacy-profile' id='privacy-form-profile'>
+                            <option value='0'>Público</option>
+                            <option value='1'>Privado</option>
                         </select>
                     </div>
-                    <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
+                    <div class="item">
+                        <label for="privacy-form-events">Visualização de Eventos</label>
+                        <div class='subitem'>Caso o seu perfil seja público, defina quais eventos você deseja exibir.</div>
+                        <select name='privacy-events' id='privacy-form-events'>
+                            <option value='0'>Eventos que comprei e que demonstrei interesses</option>
+                            <option value='1'>Apenas eventos que participei</option>
+                            <option value='2'>Nenhum Evento</option>
+                        </select>
+                    </div><div class="item">
+                        <label for="privacy-form-email">Configurações de Email</label>
+                        <div class='subitem'>Defina quem pode te enviar emails.</div>
+                        <select name='privacy-email' id='privacy-form-email'>
+                            <option value='0'>Organizadores de eventos que participei</option>
+                            <option value='1'>Apenas emails oficiais do Dyon</option>
+                            <option value='2'>Não receber emails de notificação</option>
+                        </select>
+                    </div>
+                    
+                    <input type="button" id="privacy-form-submit" value="Salvar" class="btn-01"/>
                 </form>                   
             </div>
             <div class="tab hidden" tab="payment">
                 <div class="title">Configurações de Pagamento</div>   
                 <form id="payment-info-form">
-                    <div class="item">
-                        <label for="personal-form-nome">Nome*</label>
-                        <input type="text" id="personal-form-nome" name="nome" value="{{ user.nome }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-email">Email*</label>
-                        <input type="text" id="personal-form-email" name="nome" value="{{ user.email }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-rg">Documento de Identidade*</label>
-                        <input type="text" id="personal-form-rg" name="rg" value="{{ user.nome }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-nascimento">Data de Nascimento*</label>
-                        <input type="text" id="personal-form-nascimento" class="small" name="nascimento" value="{{ user.data_nascimento }}" />
-                    </div>
-                    <div class="item">
-                        <label for="personal-form-sexo">Sexo</label>
-                        <select id="personal-form-sexo" name="sexo" >
-                            <option value="">Não Informado</option>
-                            <option value="m" {% if user.sexo == 'm' %}selected{%endif%}>Masculino</option>
-                            <option value="f" {% if user.sexo == 'f' %}selected{%endif%}>Feminino</option>
-                        </select>
-                    </div>
+                    
                     <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
                 </form>                   
             </div>

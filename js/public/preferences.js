@@ -58,14 +58,23 @@ preferencesInterface = function () {
         var self = this;
         var form = new FormData();
         var xhr = new XMLHttpRequest();
-        form.append("image",file);
+        form.append("image", file);
         form.append("mode", "upload_profile_image");
         xhr.open('POST', self.root + "/usuario/ajax", true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 2) {
+                    $("#personal-info-form .image-file").css("display", "none");
+                    $("#personal-info-form .image").append("<i class='fa fa-spinner fa-spin' id='image-file-loading'></i>");
             }
             if (xhr.readyState == 4 && xhr.status == 200) {
-                console.log(file);
+                var data = eval("(" + xhr.responseText + ")");
+                if (data.success == "true") {
+                    $("#personal-info-form .image-file").css("display","block");
+                    $("#image-file-loading").remove();
+                    $("#personal-info-form .image-file").attr("src", self.root+"/images/avatar/"+data.image);
+                } else {
+                    ajaxBoxMessage(data.error, "error");
+                }
             }
         };
         xhr.send(form);

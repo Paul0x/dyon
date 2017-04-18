@@ -3,11 +3,20 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/wamp/www/dyon/css/public.css</file>
-            <file>file:/C:/wamp/www/dyon/includes/control/usuario/users_public.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/system/config.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/interface/templates/public/usuario/user_preferences.twig</file>
-            <file>file:/C:/wamp/www/dyon/includes/control/usuario/user.php</file>
+            <file>file:/var/www/html/dyon/includes/control/evento/pacotes.php</file>
+            <file>file:/var/www/html/dyon/js/manager/control.js</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/public/auth/signup.twig</file>
+            <file>file:/var/www/html/dyon/includes/control/usuario/user.php</file>
+            <file>file:/var/www/html/dyon/includes/control/usuario/users_public.php</file>
+            <file>file:/var/www/html/dyon/includes/control/usuario/users.php</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/manager/controle/cliente_edit_control.twig</file>
+            <file>file:/var/www/html/dyon/css/public.css</file>
+            <file>file:/var/www/html/dyon/includes/interface/templates/public/usuario/user_preferences.twig</file>
+            <file>file:/var/www/html/dyon/includes/control/auth/auth.php</file>
+            <file>file:/var/www/html/dyon/includes/system/config.php</file>
+            <file>file:/var/www/html/dyon/includes/control/controle/control.php</file>
+            <file>file:/var/www/html/dyon/js/public/preferences.js</file>
+            <file>file:/var/www/html/dyon/includes/system/setup.php</file>
         </group>
     </open-files>
 </project-private>

@@ -128,22 +128,26 @@ class user {
 
 
         $instanceController = new instanceController();
-        $this->instances = $instanceController->loadUserInstance($this);
-        if ($this->instances['count'] > 1) {
-            foreach ($this->instances['instances'] as $index => $instance) {
-                if ($instance['user_info']['instancia_padrao'] != 0) {
-                    $this->instance = $instance;
-                    $this->admin_info = $this->instance['user_info'];
-                    break;
+        try {
+            $this->instances = $instanceController->loadUserInstance($this);
+            if ($this->instances['count'] > 1) {
+                foreach ($this->instances['instances'] as $index => $instance) {
+                    if ($instance['user_info']['instancia_padrao'] != 0) {
+                        $this->instance = $instance;
+                        $this->admin_info = $this->instance['user_info'];
+                        break;
+                    }
                 }
-            }
-            if (!$this->instance) {
-                $this->instance = $this->instances['instances'][0];
+                if (!$this->instance) {
+                    $this->instance = $this->instances['instances'][0];
+                    $this->admin_info = $this->instance['user_info'];
+                }
+            } elseif ($this->instances['count'] == 1) {
+                $this->instance = $this->instances['instance'];
                 $this->admin_info = $this->instance['user_info'];
             }
-        } elseif ($this->instances['count'] == 1) {
-            $this->instance = $this->instances['instance'];
-            $this->admin_info = $this->instance['user_info'];
+        } catch (Exception $ex) {
+            $this->instances = false;
         }
     }
 
@@ -172,7 +176,7 @@ class user {
 
         return $infos;
     }
-    
+
     public function formatBirthDay($birthday) {
         $array = Array("dia" => 01, "mes" => 06, "ano" => 1994, "full" => "01/06/1994");
         return $array;
@@ -503,6 +507,22 @@ class user {
 
         $this->admin_info['fluxo_padrao'] = $flow_id;
         $this->updateSerializedUser();
+    }
+
+    public function setProfileImage($file) {
+        $filename = uniqid($this->getId() . "_");
+        $imagecontroller = new imagem();
+        $imagecontroller->pegarImagem($file);
+        $imagecontroller->cropOn();
+        $imagecontroller->dimensoesMaximas(120, 120);
+        $imagecontroller->generate("images/avatar/" . $filename, true);
+        $this->conn->prepareupdate($filename . "." . $imagecontroller->formatoImg(), "image", "usuario", $this->getId(), "id");
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível alterar a imagem do usuário");
+        }
+        $this->image = $filename . "." . $imagecontroller->formatoImg();
+        $this->updateSerializedUser();
+        return $this->image;
     }
 
     public function getSelectedEvent() {

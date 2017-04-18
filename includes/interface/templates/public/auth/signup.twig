@@ -1,0 +1,19 @@
+{% extends "base_layout.twig" %}
+
+{% block content %}
+    <div id="signup-form">
+        <div class="header">
+            <div class="title">Cadastre-se no Dyon</div>
+            <div class="info">Para se cadastrar no Dyon é simples, após preencher os campos abaixos você já estará pronto para conhecer os melhores eventos da sua reunião.</div>
+        </div>
+        <div class="form">
+            <form method="post">
+                <input type="text" name="nome" placeholder="Digite seu nome" />
+                <input type="email" name="email" placeholder="Digite seu email" />
+                <input type="password" name="senha" placeholder="Escolha sua senha" />
+                <input type="submit" id="signup-submit" class="btn-01" value="Cadastrar" name="submit" />
+            </form>
+            {{ error }}
+        </div>
+    </div>
+{% endblock %}
