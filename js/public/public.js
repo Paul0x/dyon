@@ -16,7 +16,40 @@
  */
 
 publicInterface = function () {
-
     this.root = $("#dir-root").val();
-    
+};
+
+signupInterface = function () {
+    this.root = $("#dir-root").val();
+
+    this.init = function () {
+        var self = this;
+        self.bindSubmit();
+    };
+
+    this.bindSubmit = function () {
+        $("#signup-submit").bind("click", function () {
+            var error = 0;
+            if ($("#signup-form input[name=nome]").val() === "") {
+                $("#signup-form input[name=nome]").addClass("error");
+                error++;
+            }
+            if ($("#signup-form input[name=email]").val() === "") {
+                $("#signup-form input[name=email]").addClass("error");
+                error++;
+            }
+            if ($("#signup-form input[name=senha]").val() === "") {
+                $("#signup-form input[name=senha]").addClass("error");
+                error++;
+            }
+            
+            if(error > 0) {
+                return false;
+            } else {
+                $("#signup-form input").removeClass("error");
+                return true;
+            }
+
+        });
+    };
 };

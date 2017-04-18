@@ -41,17 +41,19 @@
                     <div class="item">
                         <label for="personal-form-rg">Documento de Identidade*</label>
                         <div class="subinfo">O documento de identificação pode ser requisitado na entrada de alguns eventos.</div>
-                        <input type="text" id="personal-form-rg" name="rg" value="{{ user.nome }}" />
+                        <input type="text" id="personal-form-rg" name="rg" value="{{ user.rg }}" />
                     </div>
                     <div class="item">
                         <label for="personal-form-nascimento">Data de Nascimento*</label>
                         <div class="subinfo">Alguns eventos podem possuir requerimentos mínimos de idade.</div>
                         <select type="text" id="personal-form-nascimento-day" class="birth-input" name="nascimento-day">
+                                <option value="">-</option>
                             {% for i in 1..31 %}
                                 <option value="{{ i }}" {% if user.data_nascimento.dia == i %} selected {% endif %}>{{ i }}</option>
                             {% endfor %}
                         </select>
-                        <select type="text" id="personal-form-nascimento-month" class="birth-input" name="nascimento-month">                            
+                        <select type="text" id="personal-form-nascimento-month" class="birth-input" name="nascimento-month">       
+                                <option value="">-</option>                     
                             <option value="01" {% if user.data_nascimento.mes == 01 %} selected {% endif %}>Janeiro</option>
                             <option value="02" {% if user.data_nascimento.mes == 02 %} selected {% endif %}>Fevereiro</option>
                             <option value="03" {% if user.data_nascimento.mes == 03 %} selected {% endif %}>Março</option>
@@ -66,6 +68,7 @@
                             <option value="12" {% if user.data_nascimento.mes == 12 %} selected {% endif %}>Dezembro</option>
                         </select>
                         <select type="text" id="personal-form-nascimento-year" class="birth-input" name="nascimento-year">
+                                <option value="">-</option>
                             {% for i in 1950..2010 %}
                                 <option value="{{ i }}" {% if user.data_nascimento.ano == i %} selected {% endif %}>{{ i }}</option>
                             {% endfor %}
@@ -73,7 +76,7 @@
                     </div>
                     <div class="item">
                         <label for="personal-form-sexo">Sexo</label>
-                        <div class="subinfo">Para alguns eventos pode haver diferença no valor de ingresso para determinado sexo.</div>'
+                        <div class="subinfo">Para alguns eventos pode haver diferença no valor de ingresso para determinado sexo.</div>
                         <select id="personal-form-sexo" name="sexo" >
                             <option value="">Não Informado</option>
                             <option value="m" {% if user.sexo == 'm' %}selected{%endif%}>Masculino</option>

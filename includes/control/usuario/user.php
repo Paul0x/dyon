@@ -103,7 +103,7 @@ class user {
         if ($this->id == "") {
             throw new Exception("Usuário inexistente.", 201);
         }
-        $campos_sql = array("nome", "sexo", "senha", "email", "rg", "data_criacao", "image", "data_nascimento");
+        $campos_sql = array("nome", "sexo", "senha", "email", "rg", "data_criacao", "image", "data_nascimento", "cidade", "estado", "endereco", "cep");
         $this->conn->prepareselect("usuario", $campos_sql, "id", $this->id);
         if (!$this->conn->executa()) {
             if ($this->conn->rowcount == 0) {
@@ -119,6 +119,10 @@ class user {
         $this->rg = $infos["rg"];
         $this->data_criacao = $infos['data_criacao'];
         $this->data_nascimento = $infos['data_nascimento'];
+        $this->cidade = $infos['cidade'];
+        $this->estado = $infos['estado'];
+        $this->endereco = $infos['endereco'];
+        $this->cep = $infos['cep'];
         if ($infos["image"]) {
             $this->image = $infos["image"];
         } else {
@@ -166,6 +170,8 @@ class user {
         $infos["sexo"] = $this->sexo;
         $infos["cidade"] = $this->cidade;
         $infos["estado"] = $this->estado;
+        $infos["endereco"] = $this->endereco;
+        $infos["cep"] = $this->cep;
         $infos["email"] = $this->email;
         $infos["rg"] = $this->rg;
         $infos['data_nascimento'] = $this->formatBirthDay($this->data_nascimento);
@@ -178,7 +184,15 @@ class user {
     }
 
     public function formatBirthDay($birthday) {
-        $array = Array("dia" => 01, "mes" => 06, "ano" => 1994, "full" => "01/06/1994");
+        if($birthday) {
+            $birthday = split("-", $birthday);
+            $array['dia'] = $birthday[2];
+            $array['mes'] = $birthday[1];
+            $array['ano'] = $birthday[0];
+            $array['full'] = $birthday[2]."/".$birthday[1]."/".$birthday[0];
+        } else {
+            return false;
+        }
         return $array;
     }
 
@@ -363,7 +377,6 @@ class user {
         if ($user->getId() != $this->id && $user->getPermission() < $this->tipo) {
             throw new Exception("Usuário sem permissão de alterar o perfil.");
         }
-        if ($user->getPermission() >= 5) {
 
             if ($infos['sexo'] != $this->sexo && !is_null($infos['sexo'])) {
                 if ($infos['sexo'] != 'm' && $infos['sexo'] != 'f') {
@@ -373,7 +386,7 @@ class user {
                 $fields[] = "sexo";
                 $values[] = $infos['sexo'];
             }
-        }
+        
         if (count($fields) < 1) {
             return;
         }
@@ -559,7 +572,7 @@ class user {
             return false;
         }
 
-        $this->conn->prepareselect("user", "id", "email", $email);
+        $this->conn->prepareselect("usuario", "id", "email", $email);
         $this->conn->executa();
         if ($this->conn->rowcount != 0) {
             return false;
