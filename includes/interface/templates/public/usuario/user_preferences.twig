@@ -69,7 +69,7 @@
                         </select>
                         <select type="text" id="personal-form-nascimento-year" class="birth-input" name="nascimento-year">
                                 <option value="">-</option>
-                            {% for i in 1950..2010 %}
+                            {% for i in 2010..1950 %}
                                 <option value="{{ i }}" {% if user.data_nascimento.ano == i %} selected {% endif %}>{{ i }}</option>
                             {% endfor %}
                         </select>
@@ -120,6 +120,7 @@
                     </select>
                     </div>
                     <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
+                    <div id="personal-form-response" class="response-wrap"></div>
                 </form>
             </div>
             <div class="tab hidden" tab="privacy">
@@ -152,6 +153,7 @@
                     </div>
                     
                     <input type="button" id="privacy-form-submit" value="Salvar" class="btn-01"/>
+                    
                 </form>                   
             </div>
             <div class="tab hidden" tab="payment">

@@ -121,6 +121,10 @@ preferencesInterface = function () {
                 success: function(data) {
                     data = eval("( " + data + " )");
                     if (data.success === "true") {
+                        $("#personal-form-response").html("<div class='success'><i class='fa fa-check'></i> Informações Atualizadas com Sucesso</div>");
+                    } else {
+                        $("#personal-form-response").html("<div class='error'><i class='fa fa-times'></i> "+data.error+"</div>");
+                        
                     }
                 }
             });

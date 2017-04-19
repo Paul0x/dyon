@@ -51,13 +51,16 @@ class user {
     private $rg; // identificação do usuário
     private $sexo; // sexo do usuário
     private $nome; // nome do usuário
+    private $cidade;
+    private $estado;
+    private $cep;
+    private $endereco;
     private $instance; // instância atual do usuário
     private $instances; // todas as instâncias do usuário
     private $data_nascimento;
     protected $conn; // AUXILIAR: conexão com o banco de dados
     private $is_auth = false; // flag de autenticação do usuário
     private $date_create; // data de criação da conta do usuário
-    private $user_cliente; // cliente relacionado com a conta do usuário
     private $admin_info; // Informações relacionadas ao administrador
     //Pattern de verifição do email.
     protected $email_pattern = "/.+@.+\..+/i";
@@ -174,7 +177,11 @@ class user {
         $infos["cep"] = $this->cep;
         $infos["email"] = $this->email;
         $infos["rg"] = $this->rg;
-        $infos['data_nascimento'] = $this->formatBirthDay($this->data_nascimento);
+        if (!is_array($this->data_nascimento)) {
+            $infos['data_nascimento'] = $this->formatBirthDay($this->data_nascimento);
+        } else {
+            $infos['data_nascimento'] = $this->nascimento;
+        }
         $infos["evento_padrao"] = $this->admin_info["evento_padrao"];
         $infos["nome_instancia"] = $this->instance["nome"];
         $infos["id_instancia"] = $this->instance["id"];
@@ -184,12 +191,12 @@ class user {
     }
 
     public function formatBirthDay($birthday) {
-        if($birthday) {
+        if ($birthday) {
             $birthday = split("-", $birthday);
             $array['dia'] = $birthday[2];
             $array['mes'] = $birthday[1];
             $array['ano'] = $birthday[0];
-            $array['full'] = $birthday[2]."/".$birthday[1]."/".$birthday[0];
+            $array['full'] = $birthday[2] . "/" . $birthday[1] . "/" . $birthday[0];
         } else {
             return false;
         }
@@ -320,6 +327,8 @@ class user {
             throw new Exception("Informações para edição inválidas.");
         }
 
+
+
         if ($infos['nome'] != $this->nome && !is_null($infos['nome'])) {
             if (trim($infos['nome']) == "" || !is_string($infos['nome'])) {
                 throw new Exception("Nome informado inválido.");
@@ -329,8 +338,8 @@ class user {
             $values[] = $infos['nome'];
         }
 
-        if ($infos['rg'] != $this->rg && !is_null($infos['rg'])) {
-            if (trim($infos['rg']) == "" || strlen($infos['rg']) > 20) {
+        if ($infos['rg'] != $this->rg) {
+            if (strlen($infos['rg']) > 20) {
                 throw new Exception("RG informado inválido.");
             }
             $this->rg = $infos['rg'];
@@ -348,7 +357,7 @@ class user {
             $values[] = $infos['email'];
         }
 
-        if ($infos['cidade'] != $this->cidade && !is_null($infos['cidade'])) {
+        if ($infos['cidade'] != $this->cidade) {
             if (trim($infos['cidade']) == "" || strlen($infos['cidade']) > 100) {
                 throw new Exception("Cidade informada inválida.");
             }
@@ -358,13 +367,58 @@ class user {
         }
 
 
-        if ($infos['estado'] != $this->estado && !is_null($infos['estado'])) {
+        if ($infos['estado'] != $this->estado) {
             if (strlen($infos['estado']) > 2) {
                 throw new Exception("Estado informado inválido.");
             }
             $this->estado = $infos['estado'];
             $fields[] = "estado";
             $values[] = $infos['estado'];
+        }
+        if ($infos['endereco'] != $this->endereco) {
+            $this->endereco = $infos['endereco'];
+            $fields[] = "endereco";
+            $values[] = $infos['endereco'];
+        }
+
+        if ($infos['cep'] != $this->cep) {
+            if (strlen($infos['cep']) == 9) {
+                if (substr($infos['cep'], 5, 1) != "-") {
+                    throw new Exception("CEP Inválido");
+                }
+            } else if (strlen($infos['cep']) == 8) {
+                if (!is_numeric($infos['cep'])) {
+                    throw new Exception("CEP Inválido");
+                }
+                $first_cep = substr($infos['cep'], 0, 5);
+                $second_cep = substr($infos['cep'], 5, 3);
+                $infos['cep'] = $first_cep . "-" . $second_cep;
+            } else if ($infos['cep'] != "") {
+                throw new Exception("CEP Inválido");
+            }
+            $this->cep = $infos['cep'];
+            $fields[] = "cep";
+            $values[] = $infos['cep'];
+        }
+
+        if ($infos['sexo'] != $this->sexo) {
+            if ($infos['sexo'] != 'm' && $infos['sexo'] != 'f') {
+                $infos['sexo'] = '-';
+            }
+            $this->sexo = $infos['sexo'];
+            $fields[] = "sexo";
+            $values[] = $infos['sexo'];
+        }
+
+        if ($infos['nascimento_dia'] && $infos['nascimento_mes'] && $infos['nascimento_ano']) {
+            $new_nascimento = $infos['nascimento_ano'] . "-" . $infos['nascimento_mes'] . "-" . $infos['nascimento_dia'];
+            $new_nascimento_formatted = $this->formatBirthDay($new_nascimento);
+            $nascimento_formatted = $this->formatBirthDay($this->data_nascimento);
+            if ($new_nascimento_formatted['full'] != $nascimento_formatted['full']) {
+                $this->data_nascimento = $new_nascimento;
+                $fields[] = "data_nascimento";
+                $values[] = $new_nascimento;
+            }
         }
 
         if (md5($infos['senha']) != $this->senha && $infos['senha'] != "") {
@@ -378,15 +432,6 @@ class user {
             throw new Exception("Usuário sem permissão de alterar o perfil.");
         }
 
-            if ($infos['sexo'] != $this->sexo && !is_null($infos['sexo'])) {
-                if ($infos['sexo'] != 'm' && $infos['sexo'] != 'f') {
-                    throw new Exception("Sexo informado inválida.");
-                }
-                $this->sexo = $infos['sexo'];
-                $fields[] = "sexo";
-                $values[] = $infos['sexo'];
-            }
-        
         if (count($fields) < 1) {
             return;
         }
