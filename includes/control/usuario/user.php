@@ -192,7 +192,7 @@ class user {
 
     public function formatBirthDay($birthday) {
         if ($birthday) {
-            $birthday = split("-", $birthday);
+            $birthday = explode("-", $birthday);
             $array['dia'] = $birthday[2];
             $array['mes'] = $birthday[1];
             $array['ano'] = $birthday[0];
@@ -496,7 +496,7 @@ class user {
             throw new Exception("ID do evento em formato inválido.");
         }
 
-        if ($this->tipo < DYON_USER_ADMIN || !$this->isAuth()) {
+        if (!$this->isAuth()) {
             throw new Exception("Usuário não tem permissão para realizar a ação.");
         }
 
@@ -525,7 +525,7 @@ class user {
             throw new Exception("ID do diretoria em formato inválido.");
         }
 
-        if ($this->tipo < DYON_USER_ADMIN || !$this->isAuth()) {
+        if (!$this->isAuth()) {
             throw new Exception("Usuário não tem permissão para realizar a ação.");
         }
 
@@ -553,7 +553,7 @@ class user {
             throw new Exception("O fluxo de caixa está em formato inválido..");
         }
 
-        if ($this->tipo < DYON_USER_ADMIN || !$this->isAuth()) {
+        if (!$this->isAuth()) {
             throw new Exception("Usuário não tem permissão para realizar a ação.");
         }
 

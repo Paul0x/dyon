@@ -90,7 +90,7 @@ boardInterface = function () {
                 $(".thread-wrap .badges").html(old_html);
             }
             $.ajax({
-                url: self.root + "/boards",
+                url: self.root + "/manager/boards",
                 data: {
                     mode: "archive_thread",
                     thread_id: thread_id
@@ -139,7 +139,7 @@ boardInterface = function () {
             return;
         }
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "remove_attachment",
                 attach_id: id,
@@ -202,7 +202,7 @@ boardInterface = function () {
             var id = parseInt(thread);
         }
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "load_thread",
                 id: id
@@ -227,7 +227,7 @@ boardInterface = function () {
     this.updateThreadStatus = function (thread_id, status) {
         var self = this;
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "update_status",
                 thread_id: thread_id,
@@ -271,7 +271,7 @@ boardInterface = function () {
         }
 
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "update_checklist",
                 thread_id: thread_id,
@@ -287,7 +287,7 @@ boardInterface = function () {
     this.loadAddThreadForm = function () {
         var self = this;
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "add_thread_form"
             },
@@ -310,7 +310,7 @@ boardInterface = function () {
             return;
         }
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "edit_thread_form",
                 thread_id: thread_id
@@ -366,7 +366,7 @@ boardInterface = function () {
                 self.submitThreadForm(0);
             });
         } else {
-            $(document).off("click", "#add-thread-submit").on("click", "#add-thread-submit", function () {
+            $(document).off("click", "#edit-thread-submit").on("click", "#edit-thread-submit", function () {
                 self.submitThreadForm(1);
             });
 
@@ -424,7 +424,7 @@ boardInterface = function () {
         if (self.threadobj.statussystem === true) {
             form.append("thread[statussystem]", true);
         }
-        xhr.open('POST', self.root + "/boards", true);
+        xhr.open('POST', self.root + "/manager/boards", true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onreadystatechange = function () {
             /*if (xhr.readyState == 2) {
@@ -574,7 +574,7 @@ boardInterface = function () {
                 return;
             }
             $.ajax({
-                url: self.root + "/boards",
+                url: self.root + "/manager/boards",
                 data: {
                     mode: "rename_board",
                     nome: nome,
@@ -615,7 +615,7 @@ boardInterface = function () {
                     return;
                 }
                 $.ajax({
-                    url: self.root + "/boards",
+                    url: self.root + "/manager/boards",
                     data: {
                         mode: "create_new_board",
                         nome: nome
@@ -650,7 +650,7 @@ boardInterface = function () {
     this.loadBoardsBoxes = function () {
         var self = this;
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "load_boards_boxes"
             },
@@ -669,7 +669,7 @@ boardInterface = function () {
     this.loadUserBoard = function () {
         var self = this;
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "load_user_board"
             },
@@ -688,7 +688,7 @@ boardInterface = function () {
     this.loadBoardThreads = function (board_id, status) {
         var self = this;
         $.ajax({
-            url: self.root + "/boards",
+            url: self.root + "/manager/boards",
             data: {
                 mode: "load_boad_threads",
                 board_id: board_id,
@@ -720,7 +720,7 @@ boardInterface = function () {
                 return;
             }
             $.ajax({
-                url: self.root + "/diretorias",
+                url: self.root + "/manager/boards",
                 data: {
                     mode: "update_user_board",
                     id: id

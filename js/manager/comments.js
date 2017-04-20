@@ -43,7 +43,7 @@ commentsInterface = function () {
             }
             $(this).val("Aguarde...").attr("disabled", "disabled");
             $.ajax({
-                url: self.root + "/comentarios",
+                url: self.root + "/manager/comentarios",
                 data: {
                     mode: "sendComment",
                     node: node,
@@ -82,7 +82,7 @@ commentsInterface = function () {
                 return;
             }
             $.ajax({
-                url: self.root + "/comentarios",
+                url: self.root + "/manager/comentarios",
                 data: {
                     mode: "deleteComment",
                     comment: comment
@@ -117,7 +117,7 @@ commentsInterface = function () {
             } else if (parseInt($(this).attr("step")) === 2) {
                 var texto = $(".edit-comment-textarea[comment=" + comment + "]").val();
                 $.ajax({
-                    url: self.root + "/comentarios",
+                    url: self.root + "/manager/comentarios",
                     data: {
                         mode: "editComment",
                         comment: comment,
@@ -146,7 +146,7 @@ commentsInterface = function () {
         $(box).html(this.loadHeader(node, node_id));
         var html = "";
         $.ajax({
-            url: self.root + "/comentarios",
+            url: self.root + "/manager/comentarios",
             data: {
                 mode: "loadComments",
                 node: node,
@@ -205,7 +205,7 @@ commentsInterface = function () {
     this.countComments = function (node_type, node_id, countCallback) {
         var self = this;
         $.ajax({
-            url: self.root + "/comentarios",
+            url: self.root + "/manager/comentarios",
             data: {
                 mode: "countComments",
                 node: node_type,

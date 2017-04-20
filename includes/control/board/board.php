@@ -52,7 +52,7 @@ class boardController {
             if ($form_type == 0) {
                 echo json_encode(array("success" => "true", "html" => $html));
             } else {
-                echo json_encode(array("success" => "true", "html" => $html, "thread" => $thread_info));
+                echo json_encode(array("success" => "true", "html" => $html, "thread" => $thread));
             }
         } catch (Exception $ex) {
             echo json_encode(array("success" => "false", "error" => $ex->getMessage()));
@@ -157,10 +157,10 @@ class boardController {
             $user = $usercontroller->getUser(5);
             $board_id = $user->getSelectedBoard();
             $board = $this->loadBoardInfo($board_id);
-            if ($user->getId() == $board['id_usuario'] || $user->getPermission() == 10) {
+            if ($user->getId() == $board['id_usuario']) {
                 $board['controllers_admin'] = true;
             }
-            if ($this->isBoardMember($user->getId(), $board_id) || $user->getPermission() == 10) {
+            if ($this->isBoardMember($user->getId(), $board_id)) {
                 $board['is_member'] = true;
             }
             try {

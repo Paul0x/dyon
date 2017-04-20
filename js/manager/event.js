@@ -29,7 +29,7 @@ eventInterface = function () {
         var self = this;
         $("#event-info-add-lote").bind("click", function () {
             $.ajax({
-                url: self.root + "/eventos/" + event_id + "/lote/add",
+                url: self.root + "/manager/eventos/" + event_id + "/lote/add",
                 success: function (data) {
                     data = eval("( " + data + ")");
                     loadBigAjaxBox(data.html);
@@ -70,7 +70,7 @@ eventInterface = function () {
             return;
         }
         $.ajax({
-            url: self.root + "/eventos/ajax",
+            url: self.root + "/manager/eventos/ajax",
             data: {
                 mode: "load_event_overview_edit",
                 event_id: self.event_id
@@ -109,7 +109,7 @@ eventInterface = function () {
         event_overview_info.nome = $("#event-tab-overview input[name=nome]").val();
         event_overview_info.max_venda = $("#event-tab-overview input[name=max-venda]").val();
         $.ajax({
-            url: self.root + "/eventos/ajax",
+            url: self.root + "/manager/eventos/ajax",
             data: {
                 mode: "update_event_overview",
                 event_id: self.event_id,
@@ -132,7 +132,7 @@ eventInterface = function () {
         var id = lote.id.split("-")[2];
         var id_complete = lote.id;
         $.ajax({
-            url: root + "/eventos/" + event_id + "/lote/status",
+            url: root + "/manager/eventos/" + event_id + "/lote/status",
             data: {
                 lote_id: id
             },
@@ -166,7 +166,7 @@ eventInterface = function () {
         genero = $(".event-add-lote-select[name=genero]").val();
         parent = $(".event-add-lote-select[name=parent]").val();
         $.ajax({
-            url: root + "/eventos/" + event_id + "/lote/add",
+            url: root + "/manager/eventos/" + event_id + "/lote/add",
             data: {
                 nome: nome,
                 valor: valor,
@@ -229,7 +229,7 @@ eventGraphs = function () {
         var self = this;
         var event = $("#event-id").val();
         $.ajax({
-            url: self.root + "/eventos/ajax",
+            url: self.root + "/manager/eventos/ajax",
             data: {
                 mode: "get_event_lotes",
                 event: event

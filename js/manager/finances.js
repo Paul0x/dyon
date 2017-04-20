@@ -42,7 +42,7 @@ financeInterface = function () {
     this.loadListCompras = function () {
         $(document).ready(function () {
             $.ajax({
-                url: root + "/financeiro/ajax",
+                url: root + "/manager/financeiro/ajax",
                 data: {
                     mode: "load_compras"
                 },
@@ -56,7 +56,7 @@ financeInterface = function () {
                             html += "<div class='compra-list-categoria-box' id='categoria-" + categoria.id + "'>";
                             html += "<h2>" + index + " (R$" + categoria.valor_total + ")</h2>";
                             $.each(categoria.itens, function (index2, compra) {
-                                html += "<a href='" + root + "/financeiro/compra/" + compra.id + "'><div class='item'>";
+                                html += "<a href='" + root + "/manager/financeiro/compra/" + compra.id + "'><div class='item'>";
                                 html += compra.nome;
                                 if (compra.tipo === '0')
                                     html += "<div class='compra-label-tipo label-compra' title='Compra'>C</div>";
@@ -81,7 +81,7 @@ financeInterface = function () {
                 }
             });
         });
-        $(".categoria-list-box").live("click", function () {
+        $(document).on("click", ".categoria-list-box", function () {
             var categoria_id = this.id.split("-")[2];
             var self = this;
             $.each(list_compras, function (index, categoria) {
@@ -115,14 +115,14 @@ financeInterface = function () {
             html += '<input type="button" class="btn-03 ajax-close-box" value="Fechar">';
             loadAjaxBox(html);
         });
-        $("#compra-add-categoria-btn-submit").live("click", function () {
+        $(document).on("click", "#compra-add-categoria-btn-submit", function () {
             var nome = $("#compra-add-categoria-nome").val();
             if (nome === "") {
                 ajaxBoxMessage("O nome da categoria não pode estar em branco.", "error");
                 return;
             }
             $.ajax({
-                url: root + "/financeiro/ajax",
+                url: root + "/manager/financeiro/ajax",
                 data: {
                     mode: "add_categoria",
                     nome: nome
@@ -141,7 +141,7 @@ financeInterface = function () {
     this.bindCompraAdd = function () {
         $("#compra-add-compra-btn").bind("click", function () {
             $.ajax({
-                url: root + "/financeiro/ajax",
+                url: root + "/manager/financeiro/ajax",
                 data: {
                     mode: "add_compra_form",
                 },
@@ -156,7 +156,7 @@ financeInterface = function () {
                 }
             });
         });
-        $("#compra-add-compra-parcelas").live("click", function () {
+        $(document).on("click", "#compra-add-compra-parcelas", function () {
             compra.nome = $(".compra-add-form[name=nome]").val();
             compra.tipo = $(".compra-add-form[name=tipo]").val();
             compra.categoria = $(".compra-add-form[name=categoria]").val();
@@ -195,7 +195,7 @@ financeInterface = function () {
             $(".compra-parcela-input-vencimento").mask("99/99/9999");
             $("#compra-parcela-restante span").html("R$" + (compra.valor_unitario * compra.quantidade).toFixed(2)).addClass("color-green");
         });
-        $(".compra-parcela-input-valor").live("change", function () {
+        $(document).on("change", ".compra-parcela-input-valor", function () {
             var total_parcelas = 0;
             var css_class;
             var total_compras = (compra.valor_unitario * compra.quantidade).toFixed(2);
@@ -211,13 +211,12 @@ financeInterface = function () {
             $("#compra-parcela-restante span").html("R$" + (diff).toFixed(2)).removeClass(css_class[1]).addClass(css_class[0]);
             if (diff == 0) {
                 $("#compra-add-compra-btn-submit").removeAttr("disabled");
-            }
-            else {
+            } else {
                 $("#compra-add-compra-btn-submit").attr("disabled", "true");
             }
 
         });
-        $("#compra-add-compra-btn-submit").live("click", function () {
+        $(document).on("click", "#compra-add-compra-btn-submit", function () {
             var i = 0;
             compra.parcelas = new Array();
             for (i = 0; i < compra.num_parcelas; i++) {
@@ -227,7 +226,7 @@ financeInterface = function () {
             }
 
             $.ajax({
-                url: root + "/financeiro/ajax",
+                url: root + "/manager/financeiro/ajax",
                 data: {
                     mode: "add_compra",
                     nome: compra.nome,
@@ -251,17 +250,17 @@ financeInterface = function () {
     };
     this.bindCompraButtons = function () {
         var self = this;
-        $(".compra-infos .status .edit").die().live("click", function () {
+        $(document).off("click", ".compra-infos .status .edit").on("click", ".compra-infos .status .edit", function () {
             var compra = $(this).attr("compra");
             self.loadEditCompraStatusForm(compra);
         });
 
-        $("#edit-compra-type").die().live("click", function () {
+        $(document).off("click", "#edit-compra-type").on("click", "#edit-compra-type", function () {
             var compra = $(this).attr("compra");
             self.loadEditCompraType(compra);
         });
 
-        $("#edit-compra-quantity").die().live("click", function () {
+        $(document).off("click", "#edit-compra-quantity").on("click", "#edit-compra-quantity", function () {
             var compra = $(this).attr("compra");
             var step = parseInt($(this).attr("step"));
 
@@ -272,25 +271,25 @@ financeInterface = function () {
             }
         });
 
-        $("#compra-add-parcela").die().live("click", function () {
+        $(document).off("click", "#compra-add-parcela").on("click", "#compra-add-parcela", function () {
             var compra = $(this).attr("compra");
             self.loadAddParcelaForm(compra);
         });
 
-        $(".compra-parcelas .buttons .button-edit").die().live("click", function () {
+        $(document).off("click", ".compra-parcelas .buttons .button-edit").on("click", ".compra-parcelas .buttons .button-edit", function () {
             var parcela = $(this).attr("parcela");
             var step = $(this).attr("step");
             self.loadEditParcelaForm(parcela, step, this);
         });
-        $(".compra-parcelas .buttons .button-confirm").die().live("click", function () {
+        $(document).off("click", ".compra-parcelas .buttons .button-confirm").on("click", ".compra-parcelas .buttons .button-confirm", function () {
             var parcela = $(this).attr("parcela");
             self.loadConfirmParcelaForm(parcela);
         });
-        $(".compra-parcelas .buttons .button-cancel").die().live("click", function () {
+        $(document).off("click", ".compra-parcelas .buttons .button-cancel").on("click", ".compra-parcelas .buttons .button-cancel", function () {
             var parcela = $(this).attr("parcela");
             self.loadCancelParcelaForm(parcela);
         });
-        $(".compra-parcelas .buttons .button-view").die().live("click", function () {
+        $(document).off("click", ".compra-parcelas .buttons .button-view").on("click", ".compra-parcelas .buttons .button-view", function () {
             var parcela = $(this).attr("parcela");
             self.loadViewParcelaForm(parcela);
         });
@@ -314,7 +313,7 @@ financeInterface = function () {
         }
 
         $.ajax({
-            url: root + "/financeiro/ajax",
+            url: root + "/manager/financeiro/ajax",
             data: {
                 mode: "edit_compra_quantity",
                 compra: compra,
@@ -338,12 +337,12 @@ financeInterface = function () {
         html += "<span class=\"compra-status-pendente compra-status-edit\" status=\"1\">Pendente</span>";
         html += "<span class=\"compra-status-cancelada compra-status-edit\" status=\"0\">Cancelada</span>";
         $(".compra-infos .status").html(html);
-        $(".compra-status-edit").die().live("click", function () {
+        $(document).off("click", ".compra-status-edit").on("click", ".compra-status-edit", function () {
             var status = parseInt($(this).attr("status"));
             if (status !== 0 && status !== 1 && status !== 2)
                 return;
             $.ajax({
-                url: root + "/financeiro/ajax",
+                url: root + "/manager/financeiro/ajax",
                 data: {
                     mode: "edit_compra_status",
                     compra: compra,
@@ -378,7 +377,7 @@ financeInterface = function () {
 
     this.loadEditCompraType = function (compra) {
         $.ajax({
-            url: root + "/financeiro/ajax",
+            url: root + "/manager/financeiro/ajax",
             data: {
                 mode: "edit_compra_type",
                 compra: compra
@@ -413,12 +412,12 @@ financeInterface = function () {
         loadAjaxBox(html);
         $(".compra-add-form input[name='valor']").maskMoney({prefix: 'R$ ', allowNegative: false, thousands: '.', decimal: ',', affixesStay: false});
         $(".compra-add-form input[name='vencimento']").mask("99/99/9999");
-        
-        $("#compra-parcela-add").die().live("click", function() {
+
+        $(document).off("click", "#compra-parcela-add").on("click", "#compra-parcela-add", function () {
             var valor = $(".compra-add-form input[name='valor']").val();
             var vencimento = $(".compra-add-form input[name='vencimento']").val();
             $.ajax({
-                url: self.root + "/financeiro/ajax",
+                url: self.root + "/manager/financeiro/ajax",
                 data: {
                     mode: "add_parcela",
                     compra: compra,
@@ -427,15 +426,15 @@ financeInterface = function () {
                 },
                 success: function (data) {
                     data = eval("(" + data + " )");
-                    if (data.success === "true") {                        
+                    if (data.success === "true") {
                         location.reload();
                     } else {
                         ajaxBoxMessage(data.error, "error");
                     }
                 }
             });
-            
-            
+
+
         });
     };
 
@@ -454,7 +453,7 @@ financeInterface = function () {
             var vencimento = $("#edit-parcela-vencimento-" + parcela).val();
             var valor = $("#edit-parcela-value-" + parcela).val();
             $.ajax({
-                url: root + "/financeiro/ajax",
+                url: root + "/manager/financeiro/ajax",
                 data: {
                     mode: "edit_parcela",
                     parcela_id: parcela,
@@ -478,7 +477,7 @@ financeInterface = function () {
 
     this.loadCancelParcelaForm = function (parcela) {
         $.ajax({
-            url: root + "/financeiro/ajax",
+            url: root + "/manager/financeiro/ajax",
             data: {
                 mode: "load_parcela_info",
                 parcela_id: parcela
@@ -494,10 +493,10 @@ financeInterface = function () {
                     html += '<input type="button" class="btn-01 cancel-parcela-submit" id="cancel-parcela-submit-' + data.parcela.id + '" value="Cancelar Parcela">';
                     html += '<input type="button" class="btn-03 ajax-close-box" value="Fechar">';
                     loadAjaxBox(html);
-                    $(".cancel-parcela-submit").die().live("click", function () {
+                    $(document).off("click", ".cancel-parcela-submit").on("click", ".cancel-parcela-submit", function () {
                         var id = this.id.split('-')[3];
                         $.ajax({
-                            url: root + "/financeiro/ajax",
+                            url: root + "/manager/financeiro/ajax",
                             data: {
                                 mode: "cancel_parcela_submit",
                                 parcela_id: parcela
@@ -508,8 +507,7 @@ financeInterface = function () {
                                     closeAjaxBox();
                                     $("#parcela-" + parcela + " .status").html("<div class=\"compra-parcela-status cancelada\">Cancelada</div>");
                                     $("#parcela-" + parcela + " .buttons").remove();
-                                }
-                                else {
+                                } else {
                                     ajaxBoxMessage(data.error, "error");
                                 }
                             }
@@ -524,7 +522,7 @@ financeInterface = function () {
 
     this.loadViewParcelaForm = function (parcela) {
         $.ajax({
-            url: root + "/financeiro/ajax",
+            url: root + "/manager/financeiro/ajax",
             data: {
                 mode: "load_parcela_info",
                 parcela_id: parcela
@@ -550,7 +548,7 @@ financeInterface = function () {
 
     this.loadConfirmParcelaForm = function (parcela) {
         $.ajax({
-            url: root + "/financeiro/ajax",
+            url: root + "/manager/financeiro/ajax",
             data: {
                 mode: "load_parcela_info",
                 parcela_id: parcela
@@ -595,7 +593,7 @@ financeInterface = function () {
                     html += '</form>';
                     html += "</div>";
                     loadAjaxBox(html);
-                    $(".parcela-select-comprovante-type .type").die().live("click", function () {
+                    $(document).off("click", ".parcela-select-comprovante-type .type").on("click", ".parcela-select-comprovante-type .type", function () {
                         if (this.id === "parcela-select-comprovante-type-file") {
                             $(".parcela-select-comprovante-type-box-file").stop(true, true).fadeIn();
                             $(".parcela-select-comprovante-type-box-cod").stop(true, true).fadeOut();
@@ -606,8 +604,8 @@ financeInterface = function () {
                             $("#parcela-field-tipo-comprovante").val(2);
                         }
                     });
-                    $("#confirm-pacote-submit").die("click");
-                    $("#confirm-pacote-submit").live("click", function () {
+                    $(document).off("click", "#confirm-pacote-submit");
+                    $(document).on("click", "#confirm-pacote-submit", function () {
 
                         var parcela_id = $("#parcela-field-id").val();
                         var tipo_comprovante = $("#parcela-field-tipo-comprovante").val();
@@ -625,7 +623,7 @@ financeInterface = function () {
                         form.append("parcela_id", parcela_id);
                         form.append("comprovante", comprovante);
                         form.append("tipo_comprovante", tipo_comprovante);
-                        xhr.open('POST', root + "/financeiro/ajax", true);
+                        xhr.open('POST', root + "/manager/financeiro/ajax", true);
                         xhr.onreadystatechange = function () {
                             if (xhr.readyState === 2) {
                                 $("#confirm-pacote-submit").val("Carregando...").attr("disabled", "disabled");
@@ -639,8 +637,7 @@ financeInterface = function () {
                                     $("#parcela-" + data.parcela_id + " .buttons").append("<div class='button button-view' parcela='" + data.parcela_id + "'>Visualizar Comprovante</div>");
                                     $("#parcela-" + data.parcela_id + " .data-pagamento").html(data.data_pagamento);
                                     closeAjaxBox();
-                                }
-                                else {
+                                } else {
                                     ajaxBoxMessage(data.error, "error");
                                 }
                             }
@@ -662,7 +659,7 @@ flowInterface = function () {
     this.initFlow = function () {
         var self = this;
         $.ajax({
-            url: self.root + "/financeiro/fluxo",
+            url: self.root + "/manager/financeiro/fluxo",
             data: {
                 mode: "loadFlowSettings"
             },
@@ -685,10 +682,10 @@ flowInterface = function () {
                 }
             }
         });
-        $("#flow-interface-wrap .item").die().live("click", function () {
+        $(document).off("click", "#flow-interface-wrap .item").on("click", "#flow-interface-wrap .item", function () {
             var interface = $(this).attr("ref");
             $.ajax({
-                url: self.root + "/financeiro/fluxo",
+                url: self.root + "/manager/financeiro/fluxo",
                 data: {
                     mode: "setFlowInterface",
                     interface: interface
@@ -746,7 +743,7 @@ flowInterface = function () {
         $("#yearly-date-select").html(year_select);
         for (var i = 1; i <= 12; i++) {
             $.ajax({
-                url: self.root + "/financeiro/fluxo",
+                url: self.root + "/manager/financeiro/fluxo",
                 async: false,
                 data: {
                     mode: "loadMonthlyFlow",
@@ -764,7 +761,7 @@ flowInterface = function () {
             });
         }
 
-        $("#yearly-date-select").die().live("change", function (event) {
+        $(document).off("change", "#yearly-date-select").on("change", "#yearly-date-select", function (event) {
             var ano = this.value;
             self.loadYearlyFlow(parseInt(ano));
         });
@@ -785,7 +782,7 @@ flowInterface = function () {
         html += "</div>";
         $("#flow-wrap").html(html);
         $.ajax({
-            url: self.root + "/financeiro/fluxo",
+            url: self.root + "/manager/financeiro/fluxo",
             data: {
                 mode: "loadMonthlyFlow",
                 month: month,
@@ -808,7 +805,7 @@ flowInterface = function () {
                 }
             }
         });
-        $("#monthly-date-select").die().live("change", function (event) {
+        $(document).off("change", "#monthly-date-select").on("change", "#monthly-date-select", function (event) {
             var data = this.value.split("/");
             var mes = parseInt(data[0]);
             var ano = parseInt(data[1]);
@@ -832,7 +829,7 @@ flowInterface = function () {
         $("#flow-wrap").html(html);
         $("#daily-date-select").mask("99/99/9999");
         $.ajax({
-            url: self.root + "/financeiro/fluxo",
+            url: self.root + "/manager/financeiro/fluxo",
             data: {
                 mode: "loadDailyFlow",
                 day: day,
@@ -849,7 +846,7 @@ flowInterface = function () {
                 }
             }
         });
-        $("#daily-date-select").die().live("keyup", function (event) {
+        $(document).off("keyup", "#daily-date-select").on("keyup", "#daily-date-select", function (event) {
             if (event.keyCode === 13) {
                 var data = this.value.split("/");
                 var dia = parseInt(data[0]);
@@ -885,7 +882,7 @@ flowInterface = function () {
         });
         html += "<div class='clear'></div>";
         $("#flow-table").append(html);
-        $("#flow-table .row").die().live("click", function () {
+        $(document).off("click", "#flow-table .row").on("click", "#flow-table .row", function () {
             if (this.id === "")
                 return;
             var info = this.id.split("-");
@@ -901,7 +898,7 @@ flowInterface = function () {
         html += '<input type="button" class="btn-03 ajax-close-box" value="Fechar">';
         loadBigAjaxBox(html);
         $.ajax({
-            url: self.root + "/financeiro/fluxo",
+            url: self.root + "/manager/financeiro/fluxo",
             data: {
                 mode: "loadFlowDesc",
                 flow: flow,
@@ -1001,7 +998,7 @@ flowInterface = function () {
                 $.each(parcelas.t, function (i, parcela) {
                     html += "<div class='item'>";
                     html += "<div class='field-date'>" + parcela.data_vencimento + "</div>";
-                    html += "<div class='field-nome'><a href='" + self.root + "/financeiro/compra/" + parcela.id_compra + "'>" + parcela.nome + "</a> [ " + parcela.categoria + " ]</div>";
+                    html += "<div class='field-nome'><a href='" + self.root + "/manager/financeiro/compra/" + parcela.id_compra + "'>" + parcela.nome + "</a> [ " + parcela.categoria + " ]</div>";
                     html += "<div class='field-valor'>" + parcela.valor + "</div>";
                     html += "<div class='field-tipo'>";
                     if (parseInt(parcela.status) === 2)
