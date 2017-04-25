@@ -42,8 +42,8 @@ signupInterface = function () {
                 $("#signup-form input[name=senha]").addClass("error");
                 error++;
             }
-            
-            if(error > 0) {
+
+            if (error > 0) {
                 return false;
             } else {
                 $("#signup-form input").removeClass("error");
@@ -52,4 +52,31 @@ signupInterface = function () {
 
         });
     };
+};
+
+publicEventInterface = function () {
+    this.root = $("#dir-root").val();
+
+    this.init = function () {
+        var self = this;
+        self.bindHeader();
+    };
+
+
+    this.bindHeader = function () {
+        $("#main-header-wrap .title img").bind("click", function () {
+            if ($("#main-header-wrap").hasClass("event-interface")) {
+                $("#main-header-wrap").animate({width: "100%"}, function () {
+                    $("#main-header-wrap").removeClass("event-interface");
+                });
+            } else {
+                $("#main-header-wrap").animate({width: "90px"}, function () {
+                    $("#main-header-wrap").removeAttr("style");
+                    $("#main-header-wrap").addClass("event-interface");
+                });
+            }
+            return false;
+        });
+    };
+
 };

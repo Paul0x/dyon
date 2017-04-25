@@ -11,37 +11,36 @@
         <body>
             {% include "scripts.twig" %}
             <input type="hidden" id="dir-root" value="{{ config.system_path }}"/>
-            {% if not event_interface_flag %}
-                <header id="main-header-wrap">
-                    <a href="{{ config.system_path }}">
-                        <div class="title"><img src="{{ config.system_path}}/images/logo.png" alt="Dyon"/> <h1>DYON</h1></div>
-                    </a>
-                    {% if user %}
-                        {% block user_header %}
-                            {% include "user_header.twig" %}
-                        {% endblock %}
-                    {% else %}
+            <header id="main-header-wrap" {% if event_interface_flag %} class="event-interface" {% endif %}>
+                <a href="{{ config.system_path }}">
+                    <div class="title"><img src="{{ config.system_path}}/images/logo.png" alt="Dyon"/> <h1>DYON</h1></div>
+                </a>
+                {% if user %}
+                    {% block user_header %}
+                        {% include "user_header.twig" %}
+                    {% endblock %}
+                {% else %}
 
-                        <div class="login-signup">
-                            <a href="{{ config.system_path }}/login"><div class="login">Entrar</div></a>
-                            <div class="signup"><a href="{{ config.system_path }}/signup">Criar uma Conta</a></div>
+                    <div class="login-signup">
+                        <a href="{{ config.system_path }}/login"><div class="login">Entrar</div></a>
+                        <div class="signup"><a href="{{ config.system_path }}/signup">Criar uma Conta</a></div>
+                    </div>
+                    <div class="menu-header">
+                        <div class="search-wrap">
+                            <input type="text" class="search-input" placeholder="Encontre Eventos" />
+                            <i class="fa fa-search search-submit" id="search-submit"></i>
                         </div>
-                        <div class="menu-header">
-                            <div class="search-wrap">
-                                <input type="text" class="search-input" placeholder="Encontre Eventos" />
-                                <i class="fa fa-search search-submit" id="search-submit"></i>
-                            </div>
-                            <div class="item">
-                                CATEGORIAS
-                            </div>
-                            <a href="{{ config.system_path }}/manager"><div class="item last">
-                                    MANAGER
-                                </div></a>
+                        <div class="item">
+                            CATEGORIAS
                         </div>
-                    {% endif %}
-                    <div class="clear"></div>
-                </header>
-            {% endif %}
+                        <a href="{{ config.system_path }}/manager">
+                            <div class="item last">
+                                MANAGER
+                            </div></a>
+                    </div>
+                {% endif %}
+                <div class="clear"></div>
+            </header>
             <div id="main-content-wrap">
                 {% block content %}
 
