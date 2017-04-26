@@ -1,6 +1,41 @@
 {% extends "base_layout.twig" %}
 
 {% block content %}
+    <div id="public-event-wrap">
+        <div class="header">
+            <div class="banner">
+            </div>
+            <div class="title">
+                {{ event.nome }}
+                <span class="date">
+                    {{ event.data_inicio_formatted }}
+                    {% if event.data_fim_formatted %}
+                        até {{ event.data_fim_formatted }}
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+        <div class="wrap">
+            <div class="menu">
+                <div class="tab">Início</div>
+                <div class="tab">Programação</div>
+                <div class="tab">Galeria</div>
+                <div class="tab">Contato</div>
+            </div>
+            <div class="content">
+                <div class="main">
+                </div>
+                <div class="sidebar">
+                    <input type="button" id="get-ticket" value="COMPRAR"/>
+                    <div class="owner">
+                        <div class="title">Organizador</div>
+                        <div class="image"><img src="{{ config.system_path}}/images/avatar/noimage.jpg" /></div>
+                        <div class="name">CarnaBoemia</div>
+                    </div>
+                </div>
+            </div>               
+        </div>
+    </div>
     <script>
         var publicevent = new publicEventInterface();
         publicevent.init();
