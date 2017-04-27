@@ -102,6 +102,7 @@ eventInterface = function () {
         event_overview_info.data_fim_data = $("#event-tab-overview input[name=data-fim-data]").val();
         event_overview_info.data_fim_hora = $("#event-tab-overview input[name=data-fim-hora]").val();
         event_overview_info.local = $("#event-tab-overview input[name=local]").val();
+        event_overview_info.url = $("#event-tab-overview input[name=url]").val();
         event_overview_info.descricao = $("#event-tab-overview textarea[name=descricao]").val();
         event_overview_info.flag_hospedagem = $("#event-tab-overview select[name=flag-hospedagem]").val();
         event_overview_info.flag_compras = $("#event-tab-overview select[name=flag-compras]").val();

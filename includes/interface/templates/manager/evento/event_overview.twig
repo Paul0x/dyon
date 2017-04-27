@@ -29,6 +29,16 @@
             </div>
         </div>
     {% endif %}
+    {% if event.url %}
+        <div class="item">
+            <div class="label">
+                Endereço
+            </div>
+            <div class="info" field="local">
+                <a href="http://dyon.vc/e/{{ event.url }}">http://dyon.vc/e/{{ event.url }}</a>                                        
+            </div>
+        </div>
+    {% endif %}
 </div>
 <div class="column-50" id="column-overview2">
     <div class="item">
