@@ -36,6 +36,7 @@
 /* Bibliotecas necessárias para funcionamento da classe */
 require_once(config::$syspath . "includes/sql/sqlcon.php");
 require_once(config::$syspath . "includes/lib/imagemanager.php");
+require_once(config::$syspath . "includes/control/evento/events.php");
 require_once(config::$syspath . "includes/control/instancia/instances.php");
 
 define("DYON_USER_ADMIN", 5);
@@ -153,6 +154,10 @@ class user {
                 $this->instance = $this->instances['instance'];
                 $this->admin_info = $this->instance['user_info'];
             }
+            if ($this->admin_info['evento_padrao']) {
+                $eventcontroller = new eventController();
+                $this->current_event = $eventcontroller->loadEventHeader($this->admin_info['evento_padrao']);
+            }
         } catch (Exception $ex) {
             $this->instances = false;
         }
@@ -186,7 +191,8 @@ class user {
         $infos["nome_instancia"] = $this->instance["nome"];
         $infos["id_instancia"] = $this->instance["id"];
         $infos["image"] = $this->image;
-
+        $infos['instance'] = $this->instance;
+        $infos['current_event'] = $this->current_event;
         return $infos;
     }
 

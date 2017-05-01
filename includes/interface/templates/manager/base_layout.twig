@@ -19,9 +19,11 @@
                 {% endblock %}
                 <div class="clear"></div>
             </header>
-            <section id="event-control-wrap">
-                BARRA DE CONTROLE DE EVENTOS
-            </section>
+            {% if user.instance %}
+                <section id="event-control-wrap">
+                    {% include "event_control.twig" %}
+                </section>
+            {% endif %}
             <nav id="main-menu-wrap">
                 {% block top_menu %}
                 {% endblock %}
