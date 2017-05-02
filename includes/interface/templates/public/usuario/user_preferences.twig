@@ -14,6 +14,7 @@
             <div class="item selected" tab="personal">Informações Pessoais</div>
             <div class="item" tab="privacy">Configurações de Privacidade</div>
             <div class="item" tab="payment">Configurações de Pagamento</div>
+            <div class="item" tab="instance">Configurações de Equipe</div>
         </div>
         <div class="preference-form">
             <div class="tab" tab="personal">
@@ -161,6 +162,26 @@
                 <form id="payment-info-form">
                     
                     <input type="button" id="personal-form-submit" value="Salvar" class="btn-01"/>
+                </form>                   
+            </div>
+            <div class="tab hidden" tab="instance">
+                <div class="title">Configurações de Equipe</div>  
+                <div class="info">Nessa aba você pode visualizar, configurar e criar equipes organizadoras para gerir seus eventos.</div>
+                <form id="instance-info-form">
+                    <div class="instance-table">
+                        <div class="header">
+                            <div class="column">Nome da Equipe</div>
+                            <div class="column">Plano Atual</div>
+                            <div class="column">Sua Atribuição</div>
+                            <div class="column">Controle</div>
+                        </div>
+                        <div class="instances">
+                            {% for instance in user.instances %}
+                                {{ instance.nome }}
+                            {% endfor %}
+                    </div>
+                    
+                    <input type="button" id="instance-form-submit" value="Salvar" class="btn-01"/>
                 </form>                   
             </div>
         </div>
