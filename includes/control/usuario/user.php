@@ -151,7 +151,7 @@ class user {
                     $this->admin_info = $this->instance['user_info'];
                 }
             } elseif ($this->instances['count'] == 1) {
-                $this->instance = $this->instances['instance'];
+                $this->instance = $this->instances['instances'][0];
                 $this->admin_info = $this->instance['user_info'];
             }
             if ($this->admin_info['evento_padrao']) {
