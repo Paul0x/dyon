@@ -890,7 +890,7 @@ INSERT INTO `instancia` (`id`, `nome`, `status`, `id_plano`, `data_criacao`, `id
 CREATE TABLE `instancia_grupo` (
   `id` int(11) NOT NULL,
   `id_instancia` int(11) NOT NULL,
-  `nome` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
   `board` int(11) NOT NULL,
   `evento` int(11) NOT NULL,
   `controle` int(11) NOT NULL,
@@ -898,14 +898,14 @@ CREATE TABLE `instancia_grupo` (
   `hospedagem` int(11) NOT NULL,
   `hotsite` int(11) NOT NULL,
   `root` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Extraindo dados da tabela `instancia_grupo`
 --
 
-INSERT INTO `instancia_grupo` (`id`, `id_instancia`, `nome`, `board`, `evento`, `controle`, `financeiro`, `hospedagem`, `hotsite`, `root`) VALUES
-(1, 1, 0, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO `instancia_grupo` (`id`,`id_instancia`, `nome`, `board`, `evento`, `controle`, `financeiro`, `hospedagem`, `hotsite`, `root`) VALUES
+(1, 1, 'root', 0, 0, 0, 0, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -8913,8 +8913,7 @@ ALTER TABLE `instancia`
 -- Indexes for table `instancia_grupo`
 --
 ALTER TABLE `instancia_grupo`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `id_instancia` (`id_instancia`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `instancia_usuario`
@@ -8923,7 +8922,7 @@ ALTER TABLE `instancia_usuario`
   ADD PRIMARY KEY (`id_instancia`,`id_usuario`),
   ADD KEY `fk_instancia_has_usuario_usuario1_idx` (`id_usuario`),
   ADD KEY `fk_instancia_has_usuario_instancia1_idx` (`id_instancia`),
-  ADD KEY `id_grupo` (`id_instancia_grupo`);
+  ADD KEY `fk_instancia_grupo1_idx` (`id_instancia_grupo`);
 
 --
 -- Indexes for table `logs`
@@ -9150,7 +9149,7 @@ ALTER TABLE `instancia`
 ALTER TABLE `instancia_usuario`
   ADD CONSTRAINT `fk_instancia_has_usuario_instancia1` FOREIGN KEY (`id_instancia`) REFERENCES `instancia` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_instancia_has_usuario_usuario1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `instancia_usuario_ibfk_1` FOREIGN KEY (`id_instancia_grupo`) REFERENCES `instancia_grupo` (`id`);
+  ADD CONSTRAINT `fk_instancia_grupo` FOREIGN KEY (`id_instancia_grupo`) REFERENCES `instancia_grupo` (`id`)  ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Limitadores para a tabela `logs`

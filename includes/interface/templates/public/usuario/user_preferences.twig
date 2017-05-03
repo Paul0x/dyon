@@ -176,15 +176,13 @@
                             <div class="column">Controle</div>
                         </div>
                         <div class="instances">
-                            {% for instance in user.instances %}
-                                {% if not loop.first %}
+                            {% for instance in user.instances.instances %}
                                     <div class="row">
                                         <div class="column">{{ instance.nome }}</div>
                                         <div class="column">{{ instance.id_plano }}</div>
                                         <div class="column">{{ instance.user_info.status_usuario }}</div>
                                         <div class="column"></div>
                                     </div>
-                                {% endif %}
                             {% endfor %}
                         </div>
                 </form>                   
