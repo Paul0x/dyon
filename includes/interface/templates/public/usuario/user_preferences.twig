@@ -177,15 +177,17 @@
                         </div>
                         <div class="instances">
                             {% for instance in user.instances.instances %}
-                                    <div class="row">
-                                        <div class="column">{{ instance.nome }}</div>
-                                        <div class="column">{{ instance.id_plano }}</div>
-                                        <div class="column">{{ instance.user_info.status_usuario }}</div>
-                                        <div class="column"></div>
-                                    </div>
+                                <div class="row">
+                                    <div class="column">{{ instance.nome }}</div>
+                                    <div class="column">{{ instance.id_plano }}</div>
+                                    <div class="column">{{ instance.user_info.status_usuario }}</div>
+                                    <div class="column"></div>
+                                </div>
                             {% endfor %}
                         </div>
-                </form>                   
+                    </div>
+                    <input type="button" id="instance-form-add" class="btn-01" value="Adicionar Equipe" />  
+                </form>                 
             </div>
         </div>
     </div>

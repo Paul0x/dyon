@@ -36,6 +36,11 @@ preferencesInterface = function () {
             self.updatePersonalSubmit();
         });
 
+        $("#instance-form-add").bind("click", function () {
+            self.createInstanceForm();
+
+        });
+
     };
 
     this.bindSidebarTabs = function () {
@@ -103,31 +108,47 @@ preferencesInterface = function () {
         personal.cidade = $("#personal-info-form input[name=cidade]").val();
         personal.cep = $("#personal-info-form input[name=cep]").val();
         personal.estado = $("#personal-info-form select[name=estado]").val();
-        
-        if(personal.nome === "") {
+
+        if (personal.nome === "") {
             $("#personal-info-form input[name=nome]").addClass("error");
         }
-        
-        if(personal.email === "") {
+
+        if (personal.email === "") {
             $("#personal-info-form input[name=email]").addClass("error");
         }
-        
+
         $.ajax({
-                url: self.root + "/usuario/ajax",
-                data: {
-                    mode: "update_personal_info",
-                    infos: personal
-                },
-                success: function(data) {
-                    data = eval("( " + data + " )");
-                    if (data.success === "true") {
-                        $("#personal-form-response").html("<div class='success'><i class='fa fa-check'></i> Informações Atualizadas com Sucesso</div>");
-                    } else {
-                        $("#personal-form-response").html("<div class='error'><i class='fa fa-times'></i> "+data.error+"</div>");
-                        
-                    }
+            url: self.root + "/usuario/ajax",
+            data: {
+                mode: "update_personal_info",
+                infos: personal
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#personal-form-response").html("<div class='success'><i class='fa fa-check'></i> Informações Atualizadas com Sucesso</div>");
+                } else {
+                    $("#personal-form-response").html("<div class='error'><i class='fa fa-times'></i> " + data.error + "</div>");
+
                 }
-            });
+            }
+        });
+    };
+
+    this.createInstanceForm = function () {
+        var self = this;
+        $.ajax({
+            url: self.root + "/usuario/ajax",
+            data: {
+                mode: "load_instance_add_form"
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#user-preference-wrap").html(data.html);
+                }
+            }
+        });
 
     };
 
