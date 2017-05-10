@@ -153,3 +153,19 @@ preferencesInterface = function () {
     };
 
 };
+
+instanceAddInterface = function () {
+    var self = this;
+    this.init = function() {
+        $(document).on( "click", "#add-instance-wrap .instance-submit-plan", function() {         
+            self.selectPlan(this);
+        });
+    };
+    
+    this.selectPlan = function(plan) {
+        var instance = new Object();
+        instance.plan = $(plan).attr("plan");
+        $("#add-instance-wrap .label").html("<span>2º - Nome</span> Escolha um nome para a sua equipe organizadora.");
+    };
+    
+};
