@@ -166,6 +166,7 @@ instanceAddInterface = function () {
         var instance = new Object();
         instance.plan = $(plan).attr("plan");
         $("#add-instance-wrap .label").html("<span>2º - Nome</span> Escolha um nome para a sua equipe organizadora.");
+        $("#add-instance-wrap .")
     };
     
 };
