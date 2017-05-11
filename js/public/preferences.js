@@ -156,17 +156,51 @@ preferencesInterface = function () {
 
 instanceAddInterface = function () {
     var self = this;
-    this.init = function() {
-        $(document).on( "click", "#add-instance-wrap .instance-submit-plan", function() {         
+    this.root = $("#dir-root").val();
+    this.init = function () {
+        $(document).on("click", "#add-instance-wrap .instance-submit-plan", function () {
             self.selectPlan(this);
         });
+        
+        $(document).on("click", "#add-instance-wrap #instance-submit-name", function () {
+            self.addInstance();
+        });
     };
-    
-    this.selectPlan = function(plan) {
-        var instance = new Object();
-        instance.plan = $(plan).attr("plan");
+
+    this.selectPlan = function (plan) {
+        var self = this;
+        self.instance = new Object();
+        self.instance.plan = $(plan).attr("plan");
         $("#add-instance-wrap .label").html("<span>2º - Nome</span> Escolha um nome para a sua equipe organizadora.");
-        $("#add-instance-wrap .")
+        $("#add-instance-wrap .step").html("<input type='text' id='add-instance-name' placeholder='Selecione o nome da instância' />\n\
+          <input type='button' id='instance-submit-name' value='Criar Equipe' /> ");
     };
     
+    this.addInstance = function() {
+        var self = this;
+        if(isNaN(self.instance.plan)) {
+            return;
+        }
+        
+        self.instance.name = $("#add-instance-name").val();
+        if(self.instance.name === "") {
+            return; // TODO: MOSTRAR ERRO
+        }
+        $.ajax({
+            url: self.root + "/usuario/ajax",
+            data: {
+                mode: "add_instance",
+                plan: self.instance.plan,
+                name: self.instance.name
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    alert("kek");
+                }
+            }
+        });
+        
+    };
+
 };

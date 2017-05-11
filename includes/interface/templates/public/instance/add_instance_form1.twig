@@ -7,20 +7,22 @@
     </div>
     <div class="form" step="1">
         <div class="label"><span class="step">1º - Plano</span> Escolha o plano com os recursos necessários para o seu evento.</div>
-        <div class="plan-table">
-            {% for plan in plans %}
-                <div class="plan" id="plan-{{ plan.id }}">
-                    <div class="number">{{ loop.index }}</div>
-                    <div class="name">{{ plan.name }}</div>
-                    <div class="info">
-                        <div class="item">{% if plan.max_users == 0 %}Usuários Ilimitados{% elseif plan.max_users == 1 %}1 Usuário{% else %}{{ plan.max_users }} Usuários{% endif %}</div>
-                        <div class="item">{% if plan.max_events == 0 %}Eventos Ativos Ilimitados{% elseif plan.max_events == 1 %}1 Evento Ativo{% else %}{{ plan.max_users }} Eventos Ativos{% endif %}</div>
+        <div class="step">
+            <div class="plan-table">
+                {% for plan in plans %}
+                    <div class="plan" id="plan-{{ plan.id }}">
+                        <div class="number">{{ loop.index }}</div>
+                        <div class="name">{{ plan.name }}</div>
+                        <div class="info">
+                            <div class="item">{% if plan.max_users == 0 %}Usuários Ilimitados{% elseif plan.max_users == 1 %}1 Usuário{% else %}{{ plan.max_users }} Usuários{% endif %}</div>
+                            <div class="item">{% if plan.max_events == 0 %}Eventos Ativos Ilimitados{% elseif plan.max_events == 1 %}1 Evento Ativo{% else %}{{ plan.max_users }} Eventos Ativos{% endif %}</div>
+                        </div>
+                        <div class="selection">
+                            <input type="button" class="instance-submit-plan" value="Escolher Plano" plan="{{ plan.id }}" />
+                        </div>
                     </div>
-                    <div class="selection">
-                        <input type="button" class="instance-submit-plan" value="Escolher Plano" plan="{{ plan.id }}" />
-                    </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
         </div>
     </div>
     <script>
