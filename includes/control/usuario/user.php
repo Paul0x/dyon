@@ -497,7 +497,7 @@ class user {
     }
 
     public function setSelectedEvent($event_id) {
-
+        $eventcontroller = new eventController();
         if (!is_numeric($event_id)) {
             throw new Exception("ID do evento em formato inválido.");
         }
@@ -523,6 +523,7 @@ class user {
         }
 
         $this->admin_info['evento_padrao'] = $event_id;
+        $this->current_event = $eventcontroller->loadEventHeader($this->admin_info['evento_padrao']);
         $this->updateSerializedUser();
     }
 

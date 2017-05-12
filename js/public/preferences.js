@@ -196,7 +196,7 @@ instanceAddInterface = function () {
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    alert("kek");
+                    window.location = self.root+"/manager";
                 }
             }
         });

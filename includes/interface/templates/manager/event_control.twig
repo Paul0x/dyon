@@ -2,15 +2,17 @@
     {% if user.current_event.name %}
         <div class="label">Evento</div>
         <div class="event">{{ user.current_event.name }}</div>
-        <div class="control control-info" title="Informações do Evento"><i class="fa fa-info-circle"></i></div>
+        <a href="{{ config.system_path }}/manager/administrar"><div class="control control-info" title="Informações do Evento Atual"><i class="fa fa-info-circle"></i></div></a>
+        <a href="{{ config.system_path }}/manager/eventos"><div class="control control-edit" title="Alterar Evento Atual"><i class="fa fa-pencil"></i></div></a>
+    {% else %}
+        <a href="{{ config.system_path }}/manager/eventos/create"><div class="control control-create" title="Criar Evento"><i class="fa fa-plus"></i> Novo Evento</div></a>    
     {% endif %}
-        <div class="control control-edit" title="Alterar Evento"><i class="fa fa-pencil"></i></div>
 </div>
 <div class="instance">
     <div class="organization">
         <div class="label">Equipe</div>
         <div class="name">{{ user.instance.nome }}</div>
-        <div class="control control-info" title="Informações da Equipe"><i class="fa fa-info-circle"></i></div>
-        <div class="control control-config" title="Configuração das Equipe"><i class="fa fa-cog"></i></div>
+        <a href="{{ config.system_path }}/manager/instance"><div class="control control-info" title="Informações da Equipe"><i class="fa fa-info-circle"></i></div></a>
+        <a href="{{ config.system_path }}/usuario/config/#instances"><div class="control control-config" title="Configuração das Equipe"><i class="fa fa-cog"></i></div></a>
     </div>
 </div>
