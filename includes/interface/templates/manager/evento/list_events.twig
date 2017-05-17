@@ -1,0 +1,29 @@
+{% extends "base_layout.twig" %}
+
+{% block user_header %}
+    {% include "user_header.twig" %}
+{% endblock %}
+
+{% block top_menu %}
+    {% include "main_menu.twig" %}
+{% endblock %}
+{% block content %}
+    <div id="event-list-wrap">
+        {% if events_list %}
+            {% for event in events_list %}
+            <div class="event">
+                <div class="image">
+                    {% if not event.image %}
+                        <i class="fa fa-calendar"></i>
+                        {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-events">
+                <div class="info">Você ainda não possui nenhum evento cadastrado nessa equipe</div>
+                <a href="{{ config.system_path }}/manager/eventos/create"><div class="button"><i class="fa fa-plus"></i> Criar Evento</div></a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
