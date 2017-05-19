@@ -10,19 +10,31 @@
 {% block content %}
     <div id="event-list-wrap">
         {% if events_list %}
+            <div class="clear"></div>
             {% for event in events_list %}
-            <div class="event">
-                <div class="image">
-                    {% if not event.image %}
-                        <i class="fa fa-calendar"></i>
-                        {% endif %}
-                </div>
-            </div>
+                <a href="{{ config.system_path }}/manager/eventos/{{ event.id }}">
+                    <div class="event">
+                        <div class="image">
+                            {% if not event.image %}
+                                <i class="fa fa-picture-o"></i>
+                            {% endif %}
+                        </div>
+                        <div class="info">
+                            <div class="name">{{ event.nome }}</div>
+                            <div class="date">
+                                <div class="label"><i title="Data do Evento" class="fa fa-calendar"></i></div>
+                                <div class="value">{{ event.data_inicio }} {% if event.data_fim %} às {{ event.data_fim }} {% endif %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
             {% endfor %}
+            <div class="button"><a href="{{ config.system_path }}/manager/eventos/create"><i class="fa fa-plus"></i> Criar Evento</a></div>
+            <div class="clear"></div>
         {% else %}
             <div class="no-events">
                 <div class="info">Você ainda não possui nenhum evento cadastrado nessa equipe</div>
-                <a href="{{ config.system_path }}/manager/eventos/create"><div class="button"><i class="fa fa-plus"></i> Criar Evento</div></a>
+                <div class="button"><a href="{{ config.system_path }}/manager/eventos/create"><i class="fa fa-plus"></i> Criar Evento</a></div>
             </div>
         {% endif %}
     </div>
