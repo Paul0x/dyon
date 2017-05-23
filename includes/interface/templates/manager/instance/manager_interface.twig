@@ -8,5 +8,20 @@
     {% include "main_menu.twig" %}
 {% endblock %}
 {% block content %}
-    top rekt
-{% endblock %}
+    <div id="instance-info-wrap">
+        <div class="header">Informações da Equipe</div>
+        <div class="info-wrap">
+            <div class="item">
+                <div class="label">Nome</div>
+                <div class="value">{{ instance.nome }} </div>
+            </div>
+            <div class="item">
+                <div class="label">Endereço da equipe</div>
+                <div class="value"><a href="http://dyon.vc/organizador/{{ instance.url }}">http://dyon.vc/organizador/{{ instance.url }}</a></div>
+            </div>
+            <div class="item">
+                <div class="label">Plano Atual</div>
+                <div class="value">{{ instance.plan.name }} </div>
+            </div>
+        </div>
+    {% endblock %}
