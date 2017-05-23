@@ -21,6 +21,19 @@ preferencesInterface = function () {
     this.init = function () {
         var self = this;
         self.setupButtons();
+        self.checkTab();
+    };
+
+    this.checkTab = function () {
+        var tab = window.location.hash.substr(1);
+        if (tab) {
+            $("#user-preference-wrap .preference-tabs .item").removeClass("selected");
+            $("#user-preference-wrap .preference-form .tab").css("display", "none");
+            if (tab === "instance" || tab === "privacy" || tab === "payment" || tab === "personal") {
+                $("#user-preference-wrap .preference-tabs .item[tab=" + tab + "]").addClass("selected");
+                $("#user-preference-wrap .preference-form .tab[tab=" + tab + "]").css("display", "block");
+            }
+        }
     };
 
     this.setupButtons = function () {
@@ -38,7 +51,10 @@ preferencesInterface = function () {
 
         $("#instance-form-add").bind("click", function () {
             self.createInstanceForm();
+        });
 
+        $(document).on("click", "#instance-info-form .instance-select-control", function () {
+            self.updateSelectedInstance(this);
         });
 
     };
@@ -65,6 +81,26 @@ preferencesInterface = function () {
 
         $("#image-upload-file").change(function () {
             self.uploadProfileImage(this.files[0]);
+        });
+    };
+
+    this.updateSelectedInstance = function (handler) {
+        var self = this;
+        var instance_id = $(handler).attr("instance");
+        $.ajax({
+            url: self.root + "/usuario/ajax",
+            data: {
+                mode: "update_selected_instance",
+                instance_id: instance_id
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#instance-info-form .instance-table .instance-selected-control").addClass("instance-select-control").addClass("control").removeClass("instance-selected-control").html("Selecionar Equipe");
+                    $("#instance-info-form .instance-table .instance-select-control[instance=" + data.instance + "]").addClass("instance-selected-control").removeClass("control").removeClass("instance-select-control").html("Equipe Selecionada");
+
+                }
+            }
         });
     };
 
@@ -161,7 +197,7 @@ instanceAddInterface = function () {
         $(document).on("click", "#add-instance-wrap .instance-submit-plan", function () {
             self.selectPlan(this);
         });
-        
+
         $(document).on("click", "#add-instance-wrap #instance-submit-name", function () {
             self.addInstance();
         });
@@ -175,15 +211,15 @@ instanceAddInterface = function () {
         $("#add-instance-wrap .step").html("<input type='text' id='add-instance-name' placeholder='Selecione o nome da instância' />\n\
           <input type='button' id='instance-submit-name' value='Criar Equipe' /> ");
     };
-    
-    this.addInstance = function() {
+
+    this.addInstance = function () {
         var self = this;
-        if(isNaN(self.instance.plan)) {
+        if (isNaN(self.instance.plan)) {
             return;
         }
-        
+
         self.instance.name = $("#add-instance-name").val();
-        if(self.instance.name === "") {
+        if (self.instance.name === "") {
             return; // TODO: MOSTRAR ERRO
         }
         $.ajax({
@@ -196,11 +232,11 @@ instanceAddInterface = function () {
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    window.location = self.root+"/manager";
+                    window.location = self.root + "/manager";
                 }
             }
         });
-        
+
     };
 
 };

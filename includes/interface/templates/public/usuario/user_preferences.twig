@@ -173,15 +173,22 @@
                             <div class="column">Nome da Equipe</div>
                             <div class="column">Plano Atual</div>
                             <div class="column">Sua Atribuição</div>
-                            <div class="column">Controle</div>
+                            <div class="column"></div>
                         </div>
                         <div class="instances">
+                            {{ user.instancia_padrao }}
                             {% for instance in user.instances.instances %}
                                 <div class="row">
                                     <div class="column">{{ instance.nome }}</div>
                                     <div class="column">{{ instance.id_plano }}</div>
                                     <div class="column">{{ instance.user_info.status_usuario }}</div>
-                                    <div class="column"></div>
+                                    <div class="column">
+                                        {% if user.id_instancia != instance.id %}
+                                            <div class="control instance-select-control" instance="{{ instance.id }}">Selecionar Equipe</div>                                            
+                                        {% else %}
+                                            <div class="instance-selected-control" instance="{{ instance.id }}">Equipe Selecionada</div>                                            
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>

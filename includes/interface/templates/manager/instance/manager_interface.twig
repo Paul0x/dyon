@@ -11,10 +11,14 @@
     <div id="instance-info-wrap">
         <div class="header">Informações da Equipe</div>
         <div class="info-wrap">
-            <div class="item">
-                <div class="label">Nome</div>
-                <div class="value">{{ instance.nome }} </div>
+            <div class="image">
+                {% if not instance.image %}
+                    <div class="no-image"><i class="fa fa-picture-o"></i></div>
+                    {% else %}
+                    <img src="{{ config.system_path }}/images/instance/{{ instance.image }}" />
+                {% endif %}
             </div>
+                <div class="title">{{ instance.nome }} <i title="Editar Informações" id="instance-manager-edit" class="fa fa-pencil-square"></i></div>
             <div class="item">
                 <div class="label">Endereço da equipe</div>
                 <div class="value"><a href="http://dyon.vc/organizador/{{ instance.url }}">http://dyon.vc/organizador/{{ instance.url }}</a></div>
@@ -24,4 +28,6 @@
                 <div class="value">{{ instance.plan.name }} </div>
             </div>
         </div>
-    {% endblock %}
+        <div class="clear"></div>
+    </div>
+{% endblock %}
