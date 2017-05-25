@@ -674,7 +674,12 @@ class user {
             if ($instance['id'] == $instance_id) {
                 $this->instance = $instance;
                 $this->admin_info = $instance["user_info"];
-
+                if ($this->admin_info['evento_padrao']) {
+                    $eventcontroller = new eventController();
+                    $this->current_event = $eventcontroller->loadEventHeader($this->admin_info['evento_padrao']);
+                } else {
+                    $this->current_event = false;
+                }
                 $instancecontroller = new instanceController();
                 $instancecontroller->setDefaultInstance($this, $this->instance);
                 $changed = true;

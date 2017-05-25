@@ -27,9 +27,9 @@ preferencesInterface = function () {
     this.checkTab = function () {
         var tab = window.location.hash.substr(1);
         if (tab) {
-            $("#user-preference-wrap .preference-tabs .item").removeClass("selected");
-            $("#user-preference-wrap .preference-form .tab").css("display", "none");
             if (tab === "instance" || tab === "privacy" || tab === "payment" || tab === "personal") {
+                $("#user-preference-wrap .preference-tabs .item").removeClass("selected");
+                $("#user-preference-wrap .preference-form .tab").css("display", "none");
                 $("#user-preference-wrap .preference-tabs .item[tab=" + tab + "]").addClass("selected");
                 $("#user-preference-wrap .preference-form .tab[tab=" + tab + "]").css("display", "block");
             }
