@@ -1,9 +1,6 @@
 {% extends "base_layout.twig" %}
 
 {% block content %}
-    {% if edit_flag %}
-        KEK
-        {% endif %}
     <div id="public-event-wrap">
         <div class="header">
             <div class="banner">
@@ -42,5 +39,9 @@
     <script>
         var publicevent = new publicEventInterface();
         publicevent.init();
+        {% if edit_flag %}
+           var publicmanager = new publicEventManagerInterface();
+           publicmanager.init({{ event.id }});
+        {% endif %}
     </script>
 {% endblock %}

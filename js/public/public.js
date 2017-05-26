@@ -78,5 +78,4 @@ publicEventInterface = function () {
             return false;
         });
     };
-
 };
