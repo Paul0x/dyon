@@ -48,7 +48,31 @@ publicEventManagerInterface = function () {
     
     this.loadAppearanceEditForm = function() {
         var self = this;
-    }
+        self.loadManagerForm("appearance");
+    };
+    
+    this.loadSettingsEditForm = function() {
+        var self = this;
+        self.loadManagerForm("settings");
+    };
+    
+    this.loadManagerForm = function(form) {
+        var self = this;
+        $.ajax({
+            url: self.root + "/e/ajax",
+            data: {
+                mode: "load_manager_form",
+                form: form,
+                event_id: self.event_id
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    loadAjaxBox(data.html);
+                }
+            }
+        });
+    };
     
     this.loadBottomBar = function() {
         var self = this;
