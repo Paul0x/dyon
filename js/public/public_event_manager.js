@@ -24,8 +24,31 @@ publicEventManagerInterface = function () {
             return;
         }
         self.event_id = event_id;
+        self.loadControls();
         self.loadBottomBar();
+        self.bindBottomBarControls();
     };
+    
+    this.loadControls = function() {
+        $("#public-event-wrap .content .main").append("<div class='editable-content' id='public-event-manager-edit-description'><i class='fa fa-pencil'></i> Editar Descrição</div>")
+    };
+    
+    this.bindBottomBarControls = function() {
+        var self = this;
+        $(document).on("click", "#public-event-manager-wrap .buttons .button", function() {
+            switch(this.id) {
+                case "public-event-manager-edit-appearance":
+                    self.loadAppearanceEditForm();
+                    break;
+                case "public-event-manager-edit-settings":
+                    self.loadSettingsEditForm();
+            }            
+        });        
+    };
+    
+    this.loadAppearanceEditForm = function() {
+        var self = this;
+    }
     
     this.loadBottomBar = function() {
         var self = this;
