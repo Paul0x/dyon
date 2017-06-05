@@ -50,10 +50,8 @@ publicEventManagerInterface = function () {
         var self = this;
         self.loadManagerForm("appearance", function () {
             var pickers = new Array();
-            console.log("kek");
             $(".public-manager-form-wrap .info-wrap .item .color").each(function (index, element) {
-                alert('ay');
-                var field = $(this).attr("field");
+                    var field = $(this).attr("field");
                 pickers[field] = new jscolor(element);
 
                 pickers[field].fromString("ffffff");
@@ -66,6 +64,18 @@ publicEventManagerInterface = function () {
     this.loadSettingsEditForm = function () {
         var self = this;
         self.loadManagerForm("settings");
+        $(document).off("click","#public-event-manager-settings-wrap .button-item .button").on("click","#public-event-manager-settings-wrap .button-item .button", function() {
+            var field = $(this).attr("field");
+            var value = parseInt($("#public-event-manager-settings-wrap input[field="+field+"]").val());
+            if(value === 0) {
+                $("#public-event-manager-settings-wrap .button-item .button[field="+field+"]").html('<i class="fa fa-toggle-on"></i>');
+                $("#public-event-manager-settings-wrap input[field="+field+"]").val(1);
+            } else {
+                $("#public-event-manager-settings-wrap .button-item .button[field="+field+"]").html('<i class="fa fa-toggle-off"></i>');
+                $("#public-event-manager-settings-wrap input[field="+field+"]").val(0);
+                
+            }
+        });
     };
 
     this.loadManagerForm = function (form, callback) {
