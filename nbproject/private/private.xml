@@ -4,14 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/wamp/www/dyon/css/public.css</file>
-            <file>file:/C:/wamp/www/dyon/includes/control/instancia/instances.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/system/setup.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/interface/templates/public/evento/manager_bottom_bar.twig</file>
+            <file>file:/C:/wamp/www/dyon/includes/interface/templates/public/evento/manager_appearance_form.twig</file>
             <file>file:/C:/wamp/www/dyon/includes/control/evento/events.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/interface/templates/public/evento/public_event.twig</file>
+            <file>file:/C:/wamp/www/dyon/includes/interface/templates/public/evento/manager_settings_form.twig</file>
             <file>file:/C:/wamp/www/dyon/js/public/public_event_manager.js</file>
             <file>file:/C:/wamp/www/dyon/includes/control/evento/public.php</file>
-            <file>file:/C:/wamp/www/dyon/includes/system/config.php</file>
+            <file>file:/C:/wamp/www/dyon/includes/interface/templates/manager/hotsite/ajax_config_interface.twig</file>
+            <file>file:/C:/wamp/www/dyon/js/manager/hotsite.js</file>
         </group>
     </open-files>
 </project-private>

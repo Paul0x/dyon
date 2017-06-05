@@ -17,10 +17,10 @@
 
 publicEventManagerInterface = function () {
     this.root = $("#dir-root").val();
-    
-    this.init = function(event_id) {
+
+    this.init = function (event_id) {
         var self = this;
-        if(isNaN(event_id)) {
+        if (isNaN(event_id)) {
             return;
         }
         self.event_id = event_id;
@@ -28,35 +28,47 @@ publicEventManagerInterface = function () {
         self.loadBottomBar();
         self.bindBottomBarControls();
     };
-    
-    this.loadControls = function() {
+
+    this.loadControls = function () {
         $("#public-event-wrap .content .main").append("<div class='editable-content' id='public-event-manager-edit-description'><i class='fa fa-pencil'></i> Editar Descrição</div>")
     };
-    
-    this.bindBottomBarControls = function() {
+
+    this.bindBottomBarControls = function () {
         var self = this;
-        $(document).on("click", "#public-event-manager-wrap .buttons .button", function() {
-            switch(this.id) {
+        $(document).on("click", "#public-event-manager-wrap .buttons .button", function () {
+            switch (this.id) {
                 case "public-event-manager-edit-appearance":
                     self.loadAppearanceEditForm();
                     break;
                 case "public-event-manager-edit-settings":
                     self.loadSettingsEditForm();
-            }            
-        });        
+            }
+        });
     };
-    
-    this.loadAppearanceEditForm = function() {
+
+    this.loadAppearanceEditForm = function () {
         var self = this;
-        self.loadManagerForm("appearance");
+        self.loadManagerForm("appearance", function () {
+            var pickers = new Array();
+            console.log("kek");
+            $(".public-manager-form-wrap .info-wrap .item .color").each(function (index, element) {
+                alert('ay');
+                var field = $(this).attr("field");
+                pickers[field] = new jscolor(element);
+
+                pickers[field].fromString("ffffff");
+
+            });
+        });
+
     };
-    
-    this.loadSettingsEditForm = function() {
+
+    this.loadSettingsEditForm = function () {
         var self = this;
         self.loadManagerForm("settings");
     };
-    
-    this.loadManagerForm = function(form) {
+
+    this.loadManagerForm = function (form, callback) {
         var self = this;
         $.ajax({
             url: self.root + "/e/ajax",
@@ -69,12 +81,15 @@ publicEventManagerInterface = function () {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
                     loadAjaxBox(data.html);
+                    if (callback) {
+                        callback();
+                    }
                 }
             }
         });
     };
-    
-    this.loadBottomBar = function() {
+
+    this.loadBottomBar = function () {
         var self = this;
         $.ajax({
             url: self.root + "/e/ajax",
