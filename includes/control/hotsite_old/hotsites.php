@@ -27,7 +27,7 @@ require_once("includes/control/hotsite/content/contents.php");
 require_once("includes/control/hotsite/files.php");
 include("includes/control/hotsite/render.php");
 
-class hotsiteController {
+class hotsiteController2 {
 
     /**
      * Constrói o objeto e inicializa a conexão com o banco de dados.
