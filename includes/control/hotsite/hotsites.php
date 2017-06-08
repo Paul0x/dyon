@@ -103,6 +103,14 @@ class hotsiteController {
             $this->loadHotsiteByEventId($event_id);
         }
     }
+    
+    public function getFields() {
+        if($this->loaded_hotsite) {
+            return $this->loaded_hotsite;
+        } else {
+            throw new Exception("Hotsite não carregado.");
+        }
+    }
 
     public function loadHotsiteByEventId($event_id) {
         if (!is_numeric($event_id)) {
@@ -127,6 +135,7 @@ class hotsiteController {
         $this->loaded_hotsite = $this->conn->fetch;
         $this->loaded_hotsite['manager'] = $hotsite_manager;
         $this->loaded_hotsite['public'] = $hotsite_public;
+        return $this->loaded_hotsite;
     }
 
     public function initManagerHotsite() {

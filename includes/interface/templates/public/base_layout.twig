@@ -8,7 +8,7 @@
             {% include "css.twig" %}
             <title>{{ config.title }}</title>
         </head>
-        <body>
+        <body {% if event_interface_flag and event.id %} class="public-event-{{ event.id }}" {% endif %}>
             {% include "scripts.twig" %}
             <input type="hidden" id="dir-root" value="{{ config.system_path }}"/>
             <header id="main-header-wrap" {% if event_interface_flag %} class="event-interface" {% endif %}>

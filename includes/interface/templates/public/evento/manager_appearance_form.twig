@@ -1,32 +1,31 @@
-<div id="public-event-manager-settings-wrap" class="public-manager-form-wrap">
+<div id="public-event-manager-appearance-wrap" class="public-manager-form-wrap">
     <div class="title">Aparência do Website</div>
     <div class="info-wrap">
-        <div class="item color-item" field="bg">
-            <div class="color" field="bg"></div>
+        <div class="item color-item" field="background_color">
+            <div class="color" field="background_color"></div>
             <div class="label">Cor de Fundo</div>
-            <input type="hidden" name="" field="bg" value="0"/>
+            <input type="hidden" name="" field="background_color" value="{{ hotsite.background_color }}"/>
         </div>
-        <div class="item color-item" field="tl">
-            <div class="color" field="tl"></div>
+        <div class="item color-item" field="title_color">
+            <div class="color" field="title_color"></div>
             <div class="label">Cor do Título</div>
-            <input type="hidden" name="" field="tl" value="0"/>
+            <input type="hidden" name="" field="title_color" value="{{ hotsite.title_color }}"/>
         </div>
-        <div class="item color-item" field="dt">
-            <div class="color" field="dt"></div>
+        <div class="item color-item" field="date_color">
+            <div class="color" field="date_color"></div>
             <div class="label">Cor da Data</div>
-            <input type="hidden" name="" field="dt" value="0"/>
+            <input type="hidden" name="" field="date_color" value="{{ hotsite.date_color }}"/>
         </div>
-        <div class="item image-item" field="">
-            <div class="image-selector" field=""><input type="file" name="background-banner" /></div>
+        <div class="item image-item" field="image_banner">
+            <div class="image-selector" field="image_banner"><input name="image_banner" id="public-event-manager-appearance-file-image_banner" type="file" field="image_banner" /></div>
             <div class="label">Banner de Topo</div>
         </div>
-        <div class="item text-item" field="">
+        <div class="item text-item" field="teaser">
             <div class="text">
-                <input type="text" name="" value="" />
+                <input type="text" name="teaser" value="{{ hotsite.teaser }}" />
             </div>
             <div class="label">Link do Teaser (YouTube)</div>
-            <input type="hidden" name="" field="" value="0"/>
         </div>
-        <input type="button" value="Salvar" class="btn-01" />
+        <input type="button" id="submit-button" value="Salvar" class="btn-01" />
     </div>
 </div>

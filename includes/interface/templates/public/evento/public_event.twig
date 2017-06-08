@@ -18,9 +18,15 @@
         <div class="wrap">
             <div class="menu">
                 <div class="tab">Início</div>
-                <div class="tab">Programação</div>
-                <div class="tab">Galeria</div>
-                <div class="tab">Contato</div>
+                {% if hotsite.show_schedule %}
+                    <div class="tab">Programação</div>
+                {% endif %}
+                {% if hotsite.show_gallery %}
+                    <div class="tab">Galeria</div>
+                {% endif %}
+                {% if hotsite.show_contacts %}
+                    <div class="tab">Contato</div>
+                {% endif %}
             </div>
             <div class="content">
                 <div class="main">
@@ -36,12 +42,34 @@
             </div>               
         </div>
     </div>
+    <style>
+        .public-event-{{ event.id }}
+        {
+            background: #{{ hotsite.background_color}};            
+        }
+        .public-event-{{ event.id }} #public-event-wrap .title
+        {
+            color: #{{ hotsite.title_color}};            
+        }
+        .public-event-{{ event.id }} #public-event-wrap .title .date
+        {
+            background: #{{ hotsite.date_color}};            
+            color: #fff;
+            text-shadow: 0px 0px 1px #333;
+        }
+        {% if hotsite.image_banner %}
+            .public-event-{{ event.id }} #public-event-wrap .header .banner
+            {
+                background-image: url({{ config.system_path }}/images/banners/{{ hotsite.image_banner }});
+            }
+        {% endif %}
+    </style>
     <script>
         var publicevent = new publicEventInterface();
         publicevent.init();
         {% if edit_flag %}
-           var publicmanager = new publicEventManagerInterface();
-           publicmanager.init({{ event.id }});
+            var publicmanager = new publicEventManagerInterface();
+            publicmanager.init({{ event.id }});
         {% endif %}
     </script>
 {% endblock %}

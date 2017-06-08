@@ -2,60 +2,60 @@
     <div class="title">Configurações do Website</div>
     <div class="info-wrap">
         <div class="item button-item" field="show-schedule">
-            <div class="button" field="show-schedule"><i class="fa fa-toggle-off"></i></div>
+            <div class="button" field="show-schedule"><i class="fa {% if hotsite.show_schedule == 0 %} fa-toggle-off {% else %} fa-toggle-on {% endif %}"></i></div>
             <div class="label">Mostrar Programação</div>
-            <input type="hidden" name="" field="show-schedule" value="0"/>
+            <input type="hidden" name="" field="show-schedule" value="{{ hotsite.show_schedule }}"/>
         </div>
         <div class="item button-item" field="show-gallery">
-            <div class="button" field="show-gallery"><i class="fa fa-toggle-off"></i></div>
+            <div class="button" field="show-gallery"><i class="fa {% if hotsite.show_gallery == 0 %} fa-toggle-off {% else %} fa-toggle-on {% endif %}"></i></div>
             <div class="label">Mostrar Galeria</div>
-            <input type="hidden" name="" field="show-gallery" value="0"/>
+            <input type="hidden" name="" field="show-gallery" value="{{ hotsite.show_gallery }}"/>
         </div>
         <div class="item button-item" field="show-contacts">
-            <div class="button" field="show-contacts"><i class="fa fa-toggle-off"></i></div>
+            <div class="button" field="show-contacts"><i class="fa {% if hotsite.show_contacts == 0 %} fa-toggle-off {% else %} fa-toggle-on {% endif %}"></i></div>
             <div class="label">Mostrar Página de Contato</div>
-            <input type="hidden" name="" field="show-contacts" value="0"/>
+            <input type="hidden" name="" field="show-contacts" value="{{ hotsite.show_contacts }}"/>
         </div>
         <div class="item button-item" field="show-likes">
-            <div class="button" field="show-likes"><i class="fa fa-toggle-off"></i></div>
+            <div class="button" field="show-likes"><i class="fa {% if hotsite.show_likes == 0 %} fa-toggle-off {% else %} fa-toggle-on {% endif %}"></i></div>
             <div class="label">Mostrar Número de Pessoas Interessadas</div>
-            <input type="hidden" name="" field="show-likes" value="0"/>
+            <input type="hidden" name="" field="show-likes" value="{{ hotsite.show_likes }}"/>
         </div>
         <div class="item button-item" field="show-sold">
-            <div class="button" field="show-sold"><i class="fa fa-toggle-off"></i></div>
+            <div class="button" field="show-sold"><i class="fa {% if hotsite.show_sold == 0 %} fa-toggle-off {% else %} fa-toggle-on {% endif %}"></i></div>
             <div class="label">Mostrar Número de Ingressos Vendidos</div>
-            <input type="hidden" name="" field="show-sold" value="0"/>
+            <input type="hidden" name="" field="show-sold" value="{{ hotsite.show_sold }}"/>
         </div>
-        <div class="item button-item" field="show-published">
-            <div class="button" field="published"><i class="fa fa-toggle-off"></i></div>
+        <div class="item button-item" field="published">
+            <div class="button" field="published"><i class="fa {% if hotsite.published == 0 %} fa-toggle-off {% else %} fa-toggle-on {% endif %}"></i></div>
             <div class="label">Publicar Página</div>
-            <input type="hidden" name="" field="published" value="0"/>
+            <input type="hidden" name="" field="published" value="{{ hotsite.published }}"/>
         </div>
         <div class="item select-item">
             <div class="select">
                 <select field="button-name">
-                    <option value="c">Comprar</option>
-                    <option value="r">Registrar</option>
-                    <option value="i">Inscrever</option>
+                    <option value="c" {% if hotsite.button_name == 'c' %}selected{% endif %}>Comprar</option>
+                    <option value="r" {% if hotsite.button_name == 'r' %}selected{% endif %}>Registrar</option>
+                    <option value="i" {% if hotsite.button_name == 'i' %}selected{% endif %}>Inscrever</option>
                 </select>
             </div>
             <div class="label">Nomeclatura do Botão de Vendas/Registro</div>
         </div>
         <div class="item text-item">
             <div class="text">
-                <input type="text" field="contact-phone" value="" />
+                <input type="text" field="contact-phone" value="{{ hotsite.contact_phone }}" />
             </div>
             <div class="label">Telefone de Contato</div>
         </div>
         <div class="item text-item">
             <div class="text">
-                <input type="text" field="contact-email" value="" />
+                <input type="text" field="contact-email" value="{{ hotsite.contact_email }}" />
             </div>
             <div class="label">Email de Contato</div>
         </div>
         <div class="item text-item">
             <div class="text">
-                <input type="text" field="contact-address" value="" />
+                <input type="text" field="contact-address" value="{{ hotsite.contact_address }}" />
             </div>
             <div class="label">Endereço de Contato</div>
         </div>
