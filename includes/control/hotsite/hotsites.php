@@ -94,6 +94,7 @@ class hotsiteController {
             "type" => "datetime"
         )
     );
+
     /**
      * Constrói o objeto e inicializa a conexão com o banco de dados.
      */
@@ -103,9 +104,9 @@ class hotsiteController {
             $this->loadHotsiteByEventId($event_id);
         }
     }
-    
+
     public function getFields() {
-        if($this->loaded_hotsite) {
+        if ($this->loaded_hotsite) {
             return $this->loaded_hotsite;
         } else {
             throw new Exception("Hotsite não carregado.");
@@ -116,22 +117,22 @@ class hotsiteController {
         if (!is_numeric($event_id)) {
             throw new Exception("Identificador do evento inválido.");
         }
+        $eventcontroller = new eventController();
         try {
             $usercontroller = new userController();
             $user = $usercontroller->getUser();
+            if (!$eventcontroller->userHasEditPermission($user->getId(), $event_id)) {
+                $hotsite_manager = false;
+            }
         } catch (Exception $ex) {
             $hotsite_public = true;
         }
-        $eventcontroller = new eventController();
-        if (!$eventcontroller->userHasEditPermission($user->getId(), $event_id)) {
-            $hotsite_manager = false;
-        }
-        
+
         $this->conn->prepareselect("hotsite", array_keys($this->hotsite_fields), "event_id", $event_id, "same", "", "", PDO::FETCH_ASSOC);
-        if(!$this->conn->executa()) {
+        if (!$this->conn->executa()) {
             throw new Exception("Hotsite não encontrado.");
         }
-        
+
         $this->loaded_hotsite = $this->conn->fetch;
         $this->loaded_hotsite['manager'] = $hotsite_manager;
         $this->loaded_hotsite['public'] = $hotsite_public;
@@ -157,6 +158,29 @@ class hotsiteController {
             echo $this->twig->render("evento/public_event.twig", Array("event" => $event, "edit_flag" => $edit_flag, "user" => $user_info, "config" => config::$html_preload, "event_interface_flag" => true));
         } catch (Exception $ex) {
             echo $ex->getMessage();
+        }
+    }
+
+    public function updateSettings($values) {
+        if (!$this->loaded_hotsite["id"]) {
+            throw new Exception("Hotsite não carregado.");
+        }
+
+        $settings_fields = array("show_schedule", "show_gallery", "show_contacts", "show_likes", "show_sold", "published", "button_name", "contact_phone", "contact_email", "contact_address");
+        $new_settings = array();
+        foreach ($settings_fields as $index => $field) {
+            if ($values[$field] != $this->loaded_hotsite[$field]) {
+                $new_settings[$field] = $values[$field];
+            }
+        }
+        if (count($new_settings) < 1) {
+            return true;
+        }
+        $this->conn->prepareupdate($new_settings, array_keys($new_settings), "hotsite", $this->loaded_hotsite["id"], "id");
+        if (!$this->conn->executa()) {
+            echo $this->conn->query;
+            print_r($new_settings);
+            throw new Exception("Não foi possível editar o website.");
         }
     }
 
