@@ -97,11 +97,13 @@ publicEventManagerInterface = function () {
         var fields_select = new Array("button-name");
 
         $.each(fields_input, function (idx, field) {
-            settings[field] = $("#public-event-manager-settings-wrap input[field=" + field + "]").val();
+            var underline_field = field.replace("-","_");
+            settings[underline_field] = $("#public-event-manager-settings-wrap input[field=" + field + "]").val();
         });
 
         $.each(fields_select, function (idx, field) {
-            settings[field] = $("#public-event-manager-settings-wrap select[field=" + field + "]").val();
+            var underline_field = field.replace("-","_");
+            settings[underline_field] = $("#public-event-manager-settings-wrap select[field=" + field + "]").val();
         });
 
         settings["mode"] = "submit_edit_settings";
@@ -113,7 +115,7 @@ publicEventManagerInterface = function () {
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    console.log(kek);
+                    
                 }
             }
         });

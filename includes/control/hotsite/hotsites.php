@@ -169,19 +169,19 @@ class hotsiteController {
         $settings_fields = array("show_schedule", "show_gallery", "show_contacts", "show_likes", "show_sold", "published", "button_name", "contact_phone", "contact_email", "contact_address");
         $new_settings = array();
         foreach ($settings_fields as $index => $field) {
-            if ($values[$field] != $this->loaded_hotsite[$field]) {
+            if ($values[$field] != $this->loaded_hotsite[$field] && (is_numeric($values[$field]) || $values[$field] != "")) {
                 $new_settings[$field] = $values[$field];
             }
         }
         if (count($new_settings) < 1) {
             return true;
         }
-        $this->conn->prepareupdate($new_settings, array_keys($new_settings), "hotsite", $this->loaded_hotsite["id"], "id");
-        if (!$this->conn->executa()) {
-            echo $this->conn->query;
-            print_r($new_settings);
+        $this->conn->prepareupdate(array_values($new_settings), array_keys($new_settings), "hotsite", $this->loaded_hotsite["id"], "id");
+        
+        if (!$this->conn->executa()) {            
             throw new Exception("Não foi possível editar o website.");
-        }
+        }  
+         
     }
 
 }
