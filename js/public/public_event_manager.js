@@ -115,13 +115,15 @@ publicEventManagerInterface = function () {
             success: function (data) {
                 data = eval("( " + data + " )");
                 if (data.success === "true") {
-                    
+                    $("#public-event-manager-settings-wrap .dialog-box").html("<div class='success'><i class='fa fa-check'></i> Configurações Atualizadas</div>");
+                    $("#public-event-loader").html(data.html);
+                } else {
+                    $("#public-event-manager-settings-wrap .dialog-box").html("<div class='success'><i class='fa fa-times'></i> "+ data.error +"</div>");
                 }
             }
         });
     };
-
-
+    
     this.submitAppearanceEditForm = function () {
         var self = this;
         var appearance = new FormData();
@@ -130,29 +132,31 @@ publicEventManagerInterface = function () {
         var fields_color = new Array("background_color", "date_color", "title_color");
         var fields_image = new Array("image_banner");
         $.each(fields_input, function (idx, field) {
-            appearance[field] = $("#public-event-manager-appearance-wrap input[field=" + field + "]").val();
+            appearance.append(field,$("#public-event-manager-appearance-wrap input[field=" + field + "]").val());
         });
 
         $.each(fields_color, function (idx, field) {
-            appearance[field] = $("#public-event-manager-appearance-wrap .color-item .color[field=" + field + "]").html();
+            appearance.append(field,$("#public-event-manager-appearance-wrap .color-item .color[field=" + field + "]").html());
         });
 
         $.each(fields_image, function (idx, field) {
             if ($("#public-event-manager-appearance-wrap input[field=" + field + "]").val().length > 0) {
-                appearance[field] = new Object();
-                appearance[field].file = document.getElementById("public-event-manager-appearance-file-" + field).files[0];
-                alert(appearance[field].file);
-                appearance[field].filename = $("#public-event-manager-appearance-wrap input[field=" + field + "]").val();
-                appearance[field].extension = appearance[field].filename.substr(appearance[field].filename.length - 3, 3).toLowerCase();
-                if (appearance[field].extension !== "jpg" && appearance[field].extension !== "png" && appearance[field].extension !== "gif") {
+                var file = new Object();
+                file.file = document.getElementById("public-event-manager-appearance-file-" + field).files[0];
+                file.filename = $("#public-event-manager-appearance-wrap input[field=" + field + "]").val();
+                file.extension = file.filename.substr(file.filename.length - 3, 3).toLowerCase();
+                if (file.extension !== "jpg" && file.extension !== "png" && file.extension !== "gif") {
                     return;
                 }
+                appearance.append("image_banner_file", file.file);
+                appearance.append("image_banner_filename", file.filename);
+                appearance.append("image_banner_extension", file.extension);
             }
-            alert("ok");
+            
         });
 
-        appearance["mode"] = "submit_edit_appearance";
-        appearance["event_id"] = self.event_id;
+        appearance.append("mode","submit_edit_appearance");
+        appearance.append("event_id",self.event_id);
         
         var xhr = new XMLHttpRequest();
         
@@ -161,11 +165,13 @@ publicEventManagerInterface = function () {
             if (xhr.readyState === 2) {
             }
             if (xhr.readyState === 4 && xhr.status == 200) {
-                var data = eval("(" + xhr.responseText + ")");
+                data = eval("( " + xhr.responseText + " )");
                 if (data.success === "true") {
-                    closeAjaxBox();
-                    self.loadPageHotsiteInterface();
-                } 
+                    $("#public-event-manager-appearance-wrap .dialog-box").html("<div class='success'><i class='fa fa-check'></i> Aparência Atualizada</div>");
+                    $("#public-event-loader").html(data.html);
+                } else {
+                    $("#public-event-manager-appearance-wrap .dialog-box").html("<div class='success'><i class='fa fa-times'></i> "+ data.error +"</div>");
+                }
             }
         };
         xhr.send(appearance);

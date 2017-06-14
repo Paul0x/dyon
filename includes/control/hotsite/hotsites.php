@@ -18,6 +18,7 @@
  * 
  */
 
+require_once(config::$syspath . "includes/lib/imagemanager.php");
 require_once(config::$syspath . "includes/control/evento/events.php");
 
 class hotsiteController {
@@ -177,11 +178,44 @@ class hotsiteController {
             return true;
         }
         $this->conn->prepareupdate(array_values($new_settings), array_keys($new_settings), "hotsite", $this->loaded_hotsite["id"], "id");
-        
-        if (!$this->conn->executa()) {            
+
+        if (!$this->conn->executa()) {
             throw new Exception("Não foi possível editar o website.");
-        }  
-         
+        }
+    }
+
+    public function updateAppearance($values) {
+        if (!$this->loaded_hotsite["id"]) {
+            throw new Exception("Hotsite não carregado.");
+        }
+        $appearance_fields = array("background_color", "date_color", "title_color", "teaser");
+        $new_appearance = array();
+        foreach ($appearance_fields as $index => $field) {
+            if ($values[$field] != $this->loaded_hotsite[$field] && (is_numeric($values[$field]) || $values[$field] != "")) {
+                $new_appearance[$field] = $values[$field];
+            }
+        }
+
+        if (is_file($values['image_banner']['file']['tmp_name'])) {
+            if ($this->loaded_hotsite['image_banner']) {
+                $old_banner = $this->loaded_hotsite['image_banner'];
+            }
+            $filename = uniqid($this->loaded_hotsite['id'] . "_");
+            $imagecontroller = new imagem();
+            $imagecontroller->pegarImagem($values['image_banner']['file']);
+            $imagecontroller->generate("images/banners/" . $filename, true);
+            $new_appearance["image_banner"] = $filename . "." . $imagecontroller->formatoImg();
+            
+        }
+
+        if (count($new_appearance) < 1) {
+            return true;
+        }
+        $this->conn->prepareupdate(array_values($new_appearance), array_keys($new_appearance), "hotsite", $this->loaded_hotsite["id"], "id");
+
+        if (!$this->conn->executa()) {
+            throw new Exception("Não foi possível editar o website.");
+        }
     }
 
 }

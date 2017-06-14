@@ -1,75 +1,7 @@
 {% extends "base_layout.twig" %}
 
 {% block content %}
-    <div id="public-event-wrap">
-        <div class="header">
-            <div class="banner">
-            </div>
-            <div class="title">
-                {{ event.nome }}
-                <span class="date">
-                    {{ event.data_inicio_formatted }}
-                    {% if event.data_fim_formatted %}
-                        até {{ event.data_fim_formatted }}
-                    {% endif %}
-                </span>
-            </div>
-        </div>
-        <div class="wrap">
-            <div class="menu">
-                <div class="tab">Início</div>
-                {% if hotsite.show_schedule %}
-                    <div class="tab">Programação</div>
-                {% endif %}
-                {% if hotsite.show_gallery %}
-                    <div class="tab">Galeria</div>
-                {% endif %}
-                {% if hotsite.show_contacts %}
-                    <div class="tab">Contato</div>
-                {% endif %}
-            </div>
-            <div class="content">
-                <div class="main">
-                </div>
-                <div class="sidebar">
-                    <input type="button" id="get-ticket" value="COMPRAR"/>
-                    <div class="owner">
-                        <div class="title">Organizador</div>
-                        <div class="image"><img src="{{ config.system_path}}/images/avatar/noimage.jpg" /></div>
-                        <div class="name">CarnaBoemia</div>
-                    </div>
-                </div>
-            </div>               
-        </div>
+    <div id="public-event-loader">
+        {% include "evento/public_event_template.twig" %}
     </div>
-    <style>
-        .public-event-{{ event.id }}
-        {
-            background: #{{ hotsite.background_color}};            
-        }
-        .public-event-{{ event.id }} #public-event-wrap .title
-        {
-            color: #{{ hotsite.title_color}};            
-        }
-        .public-event-{{ event.id }} #public-event-wrap .title .date
-        {
-            background: #{{ hotsite.date_color}};            
-            color: #fff;
-            text-shadow: 0px 0px 1px #333;
-        }
-        {% if hotsite.image_banner %}
-            .public-event-{{ event.id }} #public-event-wrap .header .banner
-            {
-                background-image: url({{ config.system_path }}/images/banners/{{ hotsite.image_banner }});
-            }
-        {% endif %}
-    </style>
-    <script>
-        var publicevent = new publicEventInterface();
-        publicevent.init();
-        {% if edit_flag %}
-            var publicmanager = new publicEventManagerInterface();
-            publicmanager.init({{ event.id }});
-        {% endif %}
-    </script>
 {% endblock %}
