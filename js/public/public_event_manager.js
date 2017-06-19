@@ -44,6 +44,45 @@ publicEventManagerInterface = function () {
                     self.loadSettingsEditForm();
             }
         });
+        $(document).on("click", "#public-event-manager-edit-description", function () {
+            self.loadDescriptionEditForm();
+        });
+    };
+
+    this.loadDescriptionEditForm = function () {
+        var self = this;
+
+        $.ajax({
+            url: self.root + "/e/ajax",
+            data: {
+                event_id: self.event_id,
+                mode: "load_hotsite_description"
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    var textbox = "<div id=\"public-event-edit-description\"><textarea id=\"public-event-edit-description-text\">" + data.description + "</textarea><input id=\"public-event-edit-description-submit\" type=\"button\" value=\"Salvar\"></div>";
+                    $("#public-event-wrap .content .main").html(textbox);
+                    tinymce.init({
+                        selector: '#public-event-edit-description-text',
+                        menubar: false,
+                        height: 300,
+                        statusbar: false,
+                        plugins: [
+                            'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+                            'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+                            'save table contextmenu directionality emoticons template paste textcolor'
+                        ],
+                        toolbar: "bold italic bullist numlist outdent indent | link image | print preview media fullpage | forecolor backcolor emoticons aligncenter alignright alignleft"
+                    });
+                    $(document).off("click", "#public-event-edit-description-submit").on("click", "#public-event-edit-description-submit", function () {
+                        self.submitDescriptionEditForm();
+                    });
+                } else {
+
+                }
+            }
+        });
     };
 
     this.loadAppearanceEditForm = function () {
@@ -89,6 +128,32 @@ publicEventManagerInterface = function () {
         });
     };
 
+    this.submitDescriptionEditForm = function () {
+        var self = this;
+        tinymce.triggerSave();
+        var description = $("#public-event-edit-description-text").val();
+        tinymce.remove();
+        $.ajax({
+            url: self.root + "/e/ajax",
+            data: {
+                mode: "submit_edit_description",
+                event_id: self.event_id,
+                description: description
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    $("#public-event-loader").html(data.html);
+
+                    self.loadControls();
+                    self.loadBottomBar();
+                } else {
+
+                }
+            }
+        });
+    };
+
     this.submitSettingsEditForm = function () {
         var self = this;
         var settings = new Object();
@@ -97,12 +162,12 @@ publicEventManagerInterface = function () {
         var fields_select = new Array("button-name");
 
         $.each(fields_input, function (idx, field) {
-            var underline_field = field.replace("-","_");
+            var underline_field = field.replace("-", "_");
             settings[underline_field] = $("#public-event-manager-settings-wrap input[field=" + field + "]").val();
         });
 
         $.each(fields_select, function (idx, field) {
-            var underline_field = field.replace("-","_");
+            var underline_field = field.replace("-", "_");
             settings[underline_field] = $("#public-event-manager-settings-wrap select[field=" + field + "]").val();
         });
 
@@ -117,13 +182,16 @@ publicEventManagerInterface = function () {
                 if (data.success === "true") {
                     $("#public-event-manager-settings-wrap .dialog-box").html("<div class='success'><i class='fa fa-check'></i> Configurações Atualizadas</div>");
                     $("#public-event-loader").html(data.html);
+
+                    self.loadControls();
+                    self.loadBottomBar();
                 } else {
-                    $("#public-event-manager-settings-wrap .dialog-box").html("<div class='success'><i class='fa fa-times'></i> "+ data.error +"</div>");
+                    $("#public-event-manager-settings-wrap .dialog-box").html("<div class='success'><i class='fa fa-times'></i> " + data.error + "</div>");
                 }
             }
         });
     };
-    
+
     this.submitAppearanceEditForm = function () {
         var self = this;
         var appearance = new FormData();
@@ -132,11 +200,11 @@ publicEventManagerInterface = function () {
         var fields_color = new Array("background_color", "date_color", "title_color");
         var fields_image = new Array("image_banner");
         $.each(fields_input, function (idx, field) {
-            appearance.append(field,$("#public-event-manager-appearance-wrap input[field=" + field + "]").val());
+            appearance.append(field, $("#public-event-manager-appearance-wrap input[field=" + field + "]").val());
         });
 
         $.each(fields_color, function (idx, field) {
-            appearance.append(field,$("#public-event-manager-appearance-wrap .color-item .color[field=" + field + "]").html());
+            appearance.append(field, $("#public-event-manager-appearance-wrap .color-item .color[field=" + field + "]").html());
         });
 
         $.each(fields_image, function (idx, field) {
@@ -152,16 +220,16 @@ publicEventManagerInterface = function () {
                 appearance.append("image_banner_filename", file.filename);
                 appearance.append("image_banner_extension", file.extension);
             }
-            
+
         });
 
-        appearance.append("mode","submit_edit_appearance");
-        appearance.append("event_id",self.event_id);
-        
+        appearance.append("mode", "submit_edit_appearance");
+        appearance.append("event_id", self.event_id);
+
         var xhr = new XMLHttpRequest();
-        
+
         xhr.open('POST', self.root + "/e/ajax", true);
-        xhr.onreadystatechange = function() {
+        xhr.onreadystatechange = function () {
             if (xhr.readyState === 2) {
             }
             if (xhr.readyState === 4 && xhr.status == 200) {
@@ -169,8 +237,11 @@ publicEventManagerInterface = function () {
                 if (data.success === "true") {
                     $("#public-event-manager-appearance-wrap .dialog-box").html("<div class='success'><i class='fa fa-check'></i> Aparência Atualizada</div>");
                     $("#public-event-loader").html(data.html);
+
+                    self.loadControls();
+                    self.loadBottomBar();
                 } else {
-                    $("#public-event-manager-appearance-wrap .dialog-box").html("<div class='success'><i class='fa fa-times'></i> "+ data.error +"</div>");
+                    $("#public-event-manager-appearance-wrap .dialog-box").html("<div class='success'><i class='fa fa-times'></i> " + data.error + "</div>");
                 }
             }
         };

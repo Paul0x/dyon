@@ -217,7 +217,28 @@ class hotsiteController {
             throw new Exception("Não foi possível editar o website.");
         }
     }
+    
+    public function getDescription($format) {
+        if(!$this->loaded_hotsite["id"]) {
+            throw new Exception("Hotsite não carregado completamente.");
+        }
+        
+        return $this->loaded_hotsite["description"];
+    }
 
+    public function setDescription($description) {
+        if(!$this->loaded_hotsite["id"]) {
+            throw new Exception("Hotsite não carregado completamente.");
+        }
+        
+        $query = "UPDATE hotsite SET description = \"".$description."\" WHERE id = ".$this->loaded_hotsite["id"];
+        
+        if (!$this->conn->freeQuery($query)) {
+            throw new Exception("Não foi possível editar o website.");
+        }
+        
+        $this->loaded_hotsite["description"] = $description;        
+    }
 }
 
 function init_module_hotsite() {
