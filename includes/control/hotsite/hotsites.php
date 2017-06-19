@@ -231,9 +231,10 @@ class hotsiteController {
             throw new Exception("Hotsite não carregado completamente.");
         }
         
-        $query = "UPDATE hotsite SET description = \"".$description."\" WHERE id = ".$this->loaded_hotsite["id"];
-        
-        if (!$this->conn->freeQuery($query)) {
+        $pdo = $this->conn->getPDO();
+        $query = $pdo->prepare("UPDATE hotsite SET description = ? WHERE id = ?");
+                
+        if (!$query->execute(array($description, $this->loaded_hotsite))) {
             throw new Exception("Não foi possível editar o website.");
         }
         
