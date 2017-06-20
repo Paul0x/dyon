@@ -54,12 +54,66 @@ signupInterface = function () {
     };
 };
 
+eventCheckoutInterface = function () {
+    this.root = $("#dir-root").val();
+
+    this.init = function () {
+        var self = this;
+        self.event_id = parseInt($("#get-ticket").attr("event"));
+        if (isNaN(self.event_id)) {
+            return;
+        }
+
+        self.bindCheckoutButton();
+    };
+
+    this.bindCheckoutButton = function () {
+        var self = this;
+        $(document).on("click", "#get-ticket", function () {
+            self.loadLotSelectionForm();
+        });
+    };
+
+    this.loadLotSelectionForm = function () {
+        var self = this;
+        $.ajax({
+            url: self.root + "/e/ajax",
+            data: {
+                event_id: self.event_id,
+                mode: "load_lot_selection_form"
+            },
+            success: function (data) {
+                data = eval("( " + data + " )");
+                if (data.success === "true") {
+                    self.loadCheckoutBox(data.html);
+                } else {
+
+                }
+            }
+        });
+    };
+
+    this.loadCheckoutBox = function (html) {
+        loadAjaxBox(html);
+        $("#ajax-box").addClass("checkout-box");
+        $("#ajax-box-background").addClass("checkout-box-background");
+        $(document).off("click", "#ajax-box-background");
+
+    };
+};
+
 publicEventInterface = function () {
     this.root = $("#dir-root").val();
 
     this.init = function () {
         var self = this;
         self.bindHeader();
+        self.loadCheckoutInterface();
+    };
+
+    this.loadCheckoutInterface = function () {
+        var checkout_interface = new eventCheckoutInterface();
+        checkout_interface.init();
     };
 
 

@@ -26,14 +26,14 @@ publicEventManagerInterface = function () {
         self.event_id = event_id;
         self.loadControls();
         self.loadBottomBar();
-        self.bindBottomBarControls();
+        self.bindManagerControls();
     };
 
     this.loadControls = function () {
         $("#public-event-wrap .content .main").append("<div class='editable-content' id='public-event-manager-edit-description'><i class='fa fa-pencil'></i> Editar Descrição</div>")
     };
 
-    this.bindBottomBarControls = function () {
+    this.bindManagerControls = function () {
         var self = this;
         $(document).on("click", "#public-event-manager-wrap .buttons .button", function () {
             switch (this.id) {
